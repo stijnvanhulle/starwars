@@ -10,7 +10,7 @@ The browser talks to a single `Next.js` API. Character endpoints are a server-si
 
 ## Phases
 
-- **Planning Phases**: produce md files in `plans/` (`spec.md`, `research.md`, `data-model.md`, `contracts/*.yaml`, `quickstart.md`, `design.md`, and the slice files).
+- **Planning Phases**: produce md files in `plans/` (`spec.md`, `research.md`, `data-model.md`, `contracts/*.yaml`, `verification.md`, `design.md`, and the slice files).
 - **Execution Slices**: produce code. Each boots from a fresh `pnpm install` and ends in a demoable state.
 
 ## Technical Context
@@ -119,7 +119,7 @@ See those files for the resolved questions, scenarios, functional requirements, 
 
 ## Planning Phase 1: Design & Contracts
 
-**Output**: `plans/data-model.md`, `plans/contracts/api.openapi.yaml`, `plans/contracts/starwars.openapi.yaml`, `plans/quickstart.md`.
+**Output**: `plans/data-model.md`, `plans/contracts/api.openapi.yaml`, `plans/contracts/starwars.openapi.yaml`, `plans/verification.md`.
 
 The contract specs are checked into `plans/contracts/` and copied to `apps/platform/openapi/` when Slice 004 (mirrors `api.yaml`) and Slice 005 (mirrors `starwars.yaml`) run.
 
@@ -174,7 +174,7 @@ Gate for Slice 003: `plans/design.md` has tokens, layout shell, one sketch per s
 - [x] `plans/data-model.md`: done, `TeamMember` columns + `Character` fields + invariants + `isDarkSide` rules
 - [x] `plans/contracts/api.openapi.yaml`: done, the single frontend-facing spec covering `/api/characters`, `/api/characters/{id}`, `/api/team*`, and the shared `Character` schema
 - [x] `plans/contracts/starwars.openapi.yaml`: done, `starwars-api` spec, server-only (used by the proxy fetcher's types)
-- [x] `plans/quickstart.md`: done, 6 user-flow scenarios mapped to AC-1..AC-9
+- [x] `plans/verification.md`: done, 6 user-flow scenarios mapped to AC-1..AC-9
 
 ### Planning Phase 2: Slice files authored
 
@@ -203,7 +203,7 @@ Gate for Slice 003: `plans/design.md` has tokens, layout shell, one sketch per s
 
 ### Final checks
 
-- [ ] Global verification, `quickstart.md` walked end-to-end against a clean checkout
+- [ ] Global verification, `verification.md` walked end-to-end against a clean checkout
 - [ ] `Changesets` entry
 - [ ] `README.md` updated, tech stack, use cases, folder structure
 - [ ] `AGENTS.md` / `CLAUDE.md` refreshed:

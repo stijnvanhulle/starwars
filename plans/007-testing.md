@@ -10,7 +10,7 @@ Add Playwright e2e specs and a CI pipeline that runs unit + integration + e2e ag
 
 ## Prerequisites
 
-- Slice 006 is done. Every quickstart scenario passes manually.
+- Slice 006 is done. Every verification scenario passes manually.
 - The `starwars-api` is rate-limited from CI. Since the browser only talks to `/api/*`, e2e specs mock the `starwars-api` at the **server-side** boundary (the `starwars-api.ts` fetcher) rather than intercepting browser network calls. This keeps the test surface aligned with how the app actually runs.
 
 ## Steps
@@ -67,7 +67,7 @@ Add Playwright e2e specs and a CI pipeline that runs unit + integration + e2e ag
     - **Tech stack**: bullet list pulled from `plan.md`'s Technical Context table.
     - **Use cases**: three sentences from `spec.md`.
     - **Folder structure**: the `tree` from `plan.md`'s Project Structure section.
-    - **Getting started**: link to `plans/quickstart.md` for the user flow walk-through and to `plans/001-setup.md` for the first execution slice.
+    - **Getting started**: link to `plans/verification.md` for the user flow walk-through and to `plans/001-setup.md` for the first execution slice.
     - **Status**: current state ("All seven slices complete; see `plans/plan.md` Progress Tracking").
 13. **Close out the open items** in `plans/research.md`. Anything still listed as open after Slices 005 and 006 either gets resolved (with a one-line decision) or moved to a follow-up issue. Common candidates: the `affiliations`-missing fallback, the 400-on-bad-body shape, the dark-mode decision deferred from `design.md`.
 

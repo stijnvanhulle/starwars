@@ -24,7 +24,7 @@ Slice 001 is done. `data-model.md` is the source of truth for the table shape.
 5. **Wire the Drizzle client** at `apps/platform/src/db/client.ts`. Export a singleton `db = drizzle(new Pool({ connectionString: env.DATABASE_URL }), { schema })`. This file imports `drizzle-orm/node-postgres` and is the second of two files allowed to import Drizzle (the first being `schema.ts`).
 6. **Configure `drizzle-kit`** at `apps/platform/drizzle.config.ts`: `schema: './src/db/schema.ts'`, `out: './src/db/migrations'`, `dialect: 'postgresql'`, `dbCredentials.url: env.DATABASE_URL`.
 7. **Generate the initial migration** by running `drizzle-kit generate` (the slice author runs this once; the generated `src/db/migrations/0000_*.sql` file is checked in). Do not hand-write the SQL.
-   Then add a hand-written **seed migration** at `src/db/migrations/0001_default_team.sql` that inserts the default team idempotently:
+   Then add a hand-written **seed migration** at `src/db/migrations/0001_default_team.sql` that inserts the default team and is safe to re-run (running it twice still leaves one row):
    ```sql
    INSERT INTO teams (slug, name) VALUES ('default', 'Default team')
    ON CONFLICT (slug) DO NOTHING;
@@ -77,7 +77,7 @@ Slice 001 is done. `data-model.md` is the source of truth for the table shape.
 2. `cp apps/platform/.env.example apps/platform/.env`. `pnpm --filter platform db:migrate`. Output ends with "Migrations complete" (or Drizzle's equivalent). No errors.
 3. `psql postgres://platform:platform@localhost:5432/platform -c "\d teams"` shows the four columns and the `teams_slug_unique` index. `\d team_members` shows the four columns (including `team_id`), the FK to `teams.id` with `ON DELETE CASCADE`, the composite `team_members_team_id_character_id_unique` index, and the `team_members_team_id_idx` index. `SELECT slug, name FROM teams;` shows the single `default` row.
 4. `pnpm --filter platform test`. All tests in `teamMemberRepository.test.ts` pass.
-5. Re-run `pnpm --filter platform db:migrate`. It is a no-op (idempotent). Exit 0.
+5. Re-run `pnpm --filter platform db:migrate`. It is a no-op on the second run (safe to repeat). Exit 0.
 6. `pnpm typecheck && pnpm lint` are green across the workspace.
 7. Stop the container (`docker compose down`), re-run the migration: it fails with a clear connection error and a non-zero exit. The failure path is loud, not silent.
 
@@ -86,8 +86,8 @@ Slice 001 is done. `data-model.md` is the source of truth for the table shape.
 - [ ] `docker-compose.yml` brings up Postgres 17 with a healthcheck and a named volume
 - [ ] `apps/platform/src/db/schema.ts` defines `teams` and `team_members` exactly as `data-model.md` specifies, including the named indexes and the `teamId` FK with `ON DELETE CASCADE`
 - [ ] `apps/platform/src/db/migrations/0000_*.sql` is generated and checked in
-- [ ] `apps/platform/src/db/migrations/0001_default_team.sql` inserts the default team idempotently
-- [ ] `pnpm --filter platform db:migrate` is idempotent (running twice leaves exactly one `slug = 'default'` row) and reports success
+- [ ] `apps/platform/src/db/migrations/0001_default_team.sql` inserts the default team and is safe to re-run
+- [ ] `pnpm --filter platform db:migrate` is safe to re-run (running twice leaves exactly one `slug = 'default'` row) and reports success
 - [ ] `TeamRepository` exposes `findBySlug`, `findDefault`
 - [ ] `TeamMemberRepository` exposes `insert`, `findAllByTeam`, `findByTeamAndCharacterId`, `deleteByTeamAndCharacterId`, `countByTeam`, all scoped by `teamId`
 - [ ] `drizzle-orm` is imported only from files under `apps/platform/src/db/**` and `apps/platform/src/server/repositories/**`

@@ -69,7 +69,7 @@ Every endpoint the browser calls is documented in `api.yaml`, so RTK Query endpo
 ## Verification
 
 1. `pnpm --filter platform gen` exits 0. `apps/platform/src/gen/api/` contains `types.ts` (including `Character` and `TeamMember`), generated operation files for every documented endpoint (e.g. `listCharacters.ts`, `getCharacter.ts`, `getTeam.ts`), `*.zod.ts`, and `index.ts`. `apps/platform/src/gen/starwars/` contains `types.ts`, `*.zod.ts`, `index.ts`, and no `*.client.ts` files.
-2. Re-run `pnpm gen`. Output is identical (idempotent).
+2. Re-run `pnpm gen`. Output is identical on the second run.
 3. Delete `apps/platform/src/gen/` and run `pnpm --filter platform build`. The `prebuild` hook regenerates it; build succeeds.
 4. `pnpm typecheck` is green. The team route handler now imports the generated Zod and types from `@/gen/api`; the proxy fetcher imports the `starwars-api` type from `@/gen/starwars`.
 5. `pnpm --filter platform test` and `pnpm --filter platform test` are green; the Slice 004 integration tests still pass (with the 400-body shape adjusted where needed).
@@ -81,7 +81,7 @@ Every endpoint the browser calls is documented in `api.yaml`, so RTK Query endpo
 - [ ] Both `OpenAPI` contracts are mirrored into `apps/platform/openapi/` with the do-not-edit header
 - [ ] `kubb.config.ts` wires two pipelines: `api` (ts + client + zod, frontend-facing; every documented endpoint gets an operation file) and `starwars` (ts + zod only, server-only)
 - [ ] Every RTK Query endpoint in `src/store/api.ts` is backed by the generated `@/gen/api` client; nothing is hand-rolled against `Character`
-- [ ] `pnpm gen` is idempotent and a `prebuild` hook runs it
+- [ ] `pnpm gen` is safe to re-run (same output every time) and a `prebuild` hook runs it
 - [ ] `apps/platform/src/gen/{api,starwars}/` are gitignored; `fetchClient.ts` is checked in
 - [ ] `store.ts`, `api.ts`, `Providers.tsx`, `hooks.ts` exist under `src/store/`; there is only one RTK Query slice
 - [ ] `layout.tsx` nests `<AppRouterCacheProvider>` → `<ThemeProvider>` → `<CssBaseline />` → `<Providers />` → children

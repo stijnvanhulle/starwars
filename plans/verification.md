@@ -1,6 +1,6 @@
-# Quickstart, Whale Star Wars Team Builder
+# Verification: Whale Star Wars Team Builder
 
-Authored in Planning Phase 1. The Closeout "Global verification" step walks the app end-to-end against this file. Each scenario maps to one or more acceptance criteria in `spec.md`.
+End-to-end walkthrough used at closeout to confirm the app meets the acceptance checklist in `spec.md`. Each numbered scenario maps to one or more `AC-N` rows. Speckit conventionally names this file `quickstart.md`; we renamed it to match the role it actually plays here.
 
 ## Prerequisites
 

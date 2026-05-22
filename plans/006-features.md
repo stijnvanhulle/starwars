@@ -6,7 +6,7 @@ Assemble the three screens (`/`, `/characters/[id]`, `/team`) and the persistent
 
 ## Goal (demoable outcome)
 
-`pnpm dev` boots and a visitor can complete every acceptance criterion in [`spec.md`](spec.md) and every scenario in [`quickstart.md`](quickstart.md). The team persists across reloads. The sixth add returns `422 TEAM_FULL` and is shown as an inline error. Darth Vader's Add button is disabled with a tooltip, and forcing the request returns `422 EVIL_FORBIDDEN`. The sidebar updates instantly after any add or remove.
+`pnpm dev` boots and a visitor can complete every acceptance criterion in [`spec.md`](spec.md) and every scenario in [`verification.md`](verification.md). The team persists across reloads. The sixth add returns `422 TEAM_FULL` and is shown as an inline error. Darth Vader's Add button is disabled with a tooltip, and forcing the request returns `422 EVIL_FORBIDDEN`. The sidebar updates instantly after any add or remove.
 
 ## Prerequisites
 
@@ -28,7 +28,7 @@ Assemble the three screens (`/`, `/characters/[id]`, `/team`) and the persistent
    - Calls `useListCharactersQuery()` for the list (already cached after a visit to `/`), uses it for prev/next navigation. `character.masters` is already `string[]`; no client-side resolution.
    - Renders name, image, height, mass, affiliations per FR-3.
    - Renders an `<ActionButton />` (from Slice 003) labelled "Add to team" / "Remove from team" based on `useListTeamQuery()` membership. If `isDarkSide(character)` is true and the character is not already on the team, the button is disabled and `disabledReason="Evil characters cannot join the team."` (the exact tooltip text comes from `design.md`). Clicks dispatch `addTeamMember` / `removeTeamMember`; on `422`/`409` errors, show the server's message inline.
-   - Prev/Next: compute `prevId` and `nextId` from the cached list. Wraps at both ends: first character's `Prev` goes to the last id; last character's `Next` goes to the first id. Buttons are always enabled. The buttons use `next/link` so back-button history works per quickstart §3.
+   - Prev/Next: compute `prevId` and `nextId` from the cached list. Wraps at both ends: first character's `Prev` goes to the last id; last character's `Next` goes to the first id. Buttons are always enabled. The buttons use `next/link` so back-button history works per verification §3.
 6. **Build the team page** at `apps/platform/src/app/team/page.tsx`. Client component. `useListTeamQuery()` + `useListCharactersQuery()` are joined locally to render `<TeamMemberRow />` (from Slice 003) for each team member with name/image resolved from the cached character list. Remove control dispatches `removeTeamMember`. `<StatePanel variant="empty">` shows when the team is empty.
 7. **Wire `<TeamSidebar />` for real**. `TeamSidebar` stays presentational (Slice 003 rule). Build `<TeamSidebarContainer />` at `packages/components/src/team/TeamSidebarContainer.tsx` that owns the queries, joins team rows to character names/images, and renders `<TeamSidebar>` with the rows as children. Add it to the layout shell (see next step).
 8. **Insert the layout shell** in `apps/platform/src/app/layout.tsx`. The structure becomes `<AppRouterCacheProvider>` → `<ThemeProvider>` → `<CssBaseline />` → `<Providers>` → `<AppShell topBar={<TopBar />} sidebar={<TeamSidebarContainer />}>{children}</AppShell>`. `<TopBar />` is a tiny client component under `packages/components/src/shell/TopBar.tsx` with the app name and a `next/link` to `/team`.
@@ -44,7 +44,7 @@ Assemble the three screens (`/`, `/characters/[id]`, `/team`) and the persistent
     - `masters: []` → `false` (rule 3 short-circuits on empty).
 11. **Component-test the disabled-Add wiring** next to it at `packages/components/src/characters/CharacterDetail.test.tsx`. Render `<CharacterDetail>` with a Vader-shaped character; assert the `ActionButton` is disabled and the tooltip text contains "evil" (case-insensitive). Render again with a neutral character; assert the button is enabled.
 12. **Cover the team API `EVIL_FORBIDDEN` branch** at `apps/platform/src/app/api/team/route.test.ts`. Feed the mocked `fetchCharacter` a Vader-shaped payload (`name: "Darth Vader"`, or any payload whose `masters` includes `"Darth Sidious (Sith Master)"`). Assert `422 EVIL_FORBIDDEN`. The proxy happy path and upstream-failure → `404` cases from Slice 004 still apply.
-13. **Walk `quickstart.md` end-to-end** against a clean checkout. Every scenario must pass with the real app. Where the doc says "the team page" or "the sidebar", verify both. If something in `quickstart.md` no longer matches what the app does, fix the app, the spec is the contract, not the implementation.
+13. **Walk `verification.md` end-to-end** against a clean checkout. Every scenario must pass with the real app. Where the doc says "the team page" or "the sidebar", verify both. If something in `verification.md` no longer matches what the app does, fix the app, the spec is the contract, not the implementation.
 
 ## Files touched
 
@@ -68,7 +68,7 @@ Assemble the three screens (`/`, `/characters/[id]`, `/team`) and the persistent
 ## Verification
 
 1. `docker compose up -d postgres && pnpm --filter platform db:migrate && pnpm --filter platform gen && pnpm dev`. App boots.
-2. Walk each of the six scenarios in [`quickstart.md`](quickstart.md). All pass.
+2. Walk each of the six scenarios in [`verification.md`](verification.md). All pass.
 3. Specifically for AC-9: Darth Vader's detail page shows a disabled `Add to team` button; hovering it reveals the tooltip; clicking does nothing. Force `POST /api/team` with Vader's id via devtools network panel; server returns `422 EVIL_FORBIDDEN`.
 4. Specifically for AC-8: add five non-evil characters, attempt a sixth; the inline error appears and the team stays at five rows in the DB (`psql -c "select count(*) from team_members;"` returns 5).
 5. `pnpm --filter platform test` is green; `darkSide.test.ts` covers the seven cases in step 10.
@@ -89,6 +89,6 @@ Assemble the three screens (`/`, `/characters/[id]`, `/team`) and the persistent
 - [ ] `/team` lists members with remove controls and an empty state
 - [ ] `<TeamSidebarContainer>` is visible on every page and reflects the current team in real time
 - [ ] API errors (`409`, `422 TEAM_FULL`, `422 EVIL_FORBIDDEN`, `404 NOT_FOUND`) render inline using the generated `Error` shape
-- [ ] Every scenario in `quickstart.md` passes against a clean checkout
+- [ ] Every scenario in `verification.md` passes against a clean checkout
 - [ ] `pnpm test`, `pnpm typecheck`, `pnpm lint` are all green
 - [ ] No new external dependency or generated file is introduced in this slice
