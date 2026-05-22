@@ -170,16 +170,6 @@
     }
     .member__info { min-width: 0; }
     .member__name { font-family: var(--font-head); font-weight: 800; font-size: 20px; color: var(--neutral-900); margin: 0 0 6px; line-height: 1.1; }
-    .member__meta { display: flex; flex-wrap: wrap; gap: 6px; }
-    .meta-chip {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 3px 10px;
-      background: var(--neutral-100);
-      border-radius: var(--radius-pill);
-      font-family: var(--font-body); font-weight: 600; font-size: 12px;
-      color: var(--neutral-600);
-    }
-    .meta-chip__dot { width: 5px; height: 5px; border-radius: 50%; background: var(--neutral-400); }
     .member__action {
       display: inline-flex; align-items: center; gap: 8px;
       padding: 10px 18px;
@@ -274,18 +264,12 @@
         <nav class="breadcrumb" aria-label="Breadcrumb">
           <span class="breadcrumb__current">Team</span>
         </nav>
-        <div class="topbar__spacer"></div>
-        <a class="topbar__team" href="./team.html" aria-current="page">
-          Team
-          <span class="topbar__team-count">2 / 5</span>
-        </a>
       </div>
 
       <div class="content">
         <header class="page-header">
           <div class="page-header__copy">
             <h1 class="page-header__title">Your team</h1>
-            <p class="page-header__lead">Two locked in. Three open. Add more from the roster.</p>
           </div>
           <div class="progress" aria-label="2 of 5 spots filled">
             <span class="progress__label">2 / 5</span>
@@ -302,10 +286,6 @@
             <img class="member__avatar" src="https://akabab.github.io/starwars-api/api/img/1.jpg" alt="" />
             <div class="member__info">
               <h2 class="member__name">Luke Skywalker</h2>
-              <div class="member__meta">
-                <span class="meta-chip"><span class="meta-chip__dot"></span>Rebel Alliance</span>
-                <span class="meta-chip"><span class="meta-chip__dot"></span>Jedi Order</span>
-              </div>
             </div>
             <button class="member__action" type="button">
               <span>Remove</span>
@@ -316,10 +296,6 @@
             <img class="member__avatar" src="https://akabab.github.io/starwars-api/api/img/5.jpg" alt="" />
             <div class="member__info">
               <h2 class="member__name">Leia Organa</h2>
-              <div class="member__meta">
-                <span class="meta-chip"><span class="meta-chip__dot"></span>Rebel Alliance</span>
-                <span class="meta-chip"><span class="meta-chip__dot"></span>House Organa</span>
-              </div>
             </div>
             <button class="member__action" type="button">
               <span>Remove</span>
@@ -348,7 +324,7 @@
             <button class="roster__remove" aria-label="Remove Leia Organa">✕</button>
           </li>
         </ul>
-        <a class="team-panel__cta" href="./home.html">+ Add from roster</a>
+        <a class="team-panel__cta" href="./home.html">+ Add characters</a>
       </div>
     </aside>
   </div>

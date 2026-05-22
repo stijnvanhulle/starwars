@@ -110,7 +110,7 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 ```
 +----+---------------------------------------------+-------------------+
 | NN | TOP BAR  64px, neutral.0 bg, border-bottom  |                   |
-| AA |  ⌄ Breadcrumb / Page title     [ Team 2/5 ] |                   |
+| AA |  ⌄ Breadcrumb / Page title                  |                   |
 | VV +---------------------------------------------+                   |
 | YY |                                             |  TEAM PANEL       |
 |    |                                             |  280px sticky     |
@@ -129,9 +129,9 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 ```
 
 - **Left nav.** 80px wide, `nav.bg` deep navy (`#0F1664`), no labels, icon-only with `nav.fg` white strokes. Items: characters grid (`/`), team (`/team`). Active item gets a `nav.active` rounded-square background. Whale mark at top, settings cog at the bottom.
-- **Top bar.** 64px, `neutral.0` bg with a 1px `neutral.200` bottom border. Breadcrumb / page title on the left; a pink-bordered pill on the right showing "Team 2/5" that links to `/team`. The "+ Create new"-style pink solid CTA is reserved for actions like "Build new team" if we add multi-team later; for v1 we don't need it.
-- **Team panel** (right context pane). 280px sticky. It's a single `neutral.0` card with `border.card` and `radius.lg`, sitting on the `surface.app` tinted bg. Title + count pill at top, roster rows below (compact `TeamMemberRow` variant), CTA at the bottom. The CTA is contextual: solid navy "Manage team" link on `/` and `/characters/[id]`, outline "+ Add from roster" on `/team` (where you already are, so the CTA points back to the roster instead of to itself).
-- **Breakpoints.** Viewport ≥ 1100px shows the team panel inline (above). Below 1100px the panel hides and the top-bar "Team 2/5" pill opens it as a right-side `Drawer`. Below 720px the left nav also collapses to a hamburger.
+- **Top bar.** 64px, `neutral.0` bg with a 1px `neutral.200` bottom border. Breadcrumb / page title on the left. The sidebar's team icon is the entry point to `/team`, so the top bar no longer carries a "Team 2/5" pill. The "+ Create new"-style pink solid CTA is reserved for actions like "Build new team" if we add multi-team later; for v1 we don't need it.
+- **Team panel** (right context pane). 280px sticky. It's a single `neutral.0` card with `border.card` and `radius.lg`, sitting on the `surface.app` tinted bg. Title + count pill at top, team rows below (compact `TeamMemberRow` variant), CTA at the bottom. The CTA is contextual: solid navy "Manage team" link on `/` and `/characters/[id]`, outline "+ Add characters" on `/team` (where you already are, so the CTA points back to the character list instead of to itself).
+- **Breakpoints.** Viewport ≥ 1100px shows the team panel inline (above). Below 1100px the panel hides and the sidebar's team icon opens it as a right-side `Drawer`. Below 720px the left nav also collapses to a hamburger.
 
 ## Screens
 
@@ -139,11 +139,11 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 
 ```
 +----+--------------------------------------------+-------------------+
-| NN | Characters                  [ Team 2 / 5 ] |                   |
+| NN | Characters                                 |                   |
 | AA +--------------------------------------------+                   |
 | VV |                                            |  TEAM PANEL       |
 |    | H1  Star Wars characters                   |  Your team [2/5]  |
-|    | Lead: "Browse the roster, pick five."      |  Luke   [x]       |
+|    | Lead: "Pick five for your team."           |  Luke   [x]       |
 |    |                                            |  Leia   [x]       |
 |    | +------+ +------+ +------+ +------+        |                   |
 |    | |[team]| |[team]| |      | |      |        |  [ Manage team ]  |
@@ -174,7 +174,7 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 
 ```
 +----+--------------------------------------------+-------------------+
-| NN | Characters / Darth Vader        [ Team 2/5 ]  |                   |
+| NN | Characters / Darth Vader                   |                   |
 | AA +--------------------------------------------+                   |
 | VV |                                            |  TEAM PANEL       |
 |    | [ ← Prev (R2-D2) ]  [ Next (Leia) → ]      |                   |
@@ -212,19 +212,17 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 
 ```
 +----+--------------------------------------------+-------------------+
-| NN | Team                        [ Team 2 / 5 ] |                   |
+| NN | Team                                       |                   |
 | AA +--------------------------------------------+                   |
 | VV |                                            |  TEAM PANEL       |
 |    | H1  Your team       [ 2 / 5  • • · · · ]   |  Your team [2/5]  |
-|    | Lead: "Two locked in. Three open."         |  Luke   [x]       |
+|    |                                            |  Luke   [x]       |
 |    |                                            |  Leia   [x]       |
 |    | +-----------------------------------+      |                   |
-|    | | [avatar]  Luke Skywalker  [Remove]|      |  [ + Add from     |
-|    | |           [Rebel] [Jedi]          |      |    roster ]       |
-|    | +-----------------------------------+      |                   |
+|    | | [avatar]  Luke Skywalker  [Remove]|      |  [ + Add          |
+|    | +-----------------------------------+      |    characters ]   |
 |    | +-----------------------------------+      |                   |
 |    | | [avatar]  Leia Organa     [Remove]|      |                   |
-|    | |           [Rebel] [Organa]        |      |                   |
 |    | +-----------------------------------+      |                   |
 |    |                                            |                   |
 |    | (empty team -> StatePanel variant=empty)   |                   |
@@ -232,7 +230,7 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 ```
 
 - **Page header.** Breadcrumb (`Team`) + H1 + lead on the left, progress pill on the right: tabular `N / 5` label + five dots (filled pink for taken, gray `neutral.200` for open).
-- **Member rows.** White cards with `radius.lg` (16px) + `border.card`. Layout: 80–96px rounded-square avatar | info column | Remove pill. Info column: H2 name + a small row of affiliation meta chips pulled from `character.affiliations`. No invented "role" eyebrow; the spec doesn't define one and `akabab` doesn't return one. Remove button is outline by default; on hover its border, bg, and text all flip to `semantic.error` family.
+- **Member rows.** White cards with `radius.lg` (16px) + `border.card`. Layout: 72px rounded-square avatar | name | Remove pill. Just the name — no affiliations, no invented "role" eyebrow. The spec only requires identifying members + a remove control; affiliations live on the detail page. Remove button is outline by default; on hover its border, bg, and text all flip to `semantic.error` family.
 - **Empty team.** When `team.length === 0`, the member list is replaced by `<StatePanel variant="empty" title="No team yet" description="Add characters from a detail page." action={...}>`. The empty-slot CTA cards from earlier mockups are dropped (not in spec, the app uses StatePanel for empty states).
 - **Component.** `<TeamMemberRow avatar name meta onRemove>`. The team panel reuses a compact variant (smaller avatar, single-line name, no meta chips).
 - **Data.** `useListTeamQuery()` joined locally with `useGetAllCharactersQuery()` for name/image/affiliations (the team API stores `characterId` only).
@@ -242,7 +240,7 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 | Component                  | Lives in                                 | Notes                                                  |
 | -------------------------- | ---------------------------------------- | ------------------------------------------------------ |
 | `AppShell`                 | `packages/components`                    | Top bar + sidebar + content slots                      |
-| `TeamSidebar`              | `packages/components`                    | Presentational; compact roster rows passed as children |
+| `TeamSidebar`              | `packages/components`                    | Presentational; compact team rows passed as children |
 | `CharacterCard`            | `packages/components`                    | List grid card; props include optional `badge`         |
 | `StatePanel`               | `packages/components`                    | Loading / empty / error variants                       |
 | `TeamMemberRow`            | `packages/components`                    | Two variants: `compact` (sidebar) and `full` (`/team`) |
