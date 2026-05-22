@@ -91,4 +91,4 @@ Every endpoint the browser calls is documented in `api.yaml`, so RTK Query endpo
 - [ ] `@/gen/starwars` is never imported from browser code (lint rule enforces it)
 - [ ] `pnpm typecheck`, `pnpm lint`, `pnpm test` are green
 - [ ] `plans/research.md` closes the "hand-rolled guard" open item with a pointer to Slice 005
-- [ ] `isDarkSide` is still a stub; real rules and server-side master-resolution land in Slice 006
+- [ ] `isDarkSide` is still a stub; real rules land in Slice 006 (`Character.masters` is `string[]`, so no resolution step is needed)

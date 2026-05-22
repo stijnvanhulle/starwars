@@ -167,7 +167,7 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 - **Badges.** Top-left chip on the media: `On team` (pink solid) or `Dark side` (red solid), uppercase. Solid background only, no blur.
 - **Component.** `<CharacterCard name image onClick badge?>` from `packages/components`.
 - **Data.** `useListCharactersQuery()` from the single `api` slice (hits `/api/characters`, server-proxied from `starwars-api`), joined with `useListTeamQuery()` for the "On team" badge.
-- **States.** Loading → `<StatePanel variant="loading">`. Error → `<StatePanel variant="error" action={retry}>` (proxy may surface `502 BAD_GATEWAY` if the `starwars-api` is down). Empty (guard only; the `starwars-api` always has data) → `<StatePanel variant="empty">`.
+- **States.** Loading → `<StatePanel variant="loading">`. Error → `<StatePanel variant="error" action={retry}>` (proxy maps any upstream non-200 to `404 NOT_FOUND`; transport failures surface as the same error state). Empty (guard only; the `starwars-api` always has data) → `<StatePanel variant="empty">`.
 - The filter chip row from earlier mockups is dropped: the app doesn't show one and the spec doesn't ask for it.
 
 ### `/characters/[id]`: Character detail
@@ -205,8 +205,8 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 - **Info column.** H1 + two-cell stats grid for `height` and `mass` (label uppercase 12px, value 24px navy). Affiliation chips below, Sith ones in `semantic.error` red. The spec's five required fields (name, image, height, mass, affiliations) all land here and nothing else.
 - **Action bar.** Wraps the primary CTA in a colored box: red-tinted with a warning icon + copy for the evil path; on the non-evil path it's just the pink Add button without a banner.
 - **`<ActionButton>` states.** Default pink (`accent.500`); hover `accent.600`; pressed `accent.700`; disabled `neutral.200` bg + `neutral.400` text + `disabledReason` tooltip on hover / `focus-within`. Already-on-team flips to outlined navy "Remove from team".
-- **Prev/Next.** First character's `Prev` is disabled (not wrapping). Last character's `Next` is disabled.
-- **Data.** `useGetCharacterQuery(id)` hero; `useListCharactersQuery()` for prev/next (server already resolved `masters` to names, so `masterNames` is derived from `character.masters` directly); `useListTeamQuery()` for membership.
+- **Prev/Next.** Wrap around: first character's `Prev` jumps to the last; last character's `Next` jumps to the first. Always enabled.
+- **Data.** `useGetCharacterQuery(id)` hero; `useListCharactersQuery()` for prev/next ordering (`masters` arrives as `string[]` from the source API, no id resolution needed); `useListTeamQuery()` for membership.
 
 ### `/team`: Team management
 
@@ -237,25 +237,27 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 
 ## Component inventory
 
-| Component                  | Lives in                                 | Notes                                                  |
-| -------------------------- | ---------------------------------------- | ------------------------------------------------------ |
-| `AppShell`                 | `packages/components`                    | Top bar + sidebar + content slots                      |
-| `TeamSidebar`              | `packages/components`                    | Presentational; compact team rows passed as children |
-| `CharacterCard`            | `packages/components`                    | List grid card; props include optional `badge`         |
-| `StatePanel`               | `packages/components`                    | Loading / empty / error variants                       |
-| `TeamMemberRow`            | `packages/components`                    | Two variants: `compact` (sidebar) and `full` (`/team`) |
-| `ActionButton`             | `packages/components`                    | Loading + `disabledReason` (tooltip) patterns          |
-| `Pill` / `Chip`            | `packages/components`                    | Filter chips, affiliation chips, meta chips, badges    |
-| `Pager`                    | `packages/components`                    | Prev/Next + position counter on the detail page        |
-| `ProgressDots`             | `packages/components`                    | The `n / 5` dots on `/team`                            |
-| `Tooltip`                  | `packages/components`                    | Hover/focus tooltip; used by `ActionButton`            |
-| `TopBar`                   | `apps/platform/src/components`           | Single-consumer; app name + team link                  |
-| `CharacterList`            | `apps/platform/src/components`           | Data-aware grid wrapper with filter chips              |
-| `CharacterDetail`          | `apps/platform/src/components`           | Detail page body, Add/Remove wiring, action bar        |
-| `TeamSidebarContainer`     | `apps/platform/src/components`           | Joins team rows to character data                      |
-| `ActionBar`                | `apps/platform/src/components`           | Wraps `ActionButton` with status banner (`/characters`) |
+`packages/components/src/` is organised by feature. There are no per-feature barrels; the single top-level `src/index.ts` is the package entry, and consumers can also deep-import a component by its file path.
 
-Anything single-consumer stays in `apps/platform`. It moves to `packages/components` only when a second consumer appears.
+| Component              | Folder        | Notes                                                  |
+| ---------------------- | ------------- | ------------------------------------------------------ |
+| `AppShell`             | `shell/`      | Top bar + sidebar + content slots                      |
+| `TopBar`               | `shell/`      | App name + team link                                   |
+| `CharacterCard`        | `characters/` | List grid card; props include optional `badge`         |
+| `CharacterList`        | `characters/` | Data-aware grid wrapper                                |
+| `CharacterDetail`      | `characters/` | Detail page body, Add/Remove wiring                    |
+| `ActionBar`            | `characters/` | Wraps `ActionButton` with status banner on the detail page |
+| `TeamSidebar`          | `team/`       | Presentational; compact team rows passed as children   |
+| `TeamSidebarContainer` | `team/`       | Joins team rows to character data                      |
+| `TeamMemberRow`        | `team/`       | Two variants: `compact` (sidebar) and `full` (`/team`) |
+| `StatePanel`           | `common/`     | Loading / empty / error variants                       |
+| `ActionButton`         | `common/`     | Loading + `disabledReason` (tooltip) patterns          |
+| `Pill` / `Chip`        | `common/`     | Affiliation chips, meta chips, badges                  |
+| `Pager`                | `common/`     | Prev/Next + position counter on the detail page        |
+| `ProgressDots`         | `common/`     | The `n / 5` dots on `/team`                            |
+| `Tooltip`              | `common/`     | Hover/focus tooltip; used by `ActionButton`            |
+
+All UI components live in `packages/components` from day one; `apps/platform/src/components` is reserved for app-level wiring that isn't a reusable component (route layouts, providers).
 
 ## State matrix
 
@@ -290,4 +292,3 @@ If a slice is over budget, cut from this list first.
 Tracked in `plans/research.md`'s Open items:
 
 - Toast vs inline errors (current: inline)
-- Prev/Next wrap behavior (current: disabled at endpoints)

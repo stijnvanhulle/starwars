@@ -6,7 +6,7 @@ Transform the current `TypeScript` library monorepo into a `Next.js` app that br
 
 The browser talks to a single `Next.js` API. Character endpoints are a server-side proxy in front of `starwars-api`; team endpoints persist in `Postgres` via `Drizzle`. The schema has two tables: `teams` (seeded with a single `default` row) and `team_members`. The app uses the default team everywhere, so multi-team is a future feature, not a migration.
 
-`Kubb` generates one frontend client + `Zod` from `plans/contracts/api.openapi.yaml`. That contract documents every endpoint the browser calls, characters and team alike, so the frontend has a fully generated client and never imports `starwars.openapi.yaml`. A second pipeline against `plans/contracts/starwars.openapi.yaml` emits server-only types + `Zod` for the source-API shape used by the proxy fetcher and the `isDarkSide` master resolver.
+`Kubb` generates one frontend client + `Zod` from `plans/contracts/api.openapi.yaml`. That contract documents every endpoint the browser calls (characters proxy routes and team routes), so the frontend has a fully generated client and never imports `starwars.openapi.yaml`. A second pipeline against `plans/contracts/starwars.openapi.yaml` emits server-only types + `Zod` for the source-API shape used by the proxy fetcher.
 
 ## Phases
 
@@ -29,16 +29,14 @@ The browser talks to a single `Next.js` API. Character endpoints are a server-si
 ## Ground Rules
 
 - **Layered architecture**: Route handler → `Service` → `Repository` → `DB`. Each layer has exactly one concern.\
-  \
   The `Repository` is the **only** place `Drizzle` is imported.
 
-- **Contract-first**: One `OpenAPI 3.1` spec for the frontend-facing API (`api.openapi.yaml`, documents `/api/team` + the shared `Character` schema) and one for `starwars-api` (server-only).\
-  \
+- **Contract-first**: One `OpenAPI 3.1` spec for the frontend-facing API (`api.openapi.yaml`, documents `/api/characters`, `/api/characters/{id}`, `/api/team*` and the shared `Character` schema) and one for `starwars-api` (server-only).\
   `Kubb` is the source of truth for types and `Zod`. The frontend never imports the `starwars-api` contract.
 
 - **Test-first approach**: Service rules and the `isDarkSide` util get unit/integration tests **before** UI work in their phase. Pure presentational components do not block on tests.
 - **Independent phases**: Each `plans/00X-*.md` boots from a fresh `pnpm install` and ends in a runnable, demoable state.
-- **No premature abstraction**: Components live in `packages/components` only once a second consumer exists or they're explicitly part of the design system shell (sidebar, card). Otherwise they stay in `apps/platform`.
+- **Components in** `packages/components` **from day one**: every UI component listed in `design.md`'s inventory lives in `packages/components`. `apps/platform/src/components` is reserved for app-level wiring (route layouts, providers) that isn't itself a reusable component.
 
 ## Data flow
 
@@ -100,7 +98,13 @@ apps/platform/
     api.yaml                      # frontend-facing contract (proxy + team)
     starwars.yaml                 # `starwars-api` contract, server-only
   drizzle.config.ts
-packages/components/              # MUI building blocks
+packages/components/
+  src/
+    shell/                        # AppShell, TopBar
+    characters/                   # CharacterCard, CharacterList, CharacterDetail, ActionBar
+    team/                         # TeamSidebar, TeamSidebarContainer, TeamMemberRow
+    common/                       # StatePanel, ActionButton, Pill, Pager, ProgressDots, Tooltip
+    index.ts                      # single top-level barrel; no per-feature index.ts files
 internals/utils/                  # already present
 configs/                          # already present
 ```
@@ -156,7 +160,7 @@ Gate for Slice 003: `plans/design.md` has tokens, layout shell, one sketch per s
 | Two `OpenAPI` specs instead of one           | One contract for the frontend (`api.yaml`, every endpoint the browser calls plus the shared schemas), one for the source API (server-only, used to type the proxy fetcher). The browser depends on a single contract and never sees the source-API spec. |
 | Server-side proxy for character data         | Avoids leaking the source-API URL to the browser, lets us cache and rate-limit centrally, and keeps the frontend on a single contract and a single generated client.                                                                                     |
 | `Drizzle` + `Postgres` for a single team row | The prompt explicitly requires the `DB` → `Repository` → `Service` → API layering. A simpler in-memory store would not satisfy that.                                                                                                                     |
-| `packages/components` from day one           | The prompt asks for it. Initial cost is one placeholder export; real components arrive in Slice 006.                                                                                                                                                     |
+| `packages/components` holds all UI           | The prompt asks for it. We put every UI component there from the start (no single-consumer carve-out) so imports never have to move later. `apps/platform/src/components` is reserved for non-reusable app wiring.                                       |
 
 ## Progress Tracking
 
@@ -168,7 +172,7 @@ Gate for Slice 003: `plans/design.md` has tokens, layout shell, one sketch per s
 ### Planning Phase 1: Design & Contracts
 
 - [x] `plans/data-model.md`: done, `TeamMember` columns + `Character` fields + invariants + `isDarkSide` rules
-- [x] `plans/contracts/api.openapi.yaml`: done, the single frontend-facing spec (team paths + shared `Character` schema; proxy routes intentionally not documented)
+- [x] `plans/contracts/api.openapi.yaml`: done, the single frontend-facing spec covering `/api/characters`, `/api/characters/{id}`, `/api/team*`, and the shared `Character` schema
 - [x] `plans/contracts/starwars.openapi.yaml`: done, `starwars-api` spec, server-only (used by the proxy fetcher's types)
 - [x] `plans/quickstart.md`: done, 6 user-flow scenarios mapped to AC-1..AC-9
 
@@ -207,9 +211,3 @@ Gate for Slice 003: `plans/design.md` has tokens, layout shell, one sketch per s
   - New workspace layout: `apps/platform`, `packages/components`; `packages/core` and `packages/demo` removed
   - Skill notes: Drizzle in repositories only, Kubb's regen step, the `isDarkSide` single-implementation rule
 - [ ] `plans/research.md` open items closed or moved to follow-up issues
-
-## Open items to confirm during execution
-
-- `starwars-api` images come from an external CDN; the proxy returns the `starwars-api` URL verbatim and Slice 001 whitelists the host via `next.config.ts` `images.remotePatterns`. Proxying the image bytes is out of scope.
-- `openapi/starwars.yaml` is inferred from sample `starwars-api` payloads. If reality diverges, the spec gets a follow-up and `pnpm gen` re-emits types.
-- "Single shared team" means concurrent users overwrite each other. Last write wins.

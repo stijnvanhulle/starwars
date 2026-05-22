@@ -22,35 +22,35 @@ Slice 001 is done (`MUI` theme provider wired, `AppRouterCacheProvider` in place
    - Design tokens (palette, typography scale, spacing scale, radius, elevation, motion durations). One accent, one neutral ramp (50..900), semantic states (`success`, `warning`, `error`, `info`).
    - Layout shell sketch: top bar with app name, sidebar 280px on desktop / drawer on mobile, content slot. Cross-reference the wireframes from step 1.
    - Screen notes for `/`, `/characters/[id]`, `/team`. Each lists the components it consumes and the data shape bound to each. Pairs with the corresponding wireframe.
-   - Component inventory. Mark each as `packages/components/*` (shared shell) or `apps/platform/src/components/*` (single-consumer, deferred to 006).
+   - Component inventory. Every UI component lives under `packages/components/*`; `apps/platform/src/components/*` is reserved for non-reusable app wiring (route layouts, providers).
    - State matrix per component: default, hover, focus, disabled, loading, error, empty.
 3. **Wire the tokens into the `MUI` theme** at `apps/platform/src/theme/theme.ts`. Export `lightTheme`. The values come from `design.md`, this file just imports them.
-4. **Build the layout shell** in `packages/components/src/AppShell.tsx`. Slots: `topBar`, `sidebar`, `children`. No business logic, no data fetching.
-5. **Build the placeholder `<TeamSidebar />`** in `packages/components/src/TeamSidebar.tsx`. Renders a static "Your team (0/5)" header and an empty-state message. Real data wiring lands in 006.
-6. **Build `<CharacterCard />`** in `packages/components/src/CharacterCard.tsx`. Props: `name`, `image`, `onClick`. Hover, focus, and disabled states.
-7. **Build `<StatePanel />`** in `packages/components/src/StatePanel.tsx`. Props: `variant: 'loading' | 'empty' | 'error'`, `title`, `description`, `action?`. Used for the empty team, loading list, and failed API calls.
-8. **Build `<TeamMemberRow />`** in `packages/components/src/TeamMemberRow.tsx`. Props: `name`, `image`, `onRemove`. Used in both the sidebar and `/team`.
-9. **Build `<ActionButton />`** in `packages/components/src/ActionButton.tsx`. Wraps `MUI` Button with the project's loading and disabled-with-tooltip patterns. Props: `loading`, `disabledReason?` (when present, the button is disabled and the reason renders as a tooltip).
-10. **Update the barrel export** `packages/components/src/index.ts` to expose the six components (`AppShell`, `TeamSidebar`, `CharacterCard`, `StatePanel`, `TeamMemberRow`, `ActionButton`).
-11. **Add a `Vitest` smoke test** next to each component (`packages/components/src/<Name>.test.tsx`) using Testing Library: renders without crashing, primary prop is reflected in the DOM, the disabled-with-tooltip pattern works on `<ActionButton />`, and `<StatePanel variant="loading" | "empty" | "error">` each render their distinct content.
+4. **Build the layout shell** in `packages/components/src/shell/AppShell.tsx`. Slots: `topBar`, `sidebar`, `children`. No business logic, no data fetching.
+5. **Build the placeholder `<TeamSidebar />`** in `packages/components/src/team/TeamSidebar.tsx`. Renders a static "Your team (0/5)" header and an empty-state message. Real data wiring lands in 006.
+6. **Build `<CharacterCard />`** in `packages/components/src/characters/CharacterCard.tsx`. Props: `name`, `image`, `onClick`. Hover, focus, and disabled states.
+7. **Build `<StatePanel />`** in `packages/components/src/common/StatePanel.tsx`. Props: `variant: 'loading' | 'empty' | 'error'`, `title`, `description`, `action?`. Used for the empty team, loading list, and failed API calls.
+8. **Build `<TeamMemberRow />`** in `packages/components/src/team/TeamMemberRow.tsx`. Props: `name`, `image`, `onRemove`. Used in both the sidebar and `/team`.
+9. **Build `<ActionButton />`** in `packages/components/src/common/ActionButton.tsx`. Wraps `MUI` Button with the project's loading and disabled-with-tooltip patterns. Props: `loading`, `disabledReason?` (when present, the button is disabled and the reason renders as a tooltip).
+10. **Update the top-level barrel** `packages/components/src/index.ts` to re-export the six components (`AppShell`, `TeamSidebar`, `CharacterCard`, `StatePanel`, `TeamMemberRow`, `ActionButton`) directly from their feature-folder paths. No per-feature `index.ts` files; consumers either import from the package root or deep-path the component file.
+11. **Add a `Vitest` smoke test** next to each component (`packages/components/src/<feature>/<Name>.test.tsx`) using Testing Library: renders without crashing, primary prop is reflected in the DOM, the disabled-with-tooltip pattern works on `<ActionButton />`, and `<StatePanel variant="loading" | "empty" | "error">` each render their distinct content.
 
 ## Files touched
 
 - `plans/design.md`: created (includes wireframes for `/`, `/characters/[id]`, `/team`)
 - `plans/design/`: created if hi-fi mockups are produced (exported PNG/SVG or tool source files); skipped otherwise
 - `apps/platform/src/theme/theme.ts`: modified (tokens replace the 001 placeholder values)
-- `packages/components/src/AppShell.tsx`: created
-- `packages/components/src/TeamSidebar.tsx`: created
-- `packages/components/src/CharacterCard.tsx`: created
-- `packages/components/src/StatePanel.tsx`: created
-- `packages/components/src/TeamMemberRow.tsx`: created
-- `packages/components/src/ActionButton.tsx`: created
-- `packages/components/src/index.ts`: modified (re-export the six components)
-- `packages/components/src/AppShell.test.tsx`: created
-- `packages/components/src/CharacterCard.test.tsx`: created
-- `packages/components/src/StatePanel.test.tsx`: created
-- `packages/components/src/TeamMemberRow.test.tsx`: created
-- `packages/components/src/ActionButton.test.tsx`: created
+- `packages/components/src/shell/AppShell.tsx`: created
+- `packages/components/src/team/TeamSidebar.tsx`: created
+- `packages/components/src/team/TeamMemberRow.tsx`: created
+- `packages/components/src/characters/CharacterCard.tsx`: created
+- `packages/components/src/common/StatePanel.tsx`: created
+- `packages/components/src/common/ActionButton.tsx`: created
+- `packages/components/src/index.ts`: top-level barrel re-exporting the six components by file path
+- `packages/components/src/shell/AppShell.test.tsx`: created
+- `packages/components/src/team/TeamMemberRow.test.tsx`: created
+- `packages/components/src/characters/CharacterCard.test.tsx`: created
+- `packages/components/src/common/StatePanel.test.tsx`: created
+- `packages/components/src/common/ActionButton.test.tsx`: created
 
 ## Verification
 

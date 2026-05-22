@@ -24,11 +24,10 @@ erDiagram
     number mass
     string_array affiliations
     string_array formerAffiliations "ignored by isDarkSide"
-    integer_array masters "ids, resolved to names"
+    string_array masters "names; may include parenthetical role suffix"
   }
   TEAM ||--o{ TEAM_MEMBER : "contains"
   TEAM_MEMBER }o..|| CHARACTER : "references by id (no FK; lives in starwars-api)"
-  CHARACTER ||--o{ CHARACTER : "masters (self-reference by id)"
 ```
 
 The dotted line is the soft reference: `team_members.characterId` points at a `starwars-api` character, but there is no database foreign key because the character row lives outside our database. The service validates existence by fetching `/id/{id}.json` before insert.
@@ -77,7 +76,7 @@ Read-only. The browser fetches characters from our own `/api/characters` and `/a
 Two Kubb-generated types, one per side of the proxy:
 
 - **Frontend**: `Character` is generated from `plans/contracts/api.openapi.yaml` alongside the documented `listCharacters` and `getCharacter` operations. Every browser-side component and the generated RTK Query endpoints import it from there.
-- **Server**: the source-API shape is generated from `plans/contracts/starwars.openapi.yaml`. Only the proxy fetcher and `isDarkSide` master-resolution touch it; the route handlers downconvert it to the frontend `Character` before responding.
+- **Server**: the source-API shape is generated from `plans/contracts/starwars.openapi.yaml`. Only the proxy fetcher touches it; the route handlers downconvert it to the frontend `Character` before responding.
 
 Fields the app actually reads (identical on both sides of the proxy, the `starwars-api` just carries extra ones we drop):
 
@@ -90,7 +89,7 @@ Fields the app actually reads (identical on both sides of the proxy, the `starwa
 | `mass`               | `number`    | detail page                   |
 | `affiliations`       | `string[]`  | detail page, `isDarkSide` rule 2  |
 | `formerAffiliations` | `string[]`  | deliberately ignored by `isDarkSide` (kept on the type so the field is visible, not so it's used) |
-| `masters`            | `number[]`  | `isDarkSide` rule 3 (resolved to names server-side) |
+| `masters`            | `string[]`  | `isDarkSide` rule 3. Names already (may carry a parenthetical role like `"Darth Sidious (Sith Master)"`); substring check still works. |
 
 Other `starwars-api` fields are present on the server-side generated type but are stripped by the proxy before the response leaves the server. The UI does not invent fields the contract doesn't list.
 
@@ -106,23 +105,20 @@ Other `starwars-api` fields are present on the server-side generated type but ar
 
 The five-member cap lives in the service, not as a DB check, so the failure surfaces as a typed API error rather than a generic constraint violation.
 
-## Derived predicate: `isDarkSide(character, masterNames)`
+## Derived predicate: `isDarkSide(character)`
 
 Single implementation at `apps/platform/src/lib/darkSide.ts`, imported by both `TeamService` (server guard) and the UI (Add button disable + tooltip). Pure, synchronous, no fetching inside.
 
 Signature:
 
 ```ts
-isDarkSide(character: Character, masterNames: ReadonlyMap<number, string>): boolean
+isDarkSide(character: Character): boolean
 ```
 
-`masterNames` maps `Character.id` to `Character.name` for any id that appears in `character.masters`. Both call sites build it once before calling:
-
-- **UI** builds it from the cached `/all.json` list.
-- **Server** builds it by fetching the masters it needs from `starwars-api` (or by reusing a request-scoped cache).
+`character.masters` is already `string[]` on the source API (sometimes with a parenthetical role suffix like `"Darth Sidious (Sith Master)"`), so no id-to-name resolution is needed.
 
 Three rules, OR'd together:
 
 1. `character.name` contains `"Darth"` or `"Sith"` (case-insensitive).
 2. Any entry in `character.affiliations` contains `"Darth"` or `"Sith"` (case-insensitive). `formerAffiliations` is ignored on purpose: a character who left the Sith is not currently evil.
-3. Any id in `character.masters` resolves through `masterNames` to a name containing `"Darth"`.
+3. Any entry in `character.masters` contains `"Darth"` (case-insensitive).
