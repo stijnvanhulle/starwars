@@ -20,6 +20,7 @@ We want to create a front-end application that fetches data from a Starwars API 
 Starwars API: https://akabab.github.io/starwars-api/
 
 ## Requirements (external copy paste)
+
 ```
 We’re assembling a team to fight the dark side! Our application will assist us in creating a team of maximum 5 Star Wars characters. Our team is determined to eradicate evil, which means no evil members are allowed to join.
 

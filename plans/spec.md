@@ -30,11 +30,11 @@ One per requirement bullet from `prompt.md`. Each one is something we can write 
 - **FR-4** `Prev` and `Next` on the detail page move along the list order, with no detour through `/`.
 - **FR-5** The detail page can add the character to the team or remove them. Both go through `/api/team` and persist in Postgres.
 - **FR-6** `/team` lists the team and lets you remove members. The `<TeamSidebar />` shows the same on every page.
-- **FR-7** Five-member cap and the evil ban. "Evil" follows the three rules in `src/lib/evil.ts`. Both rules live in `TeamService` on the server, with the UI mirroring them (`Add` disabled with a tooltip, sixth-add rejected).
+- **FR-7** Five-member cap and the evil ban. "Evil" follows the three rules in `src/lib/darkSide.ts`. Both rules live in `TeamService` on the server, with the UI mirroring them (`Add` disabled with a tooltip, sixth-add rejected).
 
 ## Key entities
 
-- **`Character`**: comes from `akabab`, read-only. The UI uses `id`, `name`, `image`, `height`, `mass`, `affiliations`. The server's `isEvil` also looks at `masters` (and deliberately ignores `formerAffiliations`).
+- **`Character`**: comes from `akabab`, read-only. The UI uses `id`, `name`, `image`, `height`, `mass`, `affiliations`. The server's `isDarkSide` also looks at `masters` (and deliberately ignores `formerAffiliations`).
 - **`TeamMember`**: ours, writable. `id uuid pk`, `characterId int unique`, `addedAt timestamptz default now`. Invariant: at most five rows, enforced in the service (not as a DB check, since the message needs to surface as a typed API error).
 
 ## Acceptance checklist
