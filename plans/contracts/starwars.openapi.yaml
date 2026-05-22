@@ -1,0 +1,169 @@
+# Inferred from sample payloads at https://akabab.github.io/starwars-api/.
+# Repo: https://github.com/akabab/starwars-api
+
+openapi: 3.1.0
+info:
+  title: akabab Star Wars API
+  version: 0.2.1
+  description: |
+    Read-only static JSON published as GitHub Pages.
+  license:
+    name: See upstream repository
+    url: https://github.com/akabab/starwars-api
+  contact:
+    name: akabab/starwars-api
+    url: https://github.com/akabab/starwars-api/issues
+
+tags:
+  - name: characters
+    description: Read-only Star Wars character data.
+
+servers:
+  - url: https://akabab.github.io/starwars-api/api
+    description: Primary (GitHub Pages)
+  - url: https://rawcdn.githack.com/akabab/starwars-api/0.2.1/api
+    description: CDN mirror, faster but pinned to 0.2.1
+
+security: []
+
+paths:
+  /all.json:
+    get:
+      operationId: getAllCharacters
+      summary: List every character
+      description: Returns every character in one payload.
+      tags:
+        - characters
+      responses:
+        '200':
+          description: Array of characters.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Character'
+        '404':
+          description: GitHub Pages serves its default 404 HTML if the deploy is missing.
+
+  /id/{id}.json:
+    get:
+      operationId: getCharacterById
+      summary: Get one character by id
+      description: Returns a single character. The `.json` suffix is part of the path, not the id.
+      tags:
+        - characters
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Numeric character id (e.g. `1` for Luke Skywalker).
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: The character.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Character'
+        '404':
+          description: GitHub Pages serves its default 404 HTML when the id does not exist. Treat any non-200 as not-found.
+
+components:
+  schemas:
+    Character:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          minimum: 1
+          example: 1
+        name:
+          type: string
+          example: Luke Skywalker
+        height:
+          type: number
+          description: Height in meters.
+          example: 1.72
+        mass:
+          type: number
+          description: Mass in kilograms.
+          example: 73
+        gender:
+          type: string
+          example: male
+        homeworld:
+          type: string
+          example: tatooine
+        wiki:
+          type: string
+          format: uri
+          example: http://starwars.wikia.com/wiki/Luke_Skywalker
+        image:
+          type: string
+          format: uri
+          description: External CDN URL. Allow the host in `next.config.ts` `images.remotePatterns`.
+          example: https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg
+        born:
+          type: integer
+          description: Birth year. Negative is BBY, positive is ABY.
+          example: -19
+        bornLocation:
+          type: string
+          example: polis massa
+        died:
+          type: integer
+          description: Death year. Negative is BBY, positive is ABY. Omitted if the character is still alive.
+          example: 34
+        diedLocation:
+          type: string
+          example: ahch-to
+        species:
+          type: string
+          example: human
+        hairColor:
+          type: string
+          example: blond
+        eyeColor:
+          type: string
+          example: blue
+        skinColor:
+          type: string
+          example: light
+        cybernetics:
+          type: string
+          example: Prosthetic right hand
+        affiliations:
+          type: array
+          description: Current affiliations. The evil check reads this field.
+          items:
+            type: string
+          example:
+            - Jedi Order
+            - Rebel Alliance
+        formerAffiliations:
+          type: array
+          description: Past affiliations. Ignored by the evil check.
+          items:
+            type: string
+          example:
+            - Galactic Republic
+        masters:
+          type: array
+          description: Names of masters. The evil check looks for "Darth" here.
+          items:
+            type: string
+          example:
+            - Obi-Wan Kenobi
+            - Yoda
+        apprentices:
+          type: array
+          items:
+            type: string
+          example:
+            - Rey

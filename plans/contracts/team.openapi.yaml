@@ -1,0 +1,175 @@
+openapi: 3.1.0
+info:
+  title: Whale Team API
+  version: 0.1.0
+  description: |
+    Manage the active Star Wars team. Backed by Postgres via a Drizzle
+    repository and a service that enforces the cap of five and the evil guard.
+    Characters themselves live in the upstream `akabab` API and are not stored.
+  contact:
+    name: Whale team
+    url: https://github.com/stijnvanhulle/starwars/issues
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+
+tags:
+  - name: team
+    description: Read, add, and remove team members.
+
+servers:
+  - url: /
+    description: Same-origin Next.js app
+
+security: []
+
+paths:
+  /api/team:
+    get:
+      operationId: getTeam
+      summary: List the active team
+      description: Returns every team member, oldest first.
+      tags:
+        - team
+      responses:
+        '200':
+          description: The active team. Empty array if no members yet.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TeamMember'
+
+    post:
+      operationId: addTeamMember
+      summary: Add a character to the team
+      description: |
+        The service rejects the request if the character is already a member,
+        the team is full, the character is evil, or the character id is not
+        known to the upstream `akabab` API.
+      tags:
+        - team
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddTeamMemberRequest'
+      responses:
+        '201':
+          description: Character added.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamMember'
+        '404':
+          description: The character id was not found upstream.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                notFound:
+                  value:
+                    code: NOT_FOUND
+                    message: Character 9999 does not exist.
+        '409':
+          description: The character is already on the team.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                alreadyMember:
+                  value:
+                    code: ALREADY_MEMBER
+                    message: Character 1 is already on the team.
+        '422':
+          description: |
+            The request was well-formed but violated a business rule.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                teamFull:
+                  value:
+                    code: TEAM_FULL
+                    message: The team already has five members.
+                evilForbidden:
+                  value:
+                    code: EVIL_FORBIDDEN
+                    message: Darth Vader is evil and cannot join the team.
+
+  /api/team/{characterId}:
+    delete:
+      operationId: removeTeamMember
+      summary: Remove a character from the team
+      description: Idempotent. Removing a non-member returns 204.
+      tags:
+        - team
+      parameters:
+        - name: characterId
+          in: path
+          required: true
+          description: The upstream `akabab` character id.
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '204':
+          description: Member removed, or never present.
+
+components:
+  schemas:
+    TeamMember:
+      type: object
+      required:
+        - id
+        - characterId
+        - addedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Server-generated primary key.
+          example: 3f0b2a3e-5b6e-4a3c-8f1c-2d4f6a8b0c1d
+        characterId:
+          type: integer
+          minimum: 1
+          description: Upstream `akabab` character id. Unique within the team.
+          example: 1
+        addedAt:
+          type: string
+          format: date-time
+          description: When the member was added. UTC.
+          example: '2026-05-22T10:15:30.000Z'
+
+    AddTeamMemberRequest:
+      type: object
+      required:
+        - characterId
+      properties:
+        characterId:
+          type: integer
+          minimum: 1
+          example: 1
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          enum:
+            - NOT_FOUND
+            - ALREADY_MEMBER
+            - TEAM_FULL
+            - EVIL_FORBIDDEN
+          description: Machine-readable error code. The HTTP status narrows the set.
+        message:
+          type: string
+          description: Human-readable explanation. Not localised.
