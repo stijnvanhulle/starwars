@@ -47,6 +47,7 @@ A character is defined as evil when:
 * Update `README.MD` with tech stack, uses cases and folder structure
 * Our Next.js app will be part of the `apps/platform` folder, use `packages/components` folder to store our components (based on `Material UI`)
 * Use some concepts from Github speckit:
-  * `plan.md` to create an extended plan from the prompt.
-  * `spec.md` containing a detailed specification on what is needed (user scenarios and functional requirements)
-  * `research.md` decisions made by questions asked in the prompt
+  * `plan.md`: the big picture. What we're building, what we use
+  * `spec.md`: what the app should do, functional requirements and acceptance checklist
+  * `research.md`: the choices we made and why. Also any open questions we still need to answer
+  * `quickstart.md`: how to use the app and see how it works

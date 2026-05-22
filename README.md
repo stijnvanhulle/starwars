@@ -21,6 +21,16 @@ A drop-in monorepo starter. Fork it, rename a few fields, and you have a
 production-ready repository with build, test, lint, format, release and CI
 already wired up.
 
+## Exercise log
+
+Time spent on the Whale Star Wars team-builder exercise, by phase.
+
+| Phase | Output | Time  |
+|---|---|-------|
+| Planning | `plans/plan.md`, `plans/spec.md`, `plans/research.md`, `plans/contracts/*.yaml`, six slice files | TBD   |
+| Implementation | Slices 001 to 005 (Next.js + MUI shell, Postgres + Drizzle, `/api/team`, Kubb-generated clients, features) | _TBD_ |
+| Testing | Slice 006 (Vitest unit + integration, Playwright e2e, CI Postgres service) | _TBD_ |
+
 ## What's inside
 
 | Tool | Purpose |

@@ -98,19 +98,19 @@ configs/                          # already present
 
 | Question                          | Decision                                                                                     | Rationale                                                                                         |
 | --------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| Where does character data live?   | Direct `akabab` calls from `RTK Query`                                                       | The brief doesn't require character persistence; proxying adds latency and no value               |
-| Where does the team live?         | `Postgres` via `Drizzle`, single shared team, no auth                                        | Matches a coding-test scope; exercises the `Repository`/`Service` layering the brief requires     |
-| What does `Kubb` generate?        | Both APIs: `team.yaml` → types + client + `Zod`; `starwars.yaml` → types + `Zod` (no client) | The brief mandates `Kubb`; `starwars` skips the client plugin since `RTK Query` does the fetching |
+| Where does character data live?   | Direct `akabab` calls from `RTK Query`                                                       | The prompt doesn't require character persistence; proxying adds latency and no value               |
+| Where does the team live?         | `Postgres` via `Drizzle`, single shared team, no auth                                        | Matches a coding-test scope; exercises the `Repository`/`Service` layering the prompt requires     |
+| What does `Kubb` generate?        | Both APIs: `team.yaml` → types + client + `Zod`; `starwars.yaml` → types + `Zod` (no client) | The prompt mandates `Kubb`; `starwars` skips the client plugin since `RTK Query` does the fetching |
 | `Next.js` routing?                | App Router                                                                                   | Current default; pairs with `AppRouterCacheProvider` for `MUI v7`                                 |
-| Where does the `Next.js` app sit? | `apps/platform`; shared components in `packages/components`                                  | Explicit instruction in the brief                                                                 |
+| Where does the `Next.js` app sit? | `apps/platform`; shared components in `packages/components`                                  | Explicit instruction in the prompt                                                                 |
 | Cleanup?                          | Delete `packages/core` and `packages/demo`                                                   | Unused template scaffolding                                                                       |
 
 ### Spec content (`plans/spec.md`)
 
 - **User scenarios** — Browse, view a character, add/remove to the team, see the team from anywhere, manage from `/team`.
-- **Functional requirements** — FR-1..FR-7 mirroring the brief's bullet list. Each FR is testable.
+- **Functional requirements** — FR-1..FR-7 mirroring the prompt's bullet list. Each FR is testable.
 - **Key entities** — `Character` (read-only, from `akabab`), `TeamMember` (writeable, owned by us).
-- **Acceptance** — Every requirement bullet from the brief becomes a row in the acceptance checklist.
+- **Acceptance** — Every requirement bullet from the prompt becomes a row in the acceptance checklist.
 
 ## Planning Phase 1: Design & Contracts
 
@@ -119,7 +119,7 @@ configs/                          # already present
 ### Data model (`plans/data-model.md`)
 
 - **`TeamMember`** — `id uuid pk`, `characterId int unique`, `addedAt timestamptz default now`. Invariant: `count(*) <= 5`, enforced in the service. No FK to character (character lives in `akabab`).
-- **`Character`** — read-only mirror of `akabab`'s shape. Fields used: `id`, `name`, `image`, `height`, `mass`, `affiliations`, `formerAffiliations`, `masters`. Derived predicate: `isEvil(character)` per the brief's three rules.
+- **`Character`** — read-only mirror of `akabab`'s shape. Fields used: `id`, `name`, `image`, `height`, `mass`, `affiliations`, `formerAffiliations`, `masters`. Derived predicate: `isEvil(character)` per the prompt's three rules.
 
 ### Contracts
 
@@ -146,7 +146,7 @@ Six user-flow scenarios, one per acceptance criterion:
 
 ## Planning Phase 2: Task split into Execution Slices
 
-The slice files in `plans/00X-*.md` are this feature's `tasks.md` equivalent, split so each one boots independently per the brief. They share a skeleton (Context, Goal, Prerequisites, Steps, Files touched, Verification, Done criteria) defined once in [`plans/template.md`](./template.md). Copy that file when adding a new slice.
+The slice files in `plans/00X-*.md` are this feature's `tasks.md` equivalent, split so each one boots independently per the prompt. They share a skeleton (Context, Goal, Prerequisites, Steps, Files touched, Verification, Done criteria) defined once in [`plans/template.md`](./template.md). Copy that file when adding a new slice.
 
 ### Task ordering and parallelism
 
@@ -172,16 +172,16 @@ The slice files in `plans/00X-*.md` are this feature's `tasks.md` equivalent, sp
 
 | Item                                         | Justification                                                                                                                                        |
 | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Two `OpenAPI` specs instead of one           | The brief mandates `Kubb`; without a spec for `akabab`, hand-written types would diverge from the generated team types. Cost: one extra `yaml` file. |
-| `Drizzle` + `Postgres` for a single team row | The brief explicitly requires the `DB` → `Repository` → `Service` → API layering. A simpler in-memory store would not satisfy that.                  |
-| `packages/components` from day one           | The brief asks for it. Initial cost is one placeholder export; real components arrive in Phase 005.                                                  |
+| Two `OpenAPI` specs instead of one           | The prompt mandates `Kubb`; without a spec for `akabab`, hand-written types would diverge from the generated team types. Cost: one extra `yaml` file. |
+| `Drizzle` + `Postgres` for a single team row | The prompt explicitly requires the `DB` → `Repository` → `Service` → API layering. A simpler in-memory store would not satisfy that.                  |
+| `packages/components` from day one           | The prompt asks for it. Initial cost is one placeholder export; real components arrive in Phase 005.                                                  |
 
 ## Progress Tracking
 
 ### Planning Phase 0 — Outline & Research
 
-- [ ] `plans/spec.md` — _todo_ — user scenarios + FR-1..FR-7 + acceptance checklist
-- [ ] `plans/research.md` — _todo_ — 6-row decisions table moved out of `plan.md`
+- [x] `plans/spec.md` — _done_ — user scenarios + FR-1..FR-7 + acceptance checklist
+- [x] `plans/research.md` — _done_ — 6-row decisions table moved out of `plan.md`
 
 ### Planning Phase 1 — Design & Contracts
 
