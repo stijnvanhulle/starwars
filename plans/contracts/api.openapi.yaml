@@ -65,7 +65,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Character'
         '404':
-          description: No character exists with this id.
+          description: No character exists with this id, or the upstream `starwars-api` is unavailable. Any non-200 from upstream is mapped to NOT_FOUND.
           content:
             application/json:
               schema:
@@ -247,12 +247,12 @@ components:
             type: string
         masters:
           type: array
-          description: Names of the character's masters.
+          description: Names of the character's masters. Entries may include a parenthetical role suffix (e.g. `"Darth Sidious (Sith Master)"`); `isDarkSide` rule 3 uses a case-insensitive substring match for `"Darth"`.
           items:
             type: string
           example:
             - Obi-Wan Kenobi
-            - Yoda
+            - Darth Sidious (Sith Master)
 
     AddTeamMemberRequest:
       type: object

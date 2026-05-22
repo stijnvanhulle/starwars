@@ -155,12 +155,12 @@ components:
             - Galactic Republic
         masters:
           type: array
-          description: Names of masters. The evil check looks for "Darth" here.
+          description: Names of masters. Entries may include a parenthetical role suffix (e.g. `"Darth Sidious (Sith Master)"`). The evil check does a case-insensitive substring match for `"Darth"`.
           items:
             type: string
           example:
             - Obi-Wan Kenobi
-            - Yoda
+            - Darth Sidious (Sith Master)
         apprentices:
           type: array
           items:
