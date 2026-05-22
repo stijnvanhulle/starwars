@@ -26,52 +26,52 @@ Pure values. Slice 003's `apps/platform/src/theme/theme.ts` imports them; no the
 
 Mirrors [usewhale.io](https://usewhale.io/)'s pink-on-white system. One accent for primary actions; the four semantic states keep their own ramps.
 
-| Token              | Value     | Use                                                                |
-| ------------------ | --------- | ------------------------------------------------------------------ |
-| `accent.500`       | `#FF348A` | Primary creative actions ("+ Create new"-style), Whale brand pink  |
-| `accent.600`       | `#E61F75` | Hover state of the primary accent                                  |
-| `accent.700`       | `#C01060` | Pressed / active state                                             |
+| Token              | Value     | Use                                                                    |
+| ------------------ | --------- | ---------------------------------------------------------------------- |
+| `accent.500`       | `#FF348A` | Primary creative actions ("+ Create new"-style), Whale brand pink      |
+| `accent.600`       | `#E61F75` | Hover state of the primary accent                                      |
+| `accent.700`       | `#C01060` | Pressed / active state                                                 |
 | `accent.50`        | `#FFF0F6` | Accent-tinted backgrounds (selected sidebar row, pink outline pill bg) |
-| `navy.700`         | `#1E2A8D` | Secondary CTA solid (content/library actions like "New playbook")  |
-| `navy.800`         | `#152178` | Navy CTA hover                                                     |
-| `nav.bg`           | `#0F1664` | Deep navy of the left icon nav                                     |
-| `nav.fg`           | `#FFFFFF` | Nav icon stroke + text                                             |
-| `nav.active`       | `#1E2A8D` | Active nav item background pill                                    |
-| `neutral.0`        | `#FFFFFF` | Card surface                                                       |
-| `surface.app`      | `#F5F7FB` | Main content area background (the tinted gray-blue behind cards)   |
-| `neutral.100`      | `#F1F5F9` | Subtle inner-card surface, sidebar nested rows                     |
-| `neutral.200`      | `#E2E8F0` | Borders, dividers                                                  |
-| `neutral.400`      | `#94A3B8` | Secondary text, disabled foreground                                |
-| `neutral.600`      | `#334155` | Body text                                                          |
-| `neutral.900`      | `#121A52` | Headings (matches Whale's deep navy)                               |
-| `semantic.success` | `#16A34A` | Successful add inline                                              |
-| `semantic.warning` | `#D97706` | Cap-near-full hints                                                |
-| `semantic.error`   | `#DC2626` | 422 / 409 inline errors                                            |
-| `semantic.info`    | `#0284C7` | Loading / informational                                            |
+| `navy.700`         | `#1E2A8D` | Secondary CTA solid (content/library actions like "New playbook")      |
+| `navy.800`         | `#152178` | Navy CTA hover                                                         |
+| `nav.bg`           | `#0F1664` | Deep navy of the left icon nav                                         |
+| `nav.fg`           | `#FFFFFF` | Nav icon stroke + text                                                 |
+| `nav.active`       | `#1E2A8D` | Active nav item background pill                                        |
+| `neutral.0`        | `#FFFFFF` | Card surface                                                           |
+| `surface.app`      | `#F5F7FB` | Main content area background (the tinted gray-blue behind cards)       |
+| `neutral.100`      | `#F1F5F9` | Subtle inner-card surface, sidebar nested rows                         |
+| `neutral.200`      | `#E2E8F0` | Borders, dividers                                                      |
+| `neutral.400`      | `#94A3B8` | Secondary text, disabled foreground                                    |
+| `neutral.600`      | `#334155` | Body text                                                              |
+| `neutral.900`      | `#121A52` | Headings (matches Whale's deep navy)                                   |
+| `semantic.success` | `#16A34A` | Successful add inline                                                  |
+| `semantic.warning` | `#D97706` | Cap-near-full hints                                                    |
+| `semantic.error`   | `#DC2626` | 422 / 409 inline errors                                                |
+| `semantic.info`    | `#0284C7` | Loading / informational                                                |
 
-Top bar is white (`neutral.0`) with a bottom border (`neutral.200`), not the dark band a Star Wars theme would imply. Matches Whale's clean horizontal nav.
+Top bar sits on the same `surface.app` background as the content (no separate white band) with a 1px `neutral.200` bottom border, matching the hi-fi sketches. A "dark Star Wars" band would clash with the rest of the chrome.
 
 ### Typography
 
-Whale uses **Sofia Pro Soft** for headings (paid Adobe font) and **Nunito Sans** for body. We mirror the body face exactly (Nunito Sans is free on Google Fonts); for headings we fall back to Nunito Sans 700 if Sofia Pro Soft is not licensed.
+Whale uses **Sofia Pro Soft** for headings (paid Adobe font) and **Nunito Sans** for body. We mirror the body face exactly (Nunito Sans is free on Google Fonts); for headings we fall back to Nunito Sans 800 if Sofia Pro Soft is not licensed. The hi-fi sketches under `plans/design/` load Nunito Sans only.
 
-| Token        | Value                                                                       |
-| ------------ | --------------------------------------------------------------------------- |
-| `font.body`  | `"Nunito Sans", Inter, system-ui, sans-serif`                              |
-| `font.head`  | `"Sofia Pro Soft", "Nunito Sans", Inter, system-ui, sans-serif`            |
-| `font.mono`  | `JetBrains Mono, ui-monospace, monospace`                                  |
-| `size.xs`    | `0.75rem` (12px)                                                           |
-| `size.sm`    | `0.875rem` (14px)                                                          |
-| `size.md`    | `1rem` (16px, body default, matches Whale)                                 |
-| `size.lg`    | `1.125rem` (18px)                                                          |
-| `size.xl`    | `1.5rem` (24px, h3)                                                        |
-| `size.2xl`   | `2rem` (32px, h2; line-height 40px, matches Whale)                         |
-| `size.3xl`   | `3rem` (48px, h1; line-height 52px, matches Whale's hero)                  |
-| `weight.reg` | 400                   |
-| `weight.med` | 600                   |
-| `weight.bold`| 700 (headings + CTAs) |
-| `line.tight` | 1.1                   |
-| `line.body`  | 1.5                   |
+| Token         | Value                                                                                  |
+| ------------- | -------------------------------------------------------------------------------------- |
+| `font.body`   | `"Nunito Sans", system-ui, sans-serif`                                                 |
+| `font.head`   | `"Sofia Pro Soft", "Nunito Sans", system-ui, sans-serif`                               |
+| `font.mono`   | `JetBrains Mono, ui-monospace, monospace`                                              |
+| `size.xs`     | `0.6875rem` (11px; uppercase chips, stat labels — pair with `letter-spacing: 0.08em`)  |
+| `size.sm`     | `0.8125rem` (13px; secondary body, sidebar names)                                      |
+| `size.body`   | `1rem` (16px; body default)                                                            |
+| `size.h3`     | `1.125rem` (18px, line-height 24px, `letter-spacing: -0.01em`; card name + section h3) |
+| `size.h2`     | `1.75rem` (28px, line-height 36px, `letter-spacing: -0.02em`; member-row titles)       |
+| `size.h1`     | `2.5rem` (40px, line-height 44px, `letter-spacing: -0.02em`; page titles)              |
+| `weight.reg`  | 400                                                                                    |
+| `weight.med`  | 600                                                                                    |
+| `weight.bold` | 700 (body emphasis, CTAs)                                                              |
+| `weight.head` | 800 (all headings)                                                                     |
+| `line.tight`  | 1.1                                                                                    |
+| `line.body`   | 1.5                                                                                    |
 
 ### Spacing
 
@@ -81,12 +81,12 @@ Whale uses **Sofia Pro Soft** for headings (paid Adobe font) and **Nunito Sans**
 
 The app uses soft 12-16px radii on cards and pill-shaped buttons.
 
-| Token         | Value    | Use                                                       |
-| ------------- | -------- | --------------------------------------------------------- |
-| `radius.sm`   | `4px`    | Inputs, small chips                                       |
-| `radius.md`   | `12px`   | Card inner regions, sidebar rows, secondary surfaces      |
-| `radius.lg`   | `16px`   | `CharacterCard`, `TeamMemberRow`, welcome cards           |
-| `radius.pill` | `9999px` | Primary buttons (Add to team, Remove), Ask-Alice pill     |
+| Token         | Value    | Use                                                   |
+| ------------- | -------- | ----------------------------------------------------- |
+| `radius.sm`   | `4px`    | Inputs, small chips                                   |
+| `radius.md`   | `12px`   | Card inner regions, sidebar rows, secondary surfaces  |
+| `radius.lg`   | `16px`   | `CharacterCard`, `TeamMemberRow`, welcome cards       |
+| `radius.pill` | `9999px` | Primary buttons (Add to team, Remove), Ask-Alice pill |
 
 ### Elevation
 
@@ -107,37 +107,39 @@ No animations. Hover and focus change colors or borders only; nothing moves. The
 
 Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawer on mobile), main content slot (scrollable).
 
-```
+```text
 +----+---------------------------------------------+-------------------+
-| NN | TOP BAR  64px, neutral.0 bg, border-bottom  |                   |
-| AA |  ⌄ Breadcrumb / Page title                  |                   |
-| VV +---------------------------------------------+                   |
-| YY |                                             |  TEAM PANEL       |
+| NN | TOP BAR  ~52px, surface.app bg, border-bot. |                   |
+| AA |  Breadcrumb only (e.g. "Characters" or      |                   |
+| VV |  "Characters / Darth Vader")                |                   |
+| YY +---------------------------------------------+                   |
+|    |                                             |  TEAM PANEL       |
 |    |                                             |  280px sticky     |
-| 80 |  MAIN CONTENT                               |  neutral.0 card   |
-| px |  surface.app (#F5F7FB) bg                   |  border.card      |
-|    |  page max-width 1480 minus side rails       |  radius.lg        |
-|    |  inner content max-width 1200, 32px pad     |                   |
-|    |                                             |  Your team [2/5]  |
-|    |  (cards stack inside; white cards on the    |  +-------------+  |
-|    |   tinted bg, border.card, radius.lg)        |  | Luke  [x]   |  |
+| 80 |  MAIN CONTENT                               |  inset 16px right |
+| px |  surface.app (#F5F7FB) bg                   |  neutral.0 card   |
+|    |  inner content max-width 1200, 32px pad     |  border.card      |
+|    |                                             |  radius.lg        |
+|    |  (cards stack inside; white cards on the    |                   |
+|    |   tinted bg, border.card, radius.lg)        |  Your team [2/5]  |
 |    |                                             |  +-------------+  |
-|    |                                             |  | Leia  [x]   |  |
+|    |                                             |  | ○ Luke  [x] |  |
+|    |                                             |  +-------------+  |
+|    |                                             |  | ○ Leia  [x] |  |
 |    |                                             |  +-------------+  |
 |    |                                             |  [ Manage team ]  |
 +----+---------------------------------------------+-------------------+
 ```
 
-- **Left nav.** 80px wide, `nav.bg` deep navy (`#0F1664`), no labels, icon-only with `nav.fg` white strokes. Items: characters grid (`/`), team (`/team`). Active item gets a `nav.active` rounded-square background. Whale mark at top, settings cog at the bottom.
-- **Top bar.** 64px, `neutral.0` bg with a 1px `neutral.200` bottom border. Breadcrumb / page title on the left. The sidebar's team icon is the entry point to `/team`, so the top bar no longer carries a "Team 2/5" pill. The "+ Create new"-style pink solid CTA is reserved for actions like "Build new team" if we add multi-team later; for v1 we don't need it.
-- **Team panel** (right context pane). 280px sticky. It's a single `neutral.0` card with `border.card` and `radius.lg`, sitting on the `surface.app` tinted bg. Title + count pill at top, team rows below (compact `TeamMemberRow` variant), CTA at the bottom. The CTA is contextual: solid navy "Manage team" link on `/` and `/characters/[id]`, outline "+ Add characters" on `/team` (where you already are, so the CTA points back to the character list instead of to itself).
+- **Left nav.** 80px wide, `nav.bg` deep navy (`#0F1664`), no labels, icon-only with `nav.fg` white strokes. Items: characters grid (`/`) and team (`/team`). The active item gets a `nav.active` rounded-square (`radius.md`) background. Whale glyph at the top; no settings cog in v1 (the mockups omit it).
+- **Top bar.** ~52px high (16px vertical padding around a 14px-bold breadcrumb), `surface.app` background (no white band, matches the content area) with a 1px `neutral.200` bottom border. Breadcrumb on the left, nothing on the right. The team count and the `/team` entry point live in the right panel, not in the top bar, which keeps the top bar quiet.
+- **Team panel** (right context pane). 280px column with 16px right padding so the card sits inset from the viewport edge. A single `neutral.0` card with `border.card`, `radius.lg`, 20px interior padding. Header is `Your team` (head font, 16px / 800) + a count pill (`accent.50` background, `accent.600` text, tabular numerals like `2 / 5`). Roster rows below use the compact `TeamMemberRow`: 36px circular avatar, 13px / 700 name, transparent 24px `x` button that turns `semantic.error-bg` + `semantic.error` text on hover. The CTA at the bottom is contextual: solid navy "Manage team" on `/` and `/characters/[id]`, outline "+ Add characters" on `/team` (where you already are, so the CTA points back to the character list).
 - **Breakpoints.** Viewport ≥ 1100px shows the team panel inline (above). Below 1100px the panel hides and the sidebar's team icon opens it as a right-side `Drawer`. Below 720px the left nav also collapses to a hamburger.
 
 ## Screens
 
 ### `/`: Character list
 
-```
+```text
 +----+--------------------------------------------+-------------------+
 | NN | Characters                                 |                   |
 | AA +--------------------------------------------+                   |
@@ -161,10 +163,10 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 +----+--------------------------------------------+-------------------+
 ```
 
-- **Breadcrumb + H1 + lead** stack at top. Breadcrumb is `nav.fg`-adjacent gray text → pink current item. Lead max-width 720px.
+- **Page header.** H1 `Star Wars characters` (40px, head font, navy) + lead "Pick five characters for your team. Evil characters can't join." (16px, `neutral.600`, max-width 720px). The breadcrumb (just `Characters`, no separator on the home page) sits in the top bar, not here.
 - **Grid.** `repeat(4, 1fr)` at ≥1240px, 3 cols ≥980px, 2 cols ≥560px, 1 col below. Gap `24px`.
-- **Card.** White, `radius.lg` (16px), `border.card` (1px `neutral.200`). Square media + body (just the character's name as H3). No height/mass/affiliations preview, the spec puts those on the detail page. On hover: border-color flips to `accent.500`, no movement.
-- **Badges.** Top-left chip on the media: `On team` (pink solid) or `Dark side` (red solid), uppercase. Solid background only, no blur.
+- **Card.** `neutral.0`, `radius.lg` (16px), `border.card` (1px `neutral.200`), `overflow: hidden`. Two regions split by a 1px `neutral.200` rule: square media (aspect 1/1, `neutral.100` placeholder, `object-fit: cover`) on top, body below with `14px 16px 16px` padding holding the character name (`size.body` 16px, head font, 800, `letter-spacing: -0.01em`). No height/mass/affiliations preview; the spec puts those on the detail page. On hover the card border flips from `neutral.200` to `accent.500`; nothing moves.
+- **Badges.** Top-left chip on the media, `radius.pill`, 4×10 padding, 11px / 700 / uppercase with `0.04em` tracking: `On team` (`accent.500` solid, white text) or `Dark side` (`semantic.error` solid, white text). Solid background only, no blur.
 - **Component.** `<CharacterCard name image onClick badge?>` from `packages/components`.
 - **Data.** `useListCharactersQuery()` from the single `api` slice (hits `/api/characters`, server-proxied from `starwars-api`), joined with `useListTeamQuery()` for the "On team" badge.
 - **States.** Loading → `<StatePanel variant="loading">`. Error → `<StatePanel variant="error" action={retry}>` (proxy maps any upstream non-200 to `404 NOT_FOUND`; transport failures surface as the same error state). Empty (guard only; the `starwars-api` always has data) → `<StatePanel variant="empty">`.
@@ -172,7 +174,7 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 
 ### `/characters/[id]`: Character detail
 
-```
+```text
 +----+--------------------------------------------+-------------------+
 | NN | Characters / Darth Vader                   |                   |
 | AA +--------------------------------------------+                   |
@@ -200,17 +202,18 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 +----+--------------------------------------------+-------------------+
 ```
 
-- **Pager.** Two outline pills with the adjacent character's name in the label. Position counter on the right (`N OF 87`, tabular numerals).
-- **Hero card.** 4:5 image, `radius.lg` (16px), `border.card`. Top-left chip: red `Dark side` solid or pink `On team` solid.
-- **Info column.** H1 + two-cell stats grid for `height` and `mass` (label uppercase 12px, value 24px navy). Affiliation chips below, Sith ones in `semantic.error` red. The spec's five required fields (name, image, height, mass, affiliations) all land here and nothing else.
-- **Action bar.** Wraps the primary CTA in a colored box: red-tinted with a warning icon + copy for the evil path; on the non-evil path it's just the pink Add button without a banner.
-- **`<ActionButton>` states.** Default pink (`accent.500`); hover `accent.600`; pressed `accent.700`; disabled `neutral.200` bg + `neutral.400` text + `disabledReason` tooltip on hover / `focus-within`. Already-on-team flips to outlined navy "Remove from team".
+- **Detail card.** One `neutral.0` card with `border.card`, `radius.lg`, 24px padding, containing a two-column grid: hero on the left (`280–360px`), info on the right. Collapses to a single column below 760px.
+- **Pager.** Two outline pills (`radius.pill`, 1.5px `neutral.200` border on `neutral.0`) with the adjacent character's name in the label (`Prev (R2-D2)`, `Next (Leia Organa)`). Hover flips the border to `accent.500` and the text to `accent.600`. Position counter on the right reads `N of 87` with a bold `accent` `neutral.900` numerator and `neutral.400` "of 87" trailing.
+- **Hero card.** 4:5 image, `radius.md` (12px), `neutral.900` background while the image loads. Top-left chip: red `Dark side` (`semantic.error` solid) or pink `On team` (`accent.500` solid), 11px uppercase, `0.04em` letter-spacing.
+- **Info column.** H1 (`size.h1`, 40px, head font, navy) + two stat cards in a `repeat(2, minmax(0, 180px))` grid (each card is `neutral.0`, `border.card`, `radius.md`, 12×16 padding; label `size.xs` uppercase `neutral.400`; value 22px in the head font with a small unit suffix in `neutral.400`). Then a `size.xs` uppercase `AFFILIATIONS` eyebrow, then affiliation chips: each is a `neutral.100` pill with a leading dot, Sith/Darth ones tinted with `semantic.error-bg` background + `semantic.error` text. The spec's five required fields (name, image, height, mass, affiliations) all land here and nothing else.
+- **Action bar.** For evil characters, the CTA sits in a red-tinted box (`semantic.error-bg` background with a `#FCA5A5` border, 14×16 padding, `radius.md`): a 32px white circle with `semantic.error` warning glyph on the left, a two-line copy block (`On the dark side` title in `semantic.error`, description in `#7F1D1D`) in the middle, and the disabled `Add to team` button on the right. On the non-evil path the banner is gone; the pink Add button stands alone under the affiliation chips.
+- `<ActionButton>` **states.** Default pink (`accent.500`); hover `accent.600`; pressed `accent.700`; disabled `neutral.200` bg + `neutral.400` text + `disabledReason` tooltip on hover / `focus-within`. Already-on-team flips to outlined navy "Remove from team".
 - **Prev/Next.** Wrap around: first character's `Prev` jumps to the last; last character's `Next` jumps to the first. Always enabled.
 - **Data.** `useGetCharacterQuery(id)` hero; `useListCharactersQuery()` for prev/next ordering (`masters` arrives as `string[]` from the source API, no id resolution needed); `useListTeamQuery()` for membership.
 
 ### `/team`: Team management
 
-```
+```text
 +----+--------------------------------------------+-------------------+
 | NN | Team                                       |                   |
 | AA +--------------------------------------------+                   |
@@ -229,8 +232,8 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 +----+--------------------------------------------+-------------------+
 ```
 
-- **Page header.** Breadcrumb (`Team`) + H1 + lead on the left, progress pill on the right: tabular `N / 5` label + five dots (filled pink for taken, gray `neutral.200` for open).
-- **Member rows.** White cards with `radius.lg` (16px) + `border.card`. Layout: 72px rounded-square avatar | name | Remove pill. Just the name, no affiliations, no invented "role" eyebrow. The spec only requires identifying members + a remove control; affiliations live on the detail page. Remove button is outline by default; on hover its border, bg, and text all flip to `semantic.error` family.
+- **Page header.** H1 `Your team` (head font, 40px) on the left, no lead copy. Progress pill on the right: a `neutral.0` pill with `border.card`, `radius.pill`, 10×14 padding, containing a bold tabular `N / 5` label and five 10px dots (filled `accent.500` for taken, `neutral.200` for open). Breadcrumb (`Team`) sits in the top bar, not here.
+- **Member rows.** Full-width `neutral.0` cards with `border.card` + `radius.lg`, 16px padding, laid out `72px | minmax(0, 1fr) | auto`. The 72px avatar uses `radius.md` (12px, soft-square — not a circle) and `object-fit: cover`. Name is `<h2>` at 20px, head font, 800. Remove control is a pill button with a 1.5px `neutral.200` border, 10×18 padding, label `Remove` + an `✕` glyph. On hover the border, bg, and text all flip to the `semantic.error` family (`bg` to `semantic.error-bg`). No affiliations, no invented "role" eyebrow — the spec only requires identifying members and a remove control. Card border flips to `accent.500` on hover. Below 640px the row collapses: avatar/name on the top row, Remove stretches across the full width below.
 - **Empty team.** When `team.length === 0`, the member list is replaced by `<StatePanel variant="empty" title="No team yet" description="Add characters from a detail page." action={...}>`. The empty-slot CTA cards from earlier mockups are dropped (not in spec, the app uses StatePanel for empty states).
 - **Component.** `<TeamMemberRow avatar name meta onRemove>`. The team panel reuses a compact variant (smaller avatar, single-line name, no meta chips).
 - **Data.** `useListTeamQuery()` joined locally with `useListCharactersQuery()` for name/image/affiliations (the team API stores `characterId` only).
@@ -239,56 +242,23 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 
 `packages/components/src/` is organised by feature. There are no per-feature barrels; the single top-level `src/index.ts` is the package entry, and consumers can also deep-import a component by its file path.
 
-| Component              | Folder        | Notes                                                  |
-| ---------------------- | ------------- | ------------------------------------------------------ |
-| `AppShell`             | `shell/`      | Top bar + sidebar + content slots                      |
-| `TopBar`               | `shell/`      | App name + team link                                   |
-| `CharacterCard`        | `characters/` | List grid card; props include optional `badge`         |
-| `CharacterList`        | `characters/` | Data-aware grid wrapper                                |
-| `CharacterDetail`      | `characters/` | Detail page body, Add/Remove wiring                    |
+| Component              | Folder        | Notes                                                      |
+| ---------------------- | ------------- | ---------------------------------------------------------- |
+| `AppShell`             | `shell/`      | Top bar + sidebar + content slots                          |
+| `TopBar`               | `shell/`      | App name + team link                                       |
+| `CharacterCard`        | `characters/` | List grid card; props include optional `badge`             |
+| `CharacterList`        | `characters/` | Data-aware grid wrapper                                    |
+| `CharacterDetail`      | `characters/` | Detail page body, Add/Remove wiring                        |
 | `ActionBar`            | `characters/` | Wraps `ActionButton` with status banner on the detail page |
-| `TeamSidebar`          | `team/`       | Presentational; compact team rows passed as children   |
-| `TeamSidebarContainer` | `team/`       | Joins team rows to character data                      |
-| `TeamMemberRow`        | `team/`       | Two variants: `compact` (sidebar) and `full` (`/team`) |
-| `StatePanel`           | `common/`     | Loading / empty / error variants                       |
-| `ActionButton`         | `common/`     | Loading + `disabledReason` (tooltip) patterns          |
-| `Pill` / `Chip`        | `common/`     | Affiliation chips, meta chips, badges                  |
-| `Pager`                | `common/`     | Prev/Next + position counter on the detail page        |
-| `ProgressDots`         | `common/`     | The `n / 5` dots on `/team`                            |
-| `Tooltip`              | `common/`     | Hover/focus tooltip; used by `ActionButton`            |
+| `TeamSidebar`          | `team/`       | Presentational; compact team rows passed as children       |
+| `TeamSidebarContainer` | `team/`       | Joins team rows to character data                          |
+| `TeamMemberRow`        | `team/`       | Two variants: `compact` (sidebar) and `full` (`/team`)     |
+| `StatePanel`           | `common/`     | Loading / empty / error variants                           |
+| `ActionButton`         | `common/`     | Loading + `disabledReason` (tooltip) patterns              |
+| `Pill` / `Chip`        | `common/`     | Affiliation chips, meta chips, badges                      |
+| `Pager`                | `common/`     | Prev/Next + position counter on the detail page            |
+| `ProgressDots`         | `common/`     | The `n / 5` dots on `/team`                                |
+| `Tooltip`              | `common/`     | Hover/focus tooltip; used by `ActionButton`                |
 
 All UI components live in `packages/components` from day one; `apps/platform/src/components` is reserved for app-level wiring that isn't a reusable component (route layouts, providers).
 
-## State matrix
-
-One row per interactive component. `✓` = required, `n/a` = not applicable.
-
-| Component       | default | hover | focus | disabled | loading | empty | error |
-| --------------- | :-----: | :---: | :---: | :------: | :-----: | :---: | :---: |
-| `CharacterCard` |   ✓     |   ✓   |   ✓   |   n/a    |   ✓     |  n/a  |  n/a  |
-| `ActionButton`  |   ✓     |   ✓   |   ✓   |    ✓     |   ✓     |  n/a  |  n/a  |
-| `TeamMemberRow` |   ✓     |   ✓   |   ✓   |   n/a    |   n/a   |  n/a  |  n/a  |
-| `Pill` / `Chip` |   ✓     |   ✓   |   ✓   |    ✓     |   n/a   |  n/a  |  n/a  |
-| `Pager` button  |   ✓     |   ✓   |   ✓   |    ✓     |   n/a   |  n/a  |  n/a  |
-| `StatePanel`    |   n/a   |  n/a  |  n/a  |   n/a    |   ✓     |   ✓   |   ✓   |
-| `TeamSidebar`   |   ✓     |  n/a  |  n/a  |   n/a    |   ✓     |   ✓   |  n/a  |
-
-`ActionButton`'s `disabled` state always pairs with a tooltip (`disabledReason`).
-
-## Beyond spec, kept as optional UX
-
-The mockups carry a few elements the prompt does not require. They're easy to drop if scope tightens, and they don't replace any required behavior.
-
-- **Position counter on the pager** (`N OF 87`) and **adjacent-character name labels** (`Prev (R2-D2)`). Plain Prev/Next would meet the spec.
-- **Action bar warning copy on the detail page** when a character is dark side. The required behavior is "disabled Add button with reason"; the bigger banner is a UX amplification of that. If we drop it, the tooltip on `<ActionButton>` alone still covers the requirement.
-- **Team panel "Manage team" footer link**. A hint, not a requirement.
-
-Removed in the app-aligned pass: filter chips on `/`, empty-slot CTAs on `/team`, the fabricated role eyebrows.
-
-If a slice is over budget, cut from this list first.
-
-## Deferred
-
-Tracked in `plans/research.md`'s Open items:
-
-- Toast vs inline errors (current: inline)
