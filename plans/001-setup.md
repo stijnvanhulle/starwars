@@ -1,11 +1,8 @@
-# 001 — Setup
+# 001: Setup
 
 ## Context
 
-This template ships as a library-style monorepo (`packages/core`, `packages/demo`, `internals/utils`).
-The product is a Next.js 16.2.6 app at `apps/platform` with a shared `packages/components`. This slice transforms the workspace so that `pnpm dev` boots a real Next.js page with the `MUI v9` (`9.0.1`) provider already in place, deletes the unused library scaffolding, and leaves `typecheck`/`lint`/`test` green so every later slice starts from a known-clean tree.
-
-No business code lands here. No DB, no API routes, no `Kubb` config, no `Redux` store. Those arrive in their own slices.
+Transform the library-style template into a Next.js 16.2.6 app at `apps/platform` with `MUI v9` wired and a `packages/components` placeholder. No business code, no DB, no API, no Kubb, no Redux, those land in their own slices.
 
 ## Goal (demoable outcome)
 
@@ -35,24 +32,24 @@ None. This is the first execution slice.
 
 ## Files touched
 
-- `pnpm-workspace.yaml` — modified (add `apps/*` to `packages:`)
-- `package.json` — modified (workspaces glob, scripts)
-- `turbo.json` — modified (add persistent `dev` task)
-- `tsconfig.json` — modified (drop references to deleted packages, add `apps/platform`)
-- `packages/core/` — deleted
-- `packages/demo/` — deleted
-- `packages/components/package.json` — created
-- `packages/components/tsconfig.json` — created
-- `packages/components/tsdown.config.ts` — created
-- `packages/components/src/index.ts` — created
-- `apps/platform/package.json` — created
-- `apps/platform/tsconfig.json` — created
-- `apps/platform/next.config.ts` — created
-- `apps/platform/next-env.d.ts` — created
-- `apps/platform/src/app/layout.tsx` — created
-- `apps/platform/src/app/page.tsx` — created
-- `apps/platform/src/theme/theme.ts` — created
-- `cspell.json` — modified (only if it referenced the deleted packages)
+- `pnpm-workspace.yaml`: modified (add `apps/*` to `packages:`)
+- `package.json`: modified (workspaces glob, scripts)
+- `turbo.json`: modified (add persistent `dev` task)
+- `tsconfig.json`: modified (drop references to deleted packages, add `apps/platform`)
+- `packages/core/`: deleted
+- `packages/demo/`: deleted
+- `packages/components/package.json`: created
+- `packages/components/tsconfig.json`: created
+- `packages/components/tsdown.config.ts`: created
+- `packages/components/src/index.ts`: created
+- `apps/platform/package.json`: created
+- `apps/platform/tsconfig.json`: created
+- `apps/platform/next.config.ts`: created
+- `apps/platform/next-env.d.ts`: created
+- `apps/platform/src/app/layout.tsx`: created
+- `apps/platform/src/app/page.tsx`: created
+- `apps/platform/src/theme/theme.ts`: created
+- `cspell.json`: modified (only if it referenced the deleted packages)
 
 ## Verification
 

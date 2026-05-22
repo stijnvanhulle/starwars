@@ -1,15 +1,8 @@
-# 006 — Features
+# 006: Features
 
 ## Context
 
-Every previous slice produced infrastructure: the workspace and theme (001), the database and repository (002), the design system primitives (003), the team API with rule scaffolding (004), and the codegen + Redux store (005). This slice assembles them into the actual product. Three screens (`/`, `/characters/[id]`, `/team`), a persistent `<TeamSidebar />` visible on every page, and the real `isDarkSide` rules wired into both the server guard and the UI Add-button state.
-
-Two pieces of business logic that have been stubbed land here for real:
-
-- **`isDarkSide`** — the three-rule predicate from `data-model.md`. Implemented in `apps/platform/src/lib/darkSide.ts`, imported by `TeamService` (server) and the detail page (client). Each call site builds its own `masterNames: Map<number, string>` per the data-model contract.
-- **Server-side master resolution** — `TeamService.add()` now resolves `character.masters` through `akabab` before calling `isDarkSide`, so rule 3 fires server-side.
-
-No new infrastructure. If anything in this slice requires a new dependency, a config change, or a new generated file, it belongs in an earlier slice instead.
+Assemble the three screens (`/`, `/characters/[id]`, `/team`) and the persistent `<TeamSidebar />` from earlier slices. Real `isDarkSide` rules land in `src/lib/darkSide.ts` and are wired into both the server guard (with master resolution via `akabab`) and the UI Add-button state. No new infrastructure, if something here needs a new dep or generated file, it belongs in an earlier slice.
 
 ## Goal (demoable outcome)
 
@@ -42,7 +35,7 @@ No new infrastructure. If anything in this slice requires a new dependency, a co
    - Renders an `<ActionButton />` (from Slice 003) labelled "Add to team" / "Remove from team" based on `useListTeamQuery()` membership. If `isDarkSide(character, masterNames)` is true and the character is not already on the team, the button is disabled and `disabledReason="Evil characters cannot join the team."` (the exact tooltip text comes from `design.md`). Clicks dispatch `addTeamMember` / `removeTeamMember`; on `422`/`409` errors, show the server's message inline.
    - Prev/Next: compute `prevId` and `nextId` from the cached list. The buttons use `next/link` so back-button history works per quickstart §3.
 7. **Build the team page** at `apps/platform/src/app/team/page.tsx`. Client component. `useListTeamQuery()` + `useGetAllCharactersQuery()` are joined locally to render `<TeamMemberRow />` (from Slice 003) for each team member with name/image resolved from the cached character list. Remove control dispatches `removeTeamMember`. `<StatePanel variant="empty">` shows when the team is empty.
-8. **Wire `<TeamSidebar />` for real** in `packages/components/src/TeamSidebar.tsx` — actually, no. `TeamSidebar` stays presentational (Slice 003 rule). Build `<TeamSidebarContainer />` at `apps/platform/src/components/TeamSidebarContainer.tsx` that owns the queries, joins team rows to character names/images, and renders `<TeamSidebar>` with the rows as children. Add it to the layout shell (see step 9).
+8. **Wire `<TeamSidebar />` for real** in `packages/components/src/TeamSidebar.tsx`, actually, no. `TeamSidebar` stays presentational (Slice 003 rule). Build `<TeamSidebarContainer />` at `apps/platform/src/components/TeamSidebarContainer.tsx` that owns the queries, joins team rows to character names/images, and renders `<TeamSidebar>` with the rows as children. Add it to the layout shell (see step 9).
 9. **Insert the layout shell** in `apps/platform/src/app/layout.tsx`. The structure becomes `<AppRouterCacheProvider>` → `<ThemeProvider>` → `<CssBaseline />` → `<Providers>` → `<AppShell topBar={<TopBar />} sidebar={<TeamSidebarContainer />}>{children}</AppShell>`. `<TopBar />` is a tiny client component under `apps/platform/src/components/TopBar.tsx` with the app name and a `next/link` to `/team`.
 10. **Surface API errors** at `apps/platform/src/lib/apiError.ts`. Tiny helper that takes an `RTK Query` error union and returns `{ code, message }` typed against the generated `Error` schema. Detail page and team page use it to render `422 TEAM_FULL` / `422 EVIL_FORBIDDEN` / `409 ALREADY_MEMBER` / `404 NOT_FOUND` inline. Toasts are out of scope; inline is enough per the spec.
 11. **Unit-test `isDarkSide`** at `apps/platform/tests/unit/darkSide.test.ts`. Cases:
@@ -55,26 +48,26 @@ No new infrastructure. If anything in this slice requires a new dependency, a co
     - `masters: [42]` with `masterNames: new Map()` → `false` (unresolved master can't fire rule 3).
 12. **Component-test the disabled-Add wiring** at `apps/platform/tests/components/CharacterDetail.test.tsx`. Render `<CharacterDetail>` with a Vader-shaped character; assert the `ActionButton` is disabled and the tooltip text contains "evil" (case-insensitive). Render again with a neutral character; assert the button is enabled.
 13. **Update the team API integration test** at `apps/platform/tests/integration/teamApi.test.ts`. The `EVIL_FORBIDDEN` path no longer relies on monkey-patching `isDarkSide`: feed the mocked `fetchCharacter` a Vader-shaped payload (`name: "Darth Vader"`) and a master id pointing at another Vader-shaped payload. Assert `422 EVIL_FORBIDDEN`. The four other branches stay as in Slice 004.
-14. **Walk `quickstart.md` end-to-end** against a clean checkout. Every scenario must pass with the real app. Where the doc says "the team page" or "the sidebar", verify both. If something in `quickstart.md` no longer matches what the app does, fix the app — the spec is the contract, not the implementation.
+14. **Walk `quickstart.md` end-to-end** against a clean checkout. Every scenario must pass with the real app. Where the doc says "the team page" or "the sidebar", verify both. If something in `quickstart.md` no longer matches what the app does, fix the app, the spec is the contract, not the implementation.
 
 ## Files touched
 
-- `apps/platform/src/lib/darkSide.ts` — modified (replace stub with real rules)
-- `apps/platform/src/lib/apiError.ts` — created
-- `apps/platform/src/server/akabab.ts` — modified (request-scoped `createCharacterFetcher()`)
-- `apps/platform/src/server/services/teamService.ts` — modified (`buildMasterNames`, real `isDarkSide` call)
-- `apps/platform/src/app/layout.tsx` — modified (insert `AppShell` + `TopBar` + `TeamSidebarContainer`)
-- `apps/platform/src/app/page.tsx` — modified (replace smoke with `<CharacterList />`)
-- `apps/platform/src/app/characters/[id]/page.tsx` — created
-- `apps/platform/src/app/team/page.tsx` — created
-- `apps/platform/src/components/CharacterList.tsx` — created
-- `apps/platform/src/components/CharacterDetail.tsx` — created
-- `apps/platform/src/components/TeamSidebarContainer.tsx` — created
-- `apps/platform/src/components/TopBar.tsx` — created
-- `apps/platform/tests/unit/darkSide.test.ts` — created
-- `apps/platform/tests/unit/teamService.test.ts` — modified (drop the empty-Map placeholder, cover the new master-resolution path)
-- `apps/platform/tests/components/CharacterDetail.test.tsx` — created
-- `apps/platform/tests/integration/teamApi.test.ts` — modified (`EVIL_FORBIDDEN` path uses real `isDarkSide`)
+- `apps/platform/src/lib/darkSide.ts`: modified (replace stub with real rules)
+- `apps/platform/src/lib/apiError.ts`: created
+- `apps/platform/src/server/akabab.ts`: modified (request-scoped `createCharacterFetcher()`)
+- `apps/platform/src/server/services/teamService.ts`: modified (`buildMasterNames`, real `isDarkSide` call)
+- `apps/platform/src/app/layout.tsx`: modified (insert `AppShell` + `TopBar` + `TeamSidebarContainer`)
+- `apps/platform/src/app/page.tsx`: modified (replace smoke with `<CharacterList />`)
+- `apps/platform/src/app/characters/[id]/page.tsx`: created
+- `apps/platform/src/app/team/page.tsx`: created
+- `apps/platform/src/components/CharacterList.tsx`: created
+- `apps/platform/src/components/CharacterDetail.tsx`: created
+- `apps/platform/src/components/TeamSidebarContainer.tsx`: created
+- `apps/platform/src/components/TopBar.tsx`: created
+- `apps/platform/tests/unit/darkSide.test.ts`: created
+- `apps/platform/tests/unit/teamService.test.ts`: modified (drop the empty-Map placeholder, cover the new master-resolution path)
+- `apps/platform/tests/components/CharacterDetail.test.tsx`: created
+- `apps/platform/tests/integration/teamApi.test.ts`: modified (`EVIL_FORBIDDEN` path uses real `isDarkSide`)
 
 ## Verification
 

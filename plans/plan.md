@@ -8,8 +8,8 @@ Transform the current `TypeScript` library monorepo into a `Next.js` app that br
 
 ## Phase Map
 
-- **Planning Phases (0 / 1 / 2 / 3)** — produce docs in `plans/` (`spec.md`, `research.md`, `data-model.md`, `contracts/*.yaml`, `quickstart.md`, `design.md`, and the seven slice files). No code.
-- **Execution Slices (001 – 007)** — produce code. Each boots from a fresh `pnpm install` and ends in a demoable state.
+- **Planning Phases (0 / 1 / 2 / 3)**: produce docs in `plans/` (`spec.md`, `research.md`, `data-model.md`, `contracts/*.yaml`, `quickstart.md`, `design.md`, and the seven slice files). No code.
+- **Execution Slices (001 – 007)**: produce code. Each boots from a fresh `pnpm install` and ends in a demoable state.
 - Headings are prefixed `Planning Phase N` vs `Slice 00X` throughout so the two tracks never collide.
 - Status tags used in Progress Tracking: `todo` · `in-progress` · `blocked` · `done`.
 
@@ -24,21 +24,21 @@ Transform the current `TypeScript` library monorepo into a `Next.js` app that br
 | Storage          | `Postgres 17` via `drizzle-orm` `^0.45.2` + `drizzle-kit` `^0.31.10`, `pg` `^8.21.0` driver (`@types/pg` `^8.20.0`) |
 | Testing          | `Vitest` `^4.1.6` (unit + integration), `@playwright/test` `^1.60.0` (e2e), `Testing Library` (components)  |
 | Tooling          | `pnpm` `11.1.3`, `turbo` `^2.9.14`, `tsdown` `^0.22.0`, `oxlint` `^1.66.0`, `oxfmt` `^0.47.0`, `@changesets/cli` `^2.31.0` |
-| Project Type     | Web — monorepo with `apps/platform` + shared `packages/`                                       |
+| Project Type     | Web n/a monorepo with `apps/platform` + shared `packages/`                                       |
 
 ## Constitution Check
 
-- **Layered architecture** — Route handler → `Service` → `Repository` → `Drizzle`. Each layer has exactly one concern. The `Repository` is the **only** place `Drizzle` is imported.
-- **Contract-first** — `OpenAPI 3.1` specs for both our team API and `akabab` precede generated code; `Kubb` is the source of truth for types and `Zod`.
-- **Test-first where it pays** — Service rules (cap of 5, evil guard) and the `isDarkSide` util get unit/integration tests **before** UI work in their phase. Pure presentational components do not block on tests.
-- **Independent phases** — Each `plans/00X-*.md` boots from a fresh `pnpm install` and ends in a runnable, demoable state.
-- **No premature abstraction** — Components live in `packages/components` only once a second consumer exists or they're explicitly part of the design system shell (sidebar, card). Otherwise they stay in `apps/platform`.
+- **Layered architecture**: Route handler → `Service` → `Repository` → `Drizzle`. Each layer has exactly one concern. The `Repository` is the **only** place `Drizzle` is imported.
+- **Contract-first**: `OpenAPI 3.1` specs for both our team API and `akabab` precede generated code; `Kubb` is the source of truth for types and `Zod`.
+- **Test-first where it pays**: Service rules (cap of 5, evil guard) and the `isDarkSide` util get unit/integration tests **before** UI work in their phase. Pure presentational components do not block on tests.
+- **Independent phases**: Each `plans/00X-*.md` boots from a fresh `pnpm install` and ends in a runnable, demoable state.
+- **No premature abstraction**: Components live in `packages/components` only once a second consumer exists or they're explicitly part of the design system shell (sidebar, card). Otherwise they stay in `apps/platform`.
 
 ## Data flow
 
 ```mermaid
 flowchart LR
-  subgraph browser["Browser — apps/platform"]
+  subgraph browser["Browser, apps/platform"]
     ui["React + MUI components"]
     sw["starwarsApi (RTK Query)"]
     team["teamApi (RTK Query → Kubb fetch client)"]
@@ -48,10 +48,10 @@ flowchart LR
 
   akabab[("akabab Star Wars API<br/>static JSON")]
 
-  subgraph nextapi["Next.js route handlers — /api/team"]
+  subgraph nextapi["Next.js route handlers, /api/team"]
     route["route.ts (thin: parse + map errors)"]
-    service["TeamService — cap of 5, evil guard"]
-    repo["TeamMemberRepository — Drizzle"]
+    service["TeamService, cap of 5, evil guard"]
+    repo["TeamMemberRepository, Drizzle"]
     route --> service --> repo
   end
 
@@ -120,7 +120,7 @@ The slice files in `plans/00X-*.md` are this feature's `tasks.md` equivalent, sp
 
 | Slice file                 | Depends on                              | Demoable outcome                                                                                                                                                                                  |
 | -------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `plans/001-setup.md`       | —                                       | `pnpm dev` serves an `MUI`-themed `Next.js` page at `localhost:3000`. `pnpm typecheck`/`lint`/`test` green. `packages/core` and `packages/demo` removed.                                          |
+| `plans/001-setup.md`       | n/a                                       | `pnpm dev` serves an `MUI`-themed `Next.js` page at `localhost:3000`. `pnpm typecheck`/`lint`/`test` green. `packages/core` and `packages/demo` removed.                                          |
 | `plans/002-database.md`    | 001                                     | `docker compose up -d postgres && pnpm --filter platform db:migrate` creates `team_members`. Repository CRUD covered by `Vitest` integration tests against a real `Postgres`.                     |
 | `plans/003-design.md`      | 001                                     | Design tokens land in the `MUI` theme (palette, typography, spacing, radius). `packages/components` exports the layout shell (`<AppShell />`, `<TeamSidebar />` placeholder, `<CharacterCard />`, `<StatePanel />` for loading/empty/error). Storybook-style preview route `/design` renders every component in each state. Screen sketches for `/`, `/characters/[id]`, `/team` checked into `plans/design.md`. |
 | `plans/004-api.md`         | 002 + Planning Phase 1 `team.yaml`      | `/api/team` route handlers wired through `Service` + `Repository`. `isDarkSide` stub returns `false` with a `TODO(006)`. Duplicate POST → 409. Sixth POST → 422 `TEAM_FULL`. Integration tests green. |
@@ -132,13 +132,15 @@ The slice files in `plans/00X-*.md` are this feature's `tasks.md` equivalent, sp
 
 **Output**: [`plans/design.md`](./design.md) plus optional artifacts under `plans/design/`.
 
+**Visual reference**: [usewhale.io](https://usewhale.io/). The brand is corporate-clean: Whale pink (`#FF348A`) on white, generous whitespace, ~8px radius, subtle elevation, sans-serif throughout. Tokens in `design.md` should sit inside that envelope, not the Star Wars yellow-on-black trope.
+
 Three passes, cheapest first. Stop when aligned.
 
 1. **ASCII (required).** Sketch the three screens and the layout shell directly in `plans/design.md`.
 2. **Claude design (optional, hi-fi).** Generate mockups via Claude's frontend-design / Artifacts when visual questions remain. Drop into `plans/design/`.
 3. **Wireframes (optional, formal).** Produce responsive wireframes with state coverage when decomposition is still ambiguous. Drop into `plans/design/`.
 
-Gate for Slice 003: `plans/design.md` has tokens, layout shell, one sketch per screen, component inventory, state matrix, accessibility floor.
+Gate for Slice 003: `plans/design.md` has tokens, layout shell, one sketch per screen, component inventory, state matrix.
 
 ## Complexity Tracking
 
@@ -150,58 +152,53 @@ Gate for Slice 003: `plans/design.md` has tokens, layout shell, one sketch per s
 
 ## Progress Tracking
 
-### Planning Phase 0 — Outline & Research
+### Planning Phase 0: Outline & Research
 
-- [x] `plans/spec.md` — _done_ — user scenarios + FR-1..FR-7 + acceptance checklist
-- [x] `plans/research.md` — _done_ — 6-row decisions table moved out of `plan.md`
+- [x] `plans/spec.md`: done, user scenarios + FR-1..FR-7 + acceptance checklist
+- [x] `plans/research.md`: done, 6-row decisions table moved out of `plan.md`
 
-### Planning Phase 1 — Design & Contracts
+### Planning Phase 1: Design & Contracts
 
-- [x] `plans/data-model.md` — _done_ — `TeamMember` columns + `Character` fields + invariants + `isDarkSide` rules
-- [x] `plans/contracts/team.openapi.yaml` — _done_ — our team API spec (paths, error codes, and `TeamMember` schema from plan.md)
-- [x] `plans/contracts/starwars.openapi.yaml` — _done_ — `akabab` spec inferred from samples (`/all.json`, `/id/{id}.json`, full `Character` schema)
-- [x] `plans/quickstart.md` — _done_ — 6 user-flow scenarios mapped to AC-1..AC-9
+- [x] `plans/data-model.md`: done, `TeamMember` columns + `Character` fields + invariants + `isDarkSide` rules
+- [x] `plans/contracts/team.openapi.yaml`: done, our team API spec (paths, error codes, and `TeamMember` schema from plan.md)
+- [x] `plans/contracts/starwars.openapi.yaml`: done, `akabab` spec inferred from samples (`/all.json`, `/id/{id}.json`, full `Character` schema)
+- [x] `plans/quickstart.md`: done, 6 user-flow scenarios mapped to AC-1..AC-9
 
-### Planning Phase 2 — Slice files authored
+### Planning Phase 3: Frontend Design
 
-- [x] `plans/001-setup.md` — _done_
-- [x] `plans/002-database.md` — _done_
-- [x] `plans/003-design.md` — _done_
-- [x] `plans/004-api.md` — _done_
-- [x] `plans/005-client-kubb.md` — _done_
-- [x] `plans/006-features.md` — _done_
-- [x] `plans/007-testing.md` — _done_
+- [x] `plans/design.md`: done. ASCII pass: tokens + layout shell + three screen sketches + component inventory + state matrix
+- [ ] `plans/design/` hi-fi mockups (optional; skipped unless ambiguity surfaces)
+
+### Planning Phase 2: Slice files authored
+
+- [x] `plans/001-setup.md`: done
+- [x] `plans/002-database.md`: done
+- [x] `plans/003-design.md`: done
+- [x] `plans/004-api.md`: done
+- [x] `plans/005-client-kubb.md`: done
+- [x] `plans/006-features.md`: done
+- [x] `plans/007-testing.md`: done
 
 ### Execution Slices (each ends in a demoable state)
 
-- [ ] **001-setup** — _todo_
-- [ ] **002-database** — _todo_
-- [ ] **003-design** — _todo_
-- [ ] **004-api** — _todo_
-- [ ] **005-client-kubb** — _todo_
-- [ ] **006-features** — _todo_
-- [ ] **007-testing** — _todo_
+- [ ] **001-setup**: todo
+- [ ] **002-database**: todo
+- [ ] **003-design**: todo
+- [ ] **004-api**: todo
+- [ ] **005-client-kubb**: todo
+- [ ] **006-features**: todo
+- [ ] **007-testing**: todo
 
 ### Final checks
 
-- [ ] Global verification — `quickstart.md` walked end-to-end against a clean checkout
+- [ ] Global verification, `quickstart.md` walked end-to-end against a clean checkout
 - [ ] `Changesets` entry
-- [ ] `README.md` updated — tech stack, use cases, folder structure
+- [ ] `README.md` updated, tech stack, use cases, folder structure
 - [ ] `AGENTS.md` / `CLAUDE.md` refreshed:
   - New scripts: `dev`, `db:migrate`, `db:generate`, `db:studio`, `gen`, `test:unit`, `test:integration`, `test:e2e`
   - New workspace layout: `apps/platform`, `packages/components`; `packages/core` and `packages/demo` removed
   - Skill notes: Drizzle in repositories only, Kubb's regen step, the `isDarkSide` single-implementation rule
 - [ ] `plans/research.md` open items closed or moved to follow-up issues
-
-## Evil rule (referenced from Planning Phase 1's `data-model.md` and Slice 006)
-
-A character is evil if any of:
-
-1. `name` contains "Darth" or "Sith" (case-insensitive).
-2. A current `affiliation` mentions "Darth" or "Sith". `formerAffiliations` are ignored.
-3. A `master` resolves to a name containing "Darth".
-
-`src/lib/darkSide.ts` is the single implementation, imported by both the service guard and the UI.
 
 ## Open items to confirm during execution
 

@@ -1,19 +1,12 @@
-# 005 — Client (Kubb)
+# 005: Client (Kubb)
 
 ## Context
 
-Two API surfaces need typed access from the browser: our own `team` API (Slice 004) and the upstream `akabab` `starwars` API. Both have hand-written `OpenAPI 3.1` contracts. `Kubb 5.0.0-beta.23` is the prompt-mandated generator. This slice runs `Kubb` against both contracts, wires the generated artefacts into `RTK Query`, and stands up the Redux store so the providers in `layout.tsx` are ready for Slice 006 to consume.
-
-Two pipelines, intentionally different:
-
-- **team** emits types **and** a `fetch` client **and** Zod schemas. The Zod replaces the hand-rolled body guard in Slice 004's `POST` handler.
-- **starwars** emits types **and** Zod only. No client: `RTK Query` does the fetching for us, and adding a generated client would just be a second way to call the same URLs.
-
-`isDarkSide` stays a `false` stub. Real evil detection (and the server-side master-resolution it needs) lands in Slice 006.
+Run Kubb against both OpenAPI contracts, wire the output into RTK Query, and stand up the Redux store. Two pipelines: `team` emits types + client + Zod (Zod replaces Slice 004's hand-rolled guard); `starwars` emits types + Zod only (RTK Query does the fetching). `isDarkSide` stays a stub; real rules land in Slice 006.
 
 ## Goal (demoable outcome)
 
-`pnpm --filter platform gen` runs `Kubb` and produces `apps/platform/src/gen/team/` (types + client + Zod) and `apps/platform/src/gen/starwars/` (types + Zod). `apps/platform/src/store/` exports a Redux store wiring two `RTK Query` slices, `starwarsApi` and `teamApi`. `<Providers />` wraps the app in `layout.tsx`. A throwaway client component reads `useGetAllCharactersQuery()` and renders the count of characters fetched from `akabab` — proof the wiring works end to end. No screens land yet; Slice 006 builds those.
+`pnpm --filter platform gen` runs `Kubb` and produces `apps/platform/src/gen/team/` (types + client + Zod) and `apps/platform/src/gen/starwars/` (types + Zod). `apps/platform/src/store/` exports a Redux store wiring two `RTK Query` slices, `starwarsApi` and `teamApi`. `<Providers />` wraps the app in `layout.tsx`. A throwaway client component reads `useGetAllCharactersQuery()` and renders the count of characters fetched from `akabab`, proof the wiring works end to end. No screens land yet; Slice 006 builds those.
 
 ## Prerequisites
 
@@ -26,11 +19,11 @@ Two pipelines, intentionally different:
 1. **Copy the starwars contract into the app**. Copy `plans/contracts/starwars.openapi.yaml` to `apps/platform/openapi/starwars.yaml` with the same do-not-edit header used in Slice 004's team copy.
 2. **Install `Kubb` packages** in `apps/platform`: `kubb@5.0.0-beta.23` (unified package, exports `defineConfig`), `@kubb/adapter-oas@5.0.0-beta.23` (replaces v4's `@kubb/plugin-oas`), `@kubb/plugin-ts@5.0.0-beta.23`, `@kubb/plugin-client@5.0.0-beta.23`, `@kubb/plugin-zod@5.0.0-beta.23`. Pinned exactly per the prompt; no `^`.
 3. **Write `apps/platform/kubb.config.ts`** as an array `defineConfig([teamCfg, starwarsCfg])` (v5 supports multiple configs from one file). `defineConfig` comes from `'kubb'`, not `'@kubb/core'`. Each entry uses the v5 layered shape:
-   - **Top-level `adapter`**: `adapterOas({ integerType: 'number' })` from `'@kubb/adapter-oas'`. The `integerType: 'number'` override is required — v5 defaults to `'bigint'`, but `Character.id`, `height`, `mass` and `TeamMember.characterId` are plain `number` everywhere else in the app.
+   - **Top-level `adapter`**: `adapterOas({ integerType: 'number' })` from `'@kubb/adapter-oas'`. The `integerType: 'number'` override is required, v5 defaults to `'bigint'`, but `Character.id`, `height`, `mass` and `TeamMember.characterId` are plain `number` everywhere else in the app.
    - **`output.barrel`**: `{ type: 'named' }` (v4's `output.barrelType: 'named'` no longer exists) so consumers can `import { getAllCharacters } from '@/gen/starwars'`.
    - **team** (`input.path: './openapi/team.yaml'`, `output.path: './src/gen/team'`): plugins `pluginTs()`, `pluginClient({ baseURL: '/', client: { importPath: '../fetchClient' } })`, `pluginZod()`.
    - **starwars** (`input.path: './openapi/starwars.yaml'`, `output.path: './src/gen/starwars'`): plugins `pluginTs()`, `pluginZod()`. No `pluginClient`.
-   `pluginOas` is gone — its config now lives on the top-level `adapter`. Do not pass `version` to `pluginZod` (v5 is always Zod v4) and do not pass `mapper` to `pluginTs` (use `adapter.resolver` if a rename is ever needed).
+   `pluginOas` is gone, its config now lives on the top-level `adapter`. Do not pass `version` to `pluginZod` (v5 is always Zod v4) and do not pass `mapper` to `pluginTs` (use `adapter.resolver` if a rename is ever needed).
 4. **Add a tiny fetch client wrapper** at `apps/platform/src/gen/fetchClient.ts`. Default-export a function `client(config) => Promise<Response>` that wraps native `fetch`, throws on non-2xx, returns the parsed JSON. The `pluginClient` generated code imports this; we own it so we can plug in error handling later without re-generating.
 5. **Ignore generated output**. Add `apps/platform/src/gen/` to `.gitignore` (the whole directory is regenerated). Keep `apps/platform/src/gen/fetchClient.ts` checked in (it's the seam, not generated). One way: ignore `src/gen/team/` and `src/gen/starwars/` explicitly rather than the parent folder.
 6. **Add the `gen` script** to `apps/platform/package.json`: `"gen": "kubb generate --config kubb.config.ts"`. Also add a `prebuild` hook (`"prebuild": "pnpm gen"`) so CI never builds against stale generated code.
@@ -45,27 +38,27 @@ Two pipelines, intentionally different:
 
 ## Files touched
 
-- `apps/platform/openapi/starwars.yaml` — created (mirror of `plans/contracts/starwars.openapi.yaml`)
-- `apps/platform/kubb.config.ts` — created
-- `apps/platform/src/gen/fetchClient.ts` — created
-- `apps/platform/src/gen/team/` — generated (gitignored)
-- `apps/platform/src/gen/starwars/` — generated (gitignored)
-- `apps/platform/.gitignore` (or root `.gitignore`) — modified (ignore `apps/platform/src/gen/team/`, `apps/platform/src/gen/starwars/`)
-- `apps/platform/package.json` — modified (`gen` script, `prebuild` hook, deps: `kubb`, `@kubb/adapter-oas`, `@kubb/plugin-ts`, `@kubb/plugin-client`, `@kubb/plugin-zod`, `@reduxjs/toolkit`, `react-redux`)
-- `apps/platform/src/store/store.ts` — created
-- `apps/platform/src/store/hooks.ts` — created
-- `apps/platform/src/store/starwarsApi.ts` — created
-- `apps/platform/src/store/teamApi.ts` — created
-- `apps/platform/src/store/Providers.tsx` — created
-- `apps/platform/src/app/layout.tsx` — modified (insert `<Providers />`)
-- `apps/platform/src/app/page.tsx` — modified (smoke `useGetAllCharactersQuery()` consumer)
-- `apps/platform/src/app/api/team/route.ts` — modified (replace hand-rolled guard with generated Zod)
-- `apps/platform/tests/integration/teamApi.test.ts` — modified if the 400-body shape changes
-- `plans/research.md` — modified (close the "hand-rolled guard" open item)
+- `apps/platform/openapi/starwars.yaml`: created (mirror of `plans/contracts/starwars.openapi.yaml`)
+- `apps/platform/kubb.config.ts`: created
+- `apps/platform/src/gen/fetchClient.ts`: created
+- `apps/platform/src/gen/team/`: generated (gitignored)
+- `apps/platform/src/gen/starwars/`: generated (gitignored)
+- `apps/platform/.gitignore` (or root `.gitignore`): modified (ignore `apps/platform/src/gen/team/`, `apps/platform/src/gen/starwars/`)
+- `apps/platform/package.json`: modified (`gen` script, `prebuild` hook, deps: `kubb`, `@kubb/adapter-oas`, `@kubb/plugin-ts`, `@kubb/plugin-client`, `@kubb/plugin-zod`, `@reduxjs/toolkit`, `react-redux`)
+- `apps/platform/src/store/store.ts`: created
+- `apps/platform/src/store/hooks.ts`: created
+- `apps/platform/src/store/starwarsApi.ts`: created
+- `apps/platform/src/store/teamApi.ts`: created
+- `apps/platform/src/store/Providers.tsx`: created
+- `apps/platform/src/app/layout.tsx`: modified (insert `<Providers />`)
+- `apps/platform/src/app/page.tsx`: modified (smoke `useGetAllCharactersQuery()` consumer)
+- `apps/platform/src/app/api/team/route.ts`: modified (replace hand-rolled guard with generated Zod)
+- `apps/platform/tests/integration/teamApi.test.ts`: modified if the 400-body shape changes
+- `plans/research.md`: modified (close the "hand-rolled guard" open item)
 
 ## Verification
 
-1. `pnpm --filter platform gen` exits 0. `apps/platform/src/gen/team/` contains `types.ts`, generated operation files (e.g. `getTeam.ts`), `*.zod.ts`, and `index.ts`. `apps/platform/src/gen/starwars/` contains `types.ts`, `*.zod.ts`, `index.ts` — and no `*.client.ts` files.
+1. `pnpm --filter platform gen` exits 0. `apps/platform/src/gen/team/` contains `types.ts`, generated operation files (e.g. `getTeam.ts`), `*.zod.ts`, and `index.ts`. `apps/platform/src/gen/starwars/` contains `types.ts`, `*.zod.ts`, `index.ts`, and no `*.client.ts` files.
 2. Re-run `pnpm gen`. Output is identical (idempotent).
 3. Delete `apps/platform/src/gen/` and run `pnpm --filter platform build`. The `prebuild` hook regenerates it; build succeeds.
 4. `pnpm typecheck` is green. The team route handler now imports the generated Zod and types.

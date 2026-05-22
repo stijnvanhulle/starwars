@@ -1,12 +1,8 @@
-# 007 — Testing
+# 007: Testing
 
 ## Context
 
-The product works locally after Slice 006, but two safety nets are still missing: end-to-end Playwright tests that drive the real app in a browser, and a CI pipeline that runs everything (unit, integration, e2e) against a real Postgres on every push. This slice adds both, plus the Changesets entry and the `README.md` refresh the prompt requires at the close-out.
-
-Playwright is the highest-leverage test layer for this app: it's the only layer that exercises the full stack — `akabab` (mocked at the network boundary), our route handlers, `Drizzle`, Postgres, and the MUI UI all at once. Unit + integration tests from earlier slices stay; they're faster feedback. Playwright is the regression safety net.
-
-No new product features. If a quickstart scenario fails in Playwright, the fix lives in Slice 006's files, not here.
+Add Playwright e2e specs and a CI pipeline that runs unit + integration + e2e against a Postgres service container. Plus the Changesets entry and the README refresh. No new product features; if an e2e spec fails, the fix lives in Slice 006.
 
 ## Goal (demoable outcome)
 
@@ -26,8 +22,8 @@ No new product features. If a quickstart scenario fails in Playwright, the fix l
    - `use: { baseURL: 'http://localhost:3000', trace: 'retain-on-failure', screenshot: 'only-on-failure' }`.
    - `projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }]`.
 3. **Add the test setup** at `apps/platform/e2e/setup.ts`. Two helpers:
-   - `resetTeam()` — opens a `pg` client, runs `TRUNCATE team_members RESTART IDENTITY`, closes. Called from a `test.beforeEach` in every spec so each test starts from an empty team.
-   - `mockAkabab(page, characters)` — uses `page.route('**/akabab.github.io/**', ...)` to return fixture payloads for `/all.json` and `/id/{id}.json`. Fixtures live at `apps/platform/e2e/fixtures/characters.ts` and include at least: Luke (neutral), Leia (neutral), three more neutrals, Vader (rule 1), a Sith-affiliated character (rule 2), and an apprentice whose `masters` resolve to Vader (rule 3). One fixture file shared by all specs.
+   - `resetTeam()`: opens a `pg` client, runs `TRUNCATE team_members RESTART IDENTITY`, closes. Called from a `test.beforeEach` in every spec so each test starts from an empty team.
+   - `mockAkabab(page, characters)`: uses `page.route('**/akabab.github.io/**', ...)` to return fixture payloads for `/all.json` and `/id/{id}.json`. Fixtures live at `apps/platform/e2e/fixtures/characters.ts` and include at least: Luke (neutral), Leia (neutral), three more neutrals, Vader (rule 1), a Sith-affiliated character (rule 2), and an apprentice whose `masters` resolve to Vader (rule 3). One fixture file shared by all specs.
 4. **Write `apps/platform/e2e/browse.spec.ts`** for AC-1..AC-4:
    - List loads at `/`, shows the seven fixture characters.
    - Click Luke. URL becomes `/characters/1` (or whatever id the fixture pins). Detail shows name, image, height, mass, affiliations.
@@ -68,30 +64,30 @@ No new product features. If a quickstart scenario fails in Playwright, the fix l
 10. **Add a release workflow** at `.github/workflows/release.yml` using the standard Changesets action: on push to `main`, run `changesets/action@v1` to either open a "Version Packages" PR or publish if one was merged. The product is private (apps don't publish), but the Changesets entry still drives the `CHANGELOG.md` and version bump for `apps/platform` and `packages/components`.
 11. **Author the initial Changesets entry**. `pnpm changeset add`. Mark `apps/platform` and `packages/components` as `minor` (this is the first releasable surface). Summary: "Initial release of the Whale Star Wars Team Builder." Commit the resulting `.changeset/*.md` file.
 12. **Refresh `README.md`** per the prompt:
-    - **Tech stack** — bullet list pulled from `plan.md`'s Technical Context table.
-    - **Use cases** — three sentences from `spec.md`.
-    - **Folder structure** — the `tree` from `plan.md`'s Project Structure section.
-    - **Getting started** — link to `plans/quickstart.md` for the user flow walk-through and to `plans/001-setup.md` for the first execution slice.
-    - **Status** — current state ("All seven slices complete; see `plans/plan.md` Progress Tracking").
+    - **Tech stack**: bullet list pulled from `plan.md`'s Technical Context table.
+    - **Use cases**: three sentences from `spec.md`.
+    - **Folder structure**: the `tree` from `plan.md`'s Project Structure section.
+    - **Getting started**: link to `plans/quickstart.md` for the user flow walk-through and to `plans/001-setup.md` for the first execution slice.
+    - **Status**: current state ("All seven slices complete; see `plans/plan.md` Progress Tracking").
 13. **Close out the open items** in `plans/research.md`. Anything still listed as open after Slices 005 and 006 either gets resolved (with a one-line decision) or moved to a follow-up issue. Common candidates: the `affiliations`-missing fallback, the 400-on-bad-body shape, the dark-mode decision deferred from `design.md`.
 
 ## Files touched
 
-- `apps/platform/playwright.config.ts` — created
-- `apps/platform/e2e/setup.ts` — created
-- `apps/platform/e2e/fixtures/characters.ts` — created
-- `apps/platform/e2e/browse.spec.ts` — created
-- `apps/platform/e2e/team.spec.ts` — created
-- `apps/platform/e2e/cap.spec.ts` — created
-- `apps/platform/e2e/darkSide.spec.ts` — created
-- `apps/platform/package.json` — modified (`test:e2e*` scripts, `@playwright/test` dep)
-- `.gitignore` — modified (ignore `apps/platform/playwright-report/`, `apps/platform/test-results/`)
-- `.github/workflows/ci.yml` — modified (Postgres service, full test pyramid, artifact upload on failure)
-- `.github/workflows/release.yml` — created (Changesets action)
-- `.changeset/*.md` — created (initial release entry)
-- `README.md` — modified (tech stack, use cases, folder structure, status)
-- `plans/research.md` — modified (final open-item close-out)
-- `plans/plan.md` — modified (flip the relevant checkboxes to done)
+- `apps/platform/playwright.config.ts`: created
+- `apps/platform/e2e/setup.ts`: created
+- `apps/platform/e2e/fixtures/characters.ts`: created
+- `apps/platform/e2e/browse.spec.ts`: created
+- `apps/platform/e2e/team.spec.ts`: created
+- `apps/platform/e2e/cap.spec.ts`: created
+- `apps/platform/e2e/darkSide.spec.ts`: created
+- `apps/platform/package.json`: modified (`test:e2e*` scripts, `@playwright/test` dep)
+- `.gitignore`: modified (ignore `apps/platform/playwright-report/`, `apps/platform/test-results/`)
+- `.github/workflows/ci.yml`: modified (Postgres service, full test pyramid, artifact upload on failure)
+- `.github/workflows/release.yml`: created (Changesets action)
+- `.changeset/*.md`: created (initial release entry)
+- `README.md`: modified (tech stack, use cases, folder structure, status)
+- `plans/research.md`: modified (final open-item close-out)
+- `plans/plan.md`: modified (flip the relevant checkboxes to done)
 
 ## Verification
 

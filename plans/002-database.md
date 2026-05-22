@@ -1,10 +1,8 @@
-# 002 — Database
+# 002: Database
 
 ## Context
 
-Persist the only thing our app owns: the team. The character catalog lives at `akabab` and is never copied into our database. This slice stands up a local Postgres 17 via Docker Compose, wires `drizzle-orm` + `drizzle-kit`, defines the `team_members` table exactly as `data-model.md` describes, and adds a `TeamMemberRepository` that is the **only** place `drizzle-orm` is imported. Integration tests against a real Postgres prove the repository's CRUD path and the unique-on-`characterId` index.
-
-No service rules (cap of 5, dark-side guard) land here. Those belong in Slice 004 because they need the API contract and the `isDarkSide` predicate.
+Stand up Postgres 17 via Docker Compose, wire Drizzle, create `team_members` per [`data-model.md`](data-model.md), and add a repository that is the **only** place `drizzle-orm` is imported. Service rules (cap, dark-side guard) land in Slice 004.
 
 ## Goal (demoable outcome)
 
@@ -38,21 +36,21 @@ Slice 001 is done. `data-model.md` is the source of truth for the table shape.
 
 ## Files touched
 
-- `docker-compose.yml` — created
-- `apps/platform/package.json` — modified (`db:migrate`, `db:generate`, `db:studio`, `test:integration` scripts)
-- `apps/platform/drizzle.config.ts` — created
-- `apps/platform/.env.example` — created
-- `apps/platform/src/env.ts` — created
-- `apps/platform/src/db/schema.ts` — created
-- `apps/platform/src/db/client.ts` — created
-- `apps/platform/src/db/migrate.ts` — created
-- `apps/platform/src/db/migrations/0000_*.sql` — created (generated)
-- `apps/platform/src/db/migrations/meta/_journal.json` — created (generated)
-- `apps/platform/src/server/repositories/teamMemberRepository.ts` — created
-- `apps/platform/vitest.integration.config.ts` — created
-- `apps/platform/tests/integration/teamMemberRepository.test.ts` — created
-- `.gitignore` — modified (add `.env*` if not already covered; ignore `apps/platform/.env`)
-- `.github/workflows/ci.yml` — modified (add `postgres` service to the test job)
+- `docker-compose.yml`: created
+- `apps/platform/package.json`: modified (`db:migrate`, `db:generate`, `db:studio`, `test:integration` scripts)
+- `apps/platform/drizzle.config.ts`: created
+- `apps/platform/.env.example`: created
+- `apps/platform/src/env.ts`: created
+- `apps/platform/src/db/schema.ts`: created
+- `apps/platform/src/db/client.ts`: created
+- `apps/platform/src/db/migrate.ts`: created
+- `apps/platform/src/db/migrations/0000_*.sql`: created (generated)
+- `apps/platform/src/db/migrations/meta/_journal.json`: created (generated)
+- `apps/platform/src/server/repositories/teamMemberRepository.ts`: created
+- `apps/platform/vitest.integration.config.ts`: created
+- `apps/platform/tests/integration/teamMemberRepository.test.ts`: created
+- `.gitignore`: modified (add `.env*` if not already covered; ignore `apps/platform/.env`)
+- `.github/workflows/ci.yml`: modified (add `postgres` service to the test job)
 
 ## Verification
 
