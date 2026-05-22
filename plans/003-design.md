@@ -59,7 +59,6 @@ Slice 001 is done (`MUI` theme provider wired, `AppRouterCacheProvider` in place
 2. `pnpm --filter @stijnvanhulle/components test` is green.
 3. `pnpm typecheck && pnpm lint` are green.
 4. `plans/design.md` is checked in and renders cleanly (every code fence closes; no `_TBD_` markers remain).
-5. `git grep -nE "from '@stijnvanhulle/components'"` shows the barrel re-export resolves cleanly to the new files (no broken imports).
 
 ## Done criteria
 

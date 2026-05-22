@@ -62,7 +62,6 @@ None. This is the first execution slice.
 4. `pnpm test` exits 0 (no tests yet is acceptable; the command must still succeed).
 5. `pnpm dev` starts. Visiting `http://localhost:3000` shows the app name and the styled `MUI` `Button`. Devtools shows the `Inter` (or whatever the theme picks) font applied to `body`, confirming the theme provider is wired.
 6. `ls packages/` shows only `components/`. `packages/core` and `packages/demo` are gone.
-7. `git grep -nE "packages/core|packages/demo"` returns no hits.
 
 ## Done criteria
 

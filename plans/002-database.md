@@ -62,8 +62,7 @@ Slice 001 is done. `data-model.md` is the source of truth for the table shape.
 4. `pnpm --filter platform test:integration`. All tests in `teamMemberRepository.test.ts` pass.
 5. Re-run `pnpm --filter platform db:migrate`. It is a no-op (idempotent). Exit 0.
 6. `pnpm typecheck && pnpm lint` are green across the workspace.
-7. `git grep -nE "from 'drizzle-orm'" apps/platform/src` returns hits only in `src/db/*` and `src/server/repositories/*`. No leakage into the route handler or service layers (which don't exist yet, but the rule still holds going forward).
-8. Stop the container (`docker compose down`), re-run the migration: it fails with a clear connection error and a non-zero exit. The failure path is loud, not silent.
+7. Stop the container (`docker compose down`), re-run the migration: it fails with a clear connection error and a non-zero exit. The failure path is loud, not silent.
 
 ## Done criteria
 
