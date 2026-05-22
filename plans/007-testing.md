@@ -69,7 +69,12 @@ Add Playwright e2e specs and a CI pipeline that runs unit + integration + e2e ag
     - **Folder structure**: the `tree` from `plan.md`'s Project Structure section.
     - **Getting started**: link to `plans/verification.md` for the user flow walk-through and to `plans/001-setup.md` for the first execution slice.
     - **Status**: current state ("All seven slices complete; see `plans/plan.md` Progress Tracking").
-13. **Close out the open items** in `plans/research.md`. Anything still listed as open after Slices 005 and 006 either gets resolved (with a one-line decision) or moved to a follow-up issue. Common candidates: the `affiliations`-missing fallback, the 400-on-bad-body shape, the dark-mode decision deferred from `design.md`.
+13. **Close out the open items** in `plans/research.md`. The Phase 0/1 items were resolved earlier — confirm those closures are still recorded:
+    - Optional-field fallbacks (Slice 006 step 1): placeholder image, "Unknown" stats, hidden empty lists.
+    - `isDarkSide` with missing fields (Slice 006 step 1): `?? false` short-circuit on the array probes.
+    - Proxy cache scope (Slice 006 step 2): request-scoped `Map` memo inside `createCharacterFetcher`.
+
+    Any items added during Slices 002–006 (e.g. the `400`-on-bad-body shape pinned in Slice 004 step 9, the dark-mode decision deferred from `design.md`) either get resolved with a one-line decision or moved to a follow-up issue. End state: zero items under "Open" without a decision or a follow-up link.
 
 ## Files touched
 

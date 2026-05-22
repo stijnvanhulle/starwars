@@ -168,7 +168,7 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 - **Card.** `neutral.0`, `radius.lg` (16px), `border.card` (1px `neutral.200`), `overflow: hidden`. Two regions split by a 1px `neutral.200` rule: square media (aspect 1/1, `neutral.100` placeholder, `object-fit: cover`) on top, body below with 16px padding holding the character name (`size.body` 16px, head font, 800, `letter-spacing: -0.01em`). No height/mass/affiliations preview; the spec puts those on the detail page. On hover the card border flips from `neutral.200` to `accent.500`; nothing moves.
 - **Badges.** Top-left chip on the media, `radius.pill`, 4×12 padding, `size.xs` (12px) / 700 / uppercase with `0.04em` tracking: `On team` (`accent.500` solid, white text) or `Dark side` (`semantic.error` solid, white text). Solid background only, no blur.
 - **Component.** `<CharacterCard name image onClick badge?>` from `packages/components`.
-- **Data.** `useListCharactersQuery()` from the single `api` slice (hits `/api/characters`, server-proxied from `starwars-api`), joined with `useListTeamQuery()` for the "On team" badge.
+- **Data.** `useListCharactersQuery()` from the single `api` slice (hits `/api/characters`, server-proxied from `starwars-api`), joined with `useGetTeamQuery()` for the "On team" badge.
 - **States.** Loading → `<StatePanel variant="loading">`. Error → `<StatePanel variant="error" action={retry}>` (proxy maps any upstream non-200 to `404 NOT_FOUND`; transport failures surface as the same error state). Empty (guard only; the `starwars-api` always has data) → `<StatePanel variant="empty">`.
 - The filter chip row from earlier mockups is dropped: the app doesn't show one and the spec doesn't ask for it.
 
@@ -209,7 +209,7 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 - **Action bar.** For evil characters, the CTA sits in a red-tinted box (`semantic.error-bg` background with a `#FCA5A5` border, 16px padding, `radius.md`): a 32px white circle with `semantic.error` warning glyph on the left, a two-line copy block (`On the dark side` title in `semantic.error`, description in `#7F1D1D`) in the middle, and the disabled `Add to team` button on the right. On the non-evil path the banner is gone; the pink Add button stands alone under the affiliation chips.
 - `<ActionButton>` **states.** Default pink (`accent.500`); hover `accent.600`; pressed `accent.700`; disabled `neutral.200` bg + `neutral.400` text + `disabledReason` tooltip on hover / `focus-within`. Already-on-team flips to outlined navy "Remove from team".
 - **Prev/Next.** Wrap around: first character's `Prev` jumps to the last; last character's `Next` jumps to the first. Always enabled.
-- **Data.** `useGetCharacterQuery(id)` hero; `useListCharactersQuery()` for prev/next ordering (`masters` arrives as `string[]` from the source API, no id resolution needed); `useListTeamQuery()` for membership.
+- **Data.** `useGetCharacterQuery(id)` hero; `useListCharactersQuery()` for prev/next ordering (`masters` arrives as `string[]` from the source API, no id resolution needed); `useGetTeamQuery()` for membership.
 
 ### `/team`: Team management
 
@@ -236,7 +236,7 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 - **Member rows.** Full-width `neutral.0` cards with `border.card` + `radius.lg`, 16px padding, laid out `72px | minmax(0, 1fr) | auto`. The 72px avatar uses `radius.md` (12px, soft-square — not a circle) and `object-fit: cover`. Name is an `<h2>` element styled at 20px (intentional override of the default `size.h2` to keep the row compact), head font, 800. Remove control is a pill button with a 1.5px `neutral.200` border, 8×16 padding, label `Remove` + an `✕` glyph. On hover the border, bg, and text all flip to the `semantic.error` family (`bg` to `semantic.error-bg`). No affiliations, no invented "role" eyebrow — the spec only requires identifying members and a remove control. Card border flips to `accent.500` on hover. Below 640px the row collapses: avatar/name on the top row, Remove stretches across the full width below.
 - **Empty team.** When `team.length === 0`, the member list is replaced by `<StatePanel variant="empty" title="No team yet" description="Add characters from a detail page." action={...}>`. The empty-slot CTA cards from earlier mockups are dropped (not in spec, the app uses StatePanel for empty states).
 - **Component.** `<TeamMemberRow avatar name meta onRemove>`. The team panel reuses a compact variant (smaller avatar, single-line name, no meta chips).
-- **Data.** `useListTeamQuery()` joined locally with `useListCharactersQuery()` for name/image/affiliations (the team API stores `characterId` only).
+- **Data.** `useGetTeamQuery()` joined locally with `useListCharactersQuery()` for name/image/affiliations (the team API stores `characterId` only).
 
 ## Component inventory
 
@@ -248,8 +248,7 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 | `TopBar`               | `shell/`      | App name + team link                                       |
 | `CharacterCard`        | `characters/` | List grid card; props include optional `badge`             |
 | `CharacterList`        | `characters/` | Data-aware grid wrapper                                    |
-| `CharacterDetail`      | `characters/` | Detail page body, Add/Remove wiring                        |
-| `ActionBar`            | `characters/` | Wraps `ActionButton` with status banner on the detail page |
+| `CharacterDetail`      | `characters/` | Detail page body, Add/Remove wiring; banner + Add/Remove button are inline here (no separate `ActionBar` export) |
 | `TeamSidebar`          | `team/`       | Presentational; compact team rows passed as children       |
 | `TeamSidebarContainer` | `team/`       | Joins team rows to character data                          |
 | `TeamMemberRow`        | `team/`       | Two variants: `compact` (sidebar) and `full` (`/team`)     |

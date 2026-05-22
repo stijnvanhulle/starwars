@@ -101,7 +101,7 @@ apps/platform/
 packages/components/
   src/
     shell/                        # AppShell, TopBar
-    characters/                   # CharacterCard, CharacterList, CharacterDetail, ActionBar
+    characters/                   # CharacterCard, CharacterList, CharacterDetail
     team/                         # TeamSidebar, TeamSidebarContainer, TeamMemberRow
     common/                       # StatePanel, ActionButton, Pill, Pager, ProgressDots, Tooltip
     index.ts                      # single top-level barrel; no per-feature index.ts files
