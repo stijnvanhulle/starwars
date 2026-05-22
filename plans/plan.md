@@ -24,7 +24,7 @@ Transform the current `TypeScript` library monorepo into a `Next.js` app that br
 | Storage          | `Postgres 17` via `drizzle-orm` `^0.45.2` + `drizzle-kit` `^0.31.10`, `pg` `^8.21.0` driver (`@types/pg` `^8.20.0`) |
 | Testing          | `Vitest` `^4.1.6` (unit + integration), `@playwright/test` `^1.60.0` (e2e), `Testing Library` (components)  |
 | Tooling          | `pnpm` `11.1.3`, `turbo` `^2.9.14`, `tsdown` `^0.22.0`, `oxlint` `^1.66.0`, `oxfmt` `^0.47.0`, `@changesets/cli` `^2.31.0` |
-| Project Type     | Web n/a monorepo with `apps/platform` + shared `packages/`                                       |
+| Project Type     | Web monorepo with `apps/platform` + shared `packages/`                                       |
 
 ## Constitution Check
 
@@ -120,7 +120,7 @@ The slice files in `plans/00X-*.md` are this feature's `tasks.md` equivalent, sp
 
 | Slice file                 | Depends on                              | Demoable outcome                                                                                                                                                                                  |
 | -------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `plans/001-setup.md`       | n/a                                       | `pnpm dev` serves an `MUI`-themed `Next.js` page at `localhost:3000`. `pnpm typecheck`/`lint`/`test` green. `packages/core` and `packages/demo` removed.                                          |
+| `plans/001-setup.md`       | none                                    | `pnpm dev` serves an `MUI`-themed `Next.js` page at `localhost:3000`. `pnpm typecheck`/`lint`/`test` green. `packages/core` and `packages/demo` removed.                                          |
 | `plans/002-database.md`    | 001                                     | `docker compose up -d postgres && pnpm --filter platform db:migrate` creates `team_members`. Repository CRUD covered by `Vitest` integration tests against a real `Postgres`.                     |
 | `plans/003-design.md`      | 001                                     | Design tokens land in the `MUI` theme (palette, typography, spacing, radius). `packages/components` exports the layout shell (`<AppShell />`, `<TeamSidebar />` placeholder, `<CharacterCard />`, `<StatePanel />` for loading/empty/error). Storybook-style preview route `/design` renders every component in each state. Screen sketches for `/`, `/characters/[id]`, `/team` checked into `plans/design.md`. |
 | `plans/004-api.md`         | 002 + Planning Phase 1 `team.yaml`      | `/api/team` route handlers wired through `Service` + `Repository`. `isDarkSide` stub returns `false` with a `TODO(006)`. Duplicate POST → 409. Sixth POST → 422 `TEAM_FULL`. Integration tests green. |
@@ -164,10 +164,6 @@ Gate for Slice 003: `plans/design.md` has tokens, layout shell, one sketch per s
 - [x] `plans/contracts/starwars.openapi.yaml`: done, `akabab` spec inferred from samples (`/all.json`, `/id/{id}.json`, full `Character` schema)
 - [x] `plans/quickstart.md`: done, 6 user-flow scenarios mapped to AC-1..AC-9
 
-### Planning Phase 3: Frontend Design
-
-- [x] `plans/design.md`: done. ASCII pass: tokens + layout shell + three screen sketches + component inventory + state matrix
-- [ ] `plans/design/` hi-fi mockups (optional; skipped unless ambiguity surfaces)
 
 ### Planning Phase 2: Slice files authored
 
@@ -178,6 +174,11 @@ Gate for Slice 003: `plans/design.md` has tokens, layout shell, one sketch per s
 - [x] `plans/005-client-kubb.md`: done
 - [x] `plans/006-features.md`: done
 - [x] `plans/007-testing.md`: done
+
+### Planning Phase 3: Frontend Design
+
+- [x] `plans/design.md`: done. ASCII pass: tokens + layout shell + three screen sketches + component inventory + state matrix
+- [x] `plans/design/` hi-fi mockups: done. `home.html`, `character-detail.html`, `team.html` generated via Claude design from the tokens in `design.md`
 
 ### Execution Slices (each ends in a demoable state)
 

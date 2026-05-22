@@ -24,7 +24,7 @@ Slice 001 is done (`MUI` theme provider wired, `AppRouterCacheProvider` in place
    - Screen notes for `/`, `/characters/[id]`, `/team`. Each lists the components it consumes and the data shape bound to each. Pairs with the corresponding wireframe.
    - Component inventory. Mark each as `packages/components/*` (shared shell) or `apps/platform/src/components/*` (single-consumer, deferred to 006).
    - State matrix per component: default, hover, focus, disabled, loading, error, empty.
-3. **Wire the tokens into the `MUI` theme** at `apps/platform/src/theme/theme.ts`. Export `lightTheme` (and `darkTheme` if the design.md decides on dark mode). The values come from `design.md`, this file just imports them.
+3. **Wire the tokens into the `MUI` theme** at `apps/platform/src/theme/theme.ts`. Export `lightTheme`. The values come from `design.md`, this file just imports them.
 4. **Build the layout shell** in `packages/components/src/AppShell.tsx`. Slots: `topBar`, `sidebar`, `children`. No business logic, no data fetching.
 5. **Build the placeholder `<TeamSidebar />`** in `packages/components/src/TeamSidebar.tsx`. Renders a static "Your team (0/5)" header and an empty-state message. Real data wiring lands in 006.
 6. **Build `<CharacterCard />`** in `packages/components/src/CharacterCard.tsx`. Props: `name`, `image`, `onClick`. Hover, focus, and disabled states.
