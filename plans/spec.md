@@ -6,7 +6,7 @@ This is the Phase 0 spec. It captures what we're building before any code lands,
 
 You land on the home page and see a list of Star Wars characters pulled live from `akabab`. Click one and you're on its detail page (name, image, height, mass, affiliations) with `Prev` and `Next` to walk through the roster without going back to the list.
 
-From any detail page you can add the character to your team or kick them out. The team is shared (no auth, single team), persists in Postgres, and is visible everywhere through a sidebar. There's also a `/team` page if you'd rather manage it from one screen.
+From any detail page you can add the character to your team or kick them out. The team is shared (no auth): everyone hits a single seeded **default team** (`slug = 'default'`) that lives in Postgres alongside its members. It's visible everywhere through a sidebar. There's also a `/team` page if you'd rather manage it from one screen. The schema already carries a `Team` table so multi-team support is a future feature, not a migration, but only the default team is wired in.
 
 Two rules the team has to obey: max five members, and nobody evil. Both are enforced on the server in `TeamService`, and the UI reflects them. The `Add` button is disabled (with a tooltip) for evil characters, and a sixth add gets a clear error back.
 
@@ -35,7 +35,8 @@ One per requirement bullet from `prompt.md`. Each one is something we can write 
 ## Key entities
 
 - **`Character`**: comes from `akabab`, read-only. The UI uses `id`, `name`, `image`, `height`, `mass`, `affiliations`. The server's `isDarkSide` also looks at `masters` (and deliberately ignores `formerAffiliations`).
-- **`TeamMember`**: ours, writable. `id uuid pk`, `characterId int unique`, `addedAt timestamptz default now`. Invariant: at most five rows, enforced in the service (not as a DB check, since the message needs to surface as a typed API error).
+- **`Team`**: ours, seeded. `id uuid pk`, `slug text unique`, `name text`, `createdAt timestamptz default now`. One row (`slug = 'default'`) inserted by the initial migration. The schema is multi-team ready; the app only uses the default.
+- **`TeamMember`**: ours, writable. `id uuid pk`, `teamId uuid fk → teams.id` (cascade), `characterId int`, `addedAt timestamptz default now`. Composite unique on `(teamId, characterId)`. Invariant: at most five rows per `teamId`, enforced in the service (not as a DB check, since the message needs to surface as a typed API error).
 
 ## Acceptance checklist
 

@@ -4,9 +4,16 @@
 
 ```mermaid
 erDiagram
+  TEAM {
+    uuid id PK "gen_random_uuid()"
+    string slug UK "stable handle, e.g. 'default'"
+    string name "human label"
+    timestamptz createdAt "default now()"
+  }
   TEAM_MEMBER {
     uuid id PK "gen_random_uuid()"
-    integer characterId UK "akabab Character.id"
+    uuid teamId FK "references TEAM.id"
+    integer characterId "akabab Character.id"
     timestamptz addedAt "default now()"
   }
   CHARACTER {
@@ -19,25 +26,47 @@ erDiagram
     string_array formerAffiliations "ignored by isDarkSide"
     integer_array masters "ids, resolved to names"
   }
+  TEAM ||--o{ TEAM_MEMBER : "contains"
   TEAM_MEMBER }o..|| CHARACTER : "references by id (no FK; lives in akabab)"
   CHARACTER ||--o{ CHARACTER : "masters (self-reference by id)"
 ```
 
 The dotted line is the soft reference: `team_members.characterId` points at an `akabab` character, but there is no database foreign key because the character row lives outside our database. The service validates existence by fetching `/id/{id}.json` before insert.
 
+For now the app operates against a single seeded **default team** (`slug = 'default'`). The `Team` table exists so the multi-team case is a future addition, not a schema migration; every service call resolves the default team id once at startup and threads it through. `(teamId, characterId)` is unique, so the same character can never appear twice in the same team. The five-member cap is per-team.
+
+## `Team`
+
+Persisted in Postgres via Drizzle. Defined in `apps/platform/src/db/schema.ts`.
+
+| Column      | Type          | Default               | Notes                                                                          |
+| ----------- | ------------- | --------------------- | ------------------------------------------------------------------------------ |
+| `id`        | `uuid`        | `gen_random_uuid()`   | Primary key.                                                                   |
+| `slug`      | `text`        | (none)                | Unique stable handle. The seed migration inserts `slug = 'default'`.           |
+| `name`      | `text`        | (none)                | Human label, e.g. `"Default team"`.                                            |
+| `createdAt` | `timestamptz` | `now()`               | Bookkeeping.                                                                   |
+
+Indexes:
+
+- `teams_slug_unique` on `slug`.
+
+The Drizzle table name is `teams`. A single seed row (`slug = 'default'`) is inserted as part of the initial migration so the app always has somewhere to put members.
+
 ## `TeamMember`
 
 Persisted in Postgres via Drizzle. Defined in `apps/platform/src/db/schema.ts`, the only file that imports `drizzle-orm/pg-core`.
 
-| Column        | Type          | Default      | Notes                                                                    |
-| ------------- | ------------- | ------------ | ------------------------------------------------------------------------ |
-| `id`          | `uuid`        | `gen_random_uuid()` | Primary key. App never reads this in business logic, but the API exposes it. |
-| `characterId` | `integer`     | (none)       | Unique. Matches `akabab` `Character.id`. No FK (character lives outside our DB). |
-| `addedAt`     | `timestamptz` | `now()`      | Used for stable sort in `GET /api/team` (oldest first).                  |
+| Column        | Type          | Default             | Notes                                                                              |
+| ------------- | ------------- | ------------------- | ---------------------------------------------------------------------------------- |
+| `id`          | `uuid`        | `gen_random_uuid()` | Primary key. App never reads this in business logic, but the API exposes it.        |
+| `teamId`      | `uuid`        | (none)              | FK to `teams.id` with `ON DELETE CASCADE`. Always the default team for now.        |
+| `characterId` | `integer`     | (none)              | Matches `akabab` `Character.id`. No FK (character lives outside our DB).            |
+| `addedAt`     | `timestamptz` | `now()`             | Used for stable sort in `GET /api/team` (oldest first).                            |
 
 Indexes:
 
-- `team_members_character_id_unique` on `characterId` (also enforces the dedupe rule that surfaces as `409 ALREADY_MEMBER`).
+- `team_members_team_id_character_id_unique` on `(teamId, characterId)` (enforces the dedupe rule that surfaces as `409 ALREADY_MEMBER`).
+- `team_members_team_id_idx` on `teamId` (every list query filters by it).
 
 The Drizzle table name is `team_members` (snake_case in SQL, camelCase in TS via the column mapping).
 
@@ -64,8 +93,9 @@ Other `akabab` fields are present on the generated type but unused. The UI does 
 
 | Invariant                                          | Enforced in                                | Surfaces as            |
 | -------------------------------------------------- | ------------------------------------------ | ---------------------- |
-| `count(team_members) <= 5`                         | `TeamService.add()` (read, check, insert in a transaction) | `422 TEAM_FULL`        |
-| `characterId` unique across `team_members`         | DB unique index, double-checked by service | `409 ALREADY_MEMBER`   |
+| `count(team_members where teamId = :default) <= 5` | `TeamService.add()` (read, check, insert in a transaction) | `422 TEAM_FULL`        |
+| `(teamId, characterId)` unique across `team_members` | DB composite unique index, double-checked by service | `409 ALREADY_MEMBER`   |
+| Default team row exists                            | Seeded by the initial migration; resolved once at service construction | startup error if missing |
 | Evil characters cannot be added                    | `TeamService.add()` calls `isDarkSide()` after fetching the character from `akabab` | `422 EVIL_FORBIDDEN`  |
 | Character must exist in `akabab`                   | `TeamService.add()` fetches `/id/{id}.json` first | `404 NOT_FOUND` if `akabab` 404s |
 

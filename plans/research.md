@@ -18,6 +18,7 @@ The original six-row table from `plan.md` moves here verbatim.
 | --- | --- | --- |
 | Where does character data live? | Direct `akabab` calls from `RTK Query`. | The prompt doesn't ask us to own character data, and proxying it through Next would just add latency for no win. |
 | Where does the team live? | `Postgres` via `Drizzle`. Single shared team, no auth. | This is a coding test, and one team is enough to exercise the `Repository` → `Service` layering the prompt explicitly wants. |
+| One team or a `teams` table? | Two tables: `teams` (seeded with `slug = 'default'`) and `team_members` (FK → `teams.id`, composite unique on `(teamId, characterId)`). | A dedicated `Team` row costs one extra table and one seed migration, but it means the multi-team case is a future feature, not a schema rewrite. `TeamMember` ownership becomes explicit instead of implicit, and the cap is naturally per-team. |
 | What does `Kubb` generate? | Both APIs. `team.yaml` → types + client + Zod. `starwars.yaml` → types + Zod (no client). | The prompt mandates Kubb. We skip Kubb's client for `starwars` because `RTK Query` is already doing the fetching there. |
 | Which Next.js router? | App Router. | It's the current default, and it's what `AppRouterCacheProvider` needs for MUI v9. |
 | Where does the app live? | `apps/platform`, with shared bits in `packages/components`. | Spelled out in the prompt. |

@@ -127,6 +127,7 @@ components:
       type: object
       required:
         - id
+        - teamId
         - characterId
         - addedAt
       properties:
@@ -135,6 +136,11 @@ components:
           format: uuid
           description: Server-generated primary key.
           example: 3f0b2a3e-5b6e-4a3c-8f1c-2d4f6a8b0c1d
+        teamId:
+          type: string
+          format: uuid
+          description: The team this member belongs to. Currently always the seeded default team.
+          example: 7a1c9d6e-0f2b-4b8a-9f3d-1c2e3a4b5c6d
         characterId:
           type: integer
           minimum: 1
