@@ -1,4 +1,4 @@
-# Data model, Whale Star Wars Team Builder
+# Data model: Whale Star Wars Team Builder
 
 ## Overview
 
@@ -23,7 +23,6 @@ erDiagram
     number height
     number mass
     string_array affiliations
-    string_array formerAffiliations "ignored by isDarkSide"
     string_array masters "names; may include parenthetical role suffix"
   }
   TEAM ||--o{ TEAM_MEMBER : "contains"
@@ -32,7 +31,7 @@ erDiagram
 
 The dotted line is the soft reference: `team_members.characterId` points at a `starwars-api` character, but there is no database foreign key because the character row lives outside our database. The service validates existence by fetching `/id/{id}.json` before insert.
 
-For now the app operates against a single seeded **default team** (`slug = 'default'`). The `Team` table exists so the multi-team case is a future addition, not a schema migration; every service call resolves the default team id once at startup and threads it through. `(teamId, characterId)` is unique, so the same character can never appear twice in the same team. The five-member cap is per-team.
+For now the app operates against a single seeded **default team** (`slug = 'default'`). The `Team` table exists so the multi-team case is a future addition, not a schema migration; the service factory resolves the default team id during service construction (once per request) and threads it through. `(teamId, characterId)` is unique, so the same character can never appear twice in the same team. The five-member cap is per-team.
 
 ## `Team`
 
@@ -88,7 +87,6 @@ Fields the app actually reads (identical on both sides of the proxy, the `starwa
 | `height`             | `number`    | detail page                   |
 | `mass`               | `number`    | detail page                   |
 | `affiliations`       | `string[]`  | detail page, `isDarkSide` rule 2  |
-| `formerAffiliations` | `string[]`  | deliberately ignored by `isDarkSide` (kept on the type so the field is visible, not so it's used) |
 | `masters`            | `string[]`  | `isDarkSide` rule 3. Names already (may carry a parenthetical role like `"Darth Sidious (Sith Master)"`); substring check still works. |
 
 Other `starwars-api` fields are present on the server-side generated type but are stripped by the proxy before the response leaves the server. The UI does not invent fields the contract doesn't list.
@@ -97,11 +95,11 @@ Other `starwars-api` fields are present on the server-side generated type but ar
 
 | Invariant                                          | Enforced in                                | Surfaces as            |
 | -------------------------------------------------- | ------------------------------------------ | ---------------------- |
-| `count(team_members where teamId = :default) <= 5` | `TeamService.add()` (read, check, insert in a transaction) | `422 TEAM_FULL`        |
-| `(teamId, characterId)` unique across `team_members` | DB composite unique index, double-checked by service | `409 ALREADY_MEMBER`   |
-| Default team row exists                            | Seeded by the initial migration; resolved once at service construction | startup error if missing |
+| `count(team_members where teamId = :default) <= 5` | `TeamService.add()` wraps dup-check, cap-check, and `insert` in a single `db.transaction(...)` so two concurrent adds cannot both observe count = 4 | `422 TEAM_FULL`        |
+| `(teamId, characterId)` unique across `team_members` | DB composite unique index, double-checked by service inside the same transaction | `409 ALREADY_MEMBER`   |
+| Default team row exists                            | Seeded by the initial migration; resolved by the service factory during construction (once per request) | request error if missing |
 | Evil characters cannot be added                    | `TeamService.add()` calls `isDarkSide()` after fetching the character from `starwars-api` | `422 EVIL_FORBIDDEN`  |
-| Character must exist in `starwars-api`                   | `TeamService.add()` fetches `/id/{id}.json` first | `404 NOT_FOUND` if `starwars-api` 404s |
+| Character must exist in `starwars-api`                   | `TeamService.add()` fetches `/id/{id}.json` before the evil check | `404 NOT_FOUND` if `fetchCharacter` returns `null` (any non-200 from upstream) |
 
 The five-member cap lives in the service, not as a DB check, so the failure surfaces as a typed API error rather than a generic constraint violation.
 
@@ -120,5 +118,5 @@ isDarkSide(character: Character): boolean
 Three rules, OR'd together:
 
 1. `character.name` contains `"Darth"` or `"Sith"` (case-insensitive).
-2. Any entry in `character.affiliations` contains `"Darth"` or `"Sith"` (case-insensitive). `formerAffiliations` is ignored on purpose: a character who left the Sith is not currently evil.
+2. Any entry in `character.affiliations` contains `"Darth"` or `"Sith"` (case-insensitive). The frontend `Character` does not carry `formerAffiliations` (stripped by the proxy), so a character who left the Sith is not currently evil.
 3. Any entry in `character.masters` contains `"Darth"` (case-insensitive).

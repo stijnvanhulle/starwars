@@ -240,11 +240,6 @@ components:
           example:
             - Jedi Order
             - Rebel Alliance
-        formerAffiliations:
-          type: array
-          description: Groups the character used to be affiliated with.
-          items:
-            type: string
         masters:
           type: array
           description: Names of the character's masters. Entries may include a parenthetical role suffix (e.g. `"Darth Sidious (Sith Master)"`); `isDarkSide` rule 3 uses a case-insensitive substring match for `"Darth"`.

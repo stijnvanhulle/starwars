@@ -17,7 +17,7 @@ Assemble the three screens (`/`, `/characters/[id]`, `/team`) and the persistent
 
 1. **Implement `isDarkSide`** in `apps/platform/src/lib/darkSide.ts`. Replace Slice 004's `return false`. Signature is `isDarkSide(character: Character): boolean`. Three rules OR'd, in this order:
    1. `/darth|sith/i.test(character.name)`.
-   2. `character.affiliations?.some(a => /darth|sith/i.test(a)) ?? false`. Do not look at `formerAffiliations`.
+   2. `character.affiliations?.some(a => /darth|sith/i.test(a)) ?? false`. The frontend `Character` carries only current affiliations (the proxy strips `formerAffiliations`), so there is no "former" branch to guard against here.
    3. `character.masters?.some(m => /darth/i.test(m)) ?? false`. `masters` is `string[]` upstream (entries sometimes carry a parenthetical role like `"Darth Sidious (Sith Master)"`); substring match covers that.
    Defensive defaults if a field is missing: treat absent `affiliations` / `masters` as empty arrays (the rule short-circuits to `false` for that rule, not for the whole predicate). Pure, synchronous, no fetches inside. `TeamService.add()`'s `isDarkSide(character)` call from Slice 004 has everything it needs; there is no separate master-resolution step.
 2. **Add a request-scoped character cache** at `apps/platform/src/server/starwars-api.ts`. Replace the bare `fetchCharacter` / `fetchAllCharacters` with `createCharacterFetcher()` that returns a `{ all, byId }` pair backed by an internal `Map<number, Promise<StarwarsApiCharacter | null>>` so a single request never fetches the same id twice. The proxy routes (`/api/characters`, `/api/characters/{id}`) and the service factory in `createTeamService()` both call this once per request and thread the fetcher through.
@@ -38,7 +38,7 @@ Assemble the three screens (`/`, `/characters/[id]`, `/team`) and the persistent
     - `name: "Darth Vader"` → `true` (rule 1, case-insensitive).
     - `name: "sith Lord"` → `true` (rule 1).
     - `affiliations: ["Sith Order"]` → `true` (rule 2).
-    - `formerAffiliations: ["Sith Order"]` alone → `false` (rule 2 ignores former).
+    - `affiliations: []` with everything else neutral → `false` (rule 2 short-circuits on empty; mirrors the "left the Sith" scenario, since the proxy already stripped `formerAffiliations`).
     - `masters: ["Darth Sidious (Sith Master)"]` → `true` (rule 3, substring match tolerates parenthetical suffix).
     - `masters: ["Obi-Wan Kenobi"]` → `false` (no "Darth" anywhere).
     - `masters: []` → `false` (rule 3 short-circuits on empty).
