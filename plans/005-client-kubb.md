@@ -35,7 +35,7 @@ Every endpoint the browser calls is documented in `api.yaml`, so RTK Query endpo
 8. **Build the single `api` slice** at `apps/platform/src/store/api.ts`. `createApi` with `reducerPath: 'api'`, `baseQuery: fetchBaseQuery({ baseUrl: '/api' })`, and these endpoints, all backed by the generated `@/gen/api` client and types:
    - `listCharacters` → `GET /characters`, returns `Character[]`. No tags; the source API is static for the session and refetch-on-focus handles staleness.
    - `getCharacter` → `GET /characters/{id}`, returns `Character`.
-   - `listTeam` → `GET /team`, returns `TeamMember[]`. Provides tag `'team'`.
+   - `getTeam` → `GET /team`, returns `TeamMember[]`. Provides tag `'team'`. (Matches the contract's `operationId: getTeam`; the generated hook is `useGetTeamQuery`.)
    - `addTeamMember` → `POST /team` with body `{ characterId }`, returns `TeamMember`. Invalidates `'team'`.
    - `removeTeamMember` → `DELETE /team/${characterId}`. Invalidates `'team'`.
    One slice means one `reducerPath`, one middleware, one cache. The sidebar re-renders automatically when team mutations invalidate the `'team'` tag.
