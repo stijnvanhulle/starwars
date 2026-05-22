@@ -6,7 +6,7 @@ Stand up Postgres 17 via Docker Compose, wire Drizzle, create `teams` and `team_
 
 ## Goal (demoable outcome)
 
-`docker compose up -d postgres && pnpm --filter platform db:migrate` brings up Postgres, creates the `teams` and `team_members` tables, and inserts the default team row (`slug = 'default'`). `pnpm --filter platform test:integration` runs Vitest against the real container and covers `insert`, `findAll`, `findByCharacterId`, `deleteByCharacterId`, the unique-violation path, the empty-table case, and the default-team lookup.
+`docker compose up -d postgres && pnpm --filter platform db:migrate` brings up Postgres, creates the `teams` and `team_members` tables, and inserts the default team row (`slug = 'default'`). `pnpm --filter platform test` runs Vitest against the real container and covers `insert`, `findAll`, `findByCharacterId`, `deleteByCharacterId`, the unique-violation path, the empty-table case, and the default-team lookup.
 
 ## Prerequisites
 
@@ -34,8 +34,8 @@ Slice 001 is done. `data-model.md` is the source of truth for the table shape.
 9. **Write the repositories** at `apps/platform/src/server/repositories/`. Two files; both are the **only** places outside `db/` that import `drizzle-orm`.
    - `teamRepository.ts`: `findBySlug(slug): Promise<Team | undefined>`, `findDefault(): Promise<Team>` (throws if the seed row is missing).
    - `teamMemberRepository.ts`: methods are now all scoped by `teamId`. `insert(teamId, characterId): Promise<TeamMember>`, `findAllByTeam(teamId): Promise<TeamMember[]>` (ordered by `addedAt asc`), `findByTeamAndCharacterId(teamId, characterId): Promise<TeamMember | undefined>`, `deleteByTeamAndCharacterId(teamId, characterId): Promise<boolean>` (returns whether a row was removed), `countByTeam(teamId): Promise<number>`. Export inferred `Team` and `TeamMember` types from `schema.ts`'s `InferSelectModel`.
-10. **Add the Vitest integration config** at `apps/platform/vitest.integration.config.ts` distinct from any future unit config. Set `test.include` to `tests/integration/**/*.test.ts`, `test.setupFiles` to a setup that resets `team_members` between tests (`TRUNCATE team_members RESTART IDENTITY CASCADE`) while leaving the seeded `teams` row alone, and `test.poolOptions.threads.singleThread = true` so concurrent tests do not race on the table. Add the script `"test:integration": "vitest run --config ./vitest.integration.config.ts"` to `apps/platform/package.json`.
-11. **Write the integration tests** at `apps/platform/tests/integration/`. Two files. Each test resolves the default team via `teamRepository.findDefault()` at the top and reuses its `id`.
+10. **Add the Vitest config** at `apps/platform/vitest.config.ts`. Every test lives next to its source as `foo.test.ts` (or `.tsx`); there is no unit/integration distinction by filename or directory. Set `test.include` to `src/**/*.test.{ts,tsx}`, `test.setupFiles` to a setup that resets `team_members` between tests (`TRUNCATE team_members RESTART IDENTITY CASCADE`) while leaving the seeded `teams` row alone, and `test.poolOptions.threads.singleThread = true` so concurrent tests do not race on the table. Tests that need Postgres assume `docker compose up -d postgres` has been run; tests that don't (pure units) simply skip the DB. Add the script `"test": "vitest run --config ./vitest.config.ts"` to `apps/platform/package.json`.
+11. **Write the repository tests** next to the repositories under `apps/platform/src/server/repositories/`. Two files. Each test resolves the default team via `teamRepository.findDefault()` at the top and reuses its `id`.
     `teamRepository.test.ts` covers:
     - `findBySlug('default')` returns the seeded row.
     - `findBySlug('nope')` returns `undefined`.
@@ -53,7 +53,7 @@ Slice 001 is done. `data-model.md` is the source of truth for the table shape.
 ## Files touched
 
 - `docker-compose.yml`: created
-- `apps/platform/package.json`: modified (`db:migrate`, `db:generate`, `db:studio`, `test:integration` scripts)
+- `apps/platform/package.json`: modified (`db:migrate`, `db:generate`, `db:studio`, `test` scripts)
 - `apps/platform/drizzle.config.ts`: created
 - `apps/platform/.env.example`: created
 - `apps/platform/src/env.ts`: created
@@ -65,9 +65,9 @@ Slice 001 is done. `data-model.md` is the source of truth for the table shape.
 - `apps/platform/src/db/migrations/meta/_journal.json`: created (generated)
 - `apps/platform/src/server/repositories/teamRepository.ts`: created
 - `apps/platform/src/server/repositories/teamMemberRepository.ts`: created
-- `apps/platform/vitest.integration.config.ts`: created
-- `apps/platform/tests/integration/teamRepository.test.ts`: created
-- `apps/platform/tests/integration/teamMemberRepository.test.ts`: created
+- `apps/platform/vitest.config.ts`: created
+- `apps/platform/src/server/repositories/teamRepository.test.ts`: created
+- `apps/platform/src/server/repositories/teamMemberRepository.test.ts`: created
 - `.gitignore`: modified (add `.env*` if not already covered; ignore `apps/platform/.env`)
 - `.github/workflows/ci.yml`: modified (add `postgres` service to the test job)
 
@@ -76,7 +76,7 @@ Slice 001 is done. `data-model.md` is the source of truth for the table shape.
 1. `docker compose up -d postgres`. `docker compose ps` shows the container healthy within 10 seconds.
 2. `cp apps/platform/.env.example apps/platform/.env`. `pnpm --filter platform db:migrate`. Output ends with "Migrations complete" (or Drizzle's equivalent). No errors.
 3. `psql postgres://platform:platform@localhost:5432/platform -c "\d teams"` shows the four columns and the `teams_slug_unique` index. `\d team_members` shows the four columns (including `team_id`), the FK to `teams.id` with `ON DELETE CASCADE`, the composite `team_members_team_id_character_id_unique` index, and the `team_members_team_id_idx` index. `SELECT slug, name FROM teams;` shows the single `default` row.
-4. `pnpm --filter platform test:integration`. All tests in `teamMemberRepository.test.ts` pass.
+4. `pnpm --filter platform test`. All tests in `teamMemberRepository.test.ts` pass.
 5. Re-run `pnpm --filter platform db:migrate`. It is a no-op (idempotent). Exit 0.
 6. `pnpm typecheck && pnpm lint` are green across the workspace.
 7. Stop the container (`docker compose down`), re-run the migration: it fails with a clear connection error and a non-zero exit. The failure path is loud, not silent.
@@ -92,5 +92,5 @@ Slice 001 is done. `data-model.md` is the source of truth for the table shape.
 - [ ] `TeamMemberRepository` exposes `insert`, `findAllByTeam`, `findByTeamAndCharacterId`, `deleteByTeamAndCharacterId`, `countByTeam`, all scoped by `teamId`
 - [ ] `drizzle-orm` is imported only from files under `apps/platform/src/db/**` and `apps/platform/src/server/repositories/**`
 - [ ] Integration tests cover the cases in step 11 (both repositories) and pass against the real container
-- [ ] `pnpm typecheck`, `pnpm lint`, `pnpm test:integration` are green
+- [ ] `pnpm typecheck`, `pnpm lint`, `pnpm test` are green
 - [ ] No service rules (cap of 5, dark-side guard) leak into this slice; those land in Slice 004

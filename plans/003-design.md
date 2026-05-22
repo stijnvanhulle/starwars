@@ -32,7 +32,7 @@ Slice 001 is done (`MUI` theme provider wired, `AppRouterCacheProvider` in place
 8. **Build `<TeamMemberRow />`** in `packages/components/src/TeamMemberRow.tsx`. Props: `name`, `image`, `onRemove`. Used in both the sidebar and `/team`.
 9. **Build `<ActionButton />`** in `packages/components/src/ActionButton.tsx`. Wraps `MUI` Button with the project's loading and disabled-with-tooltip patterns. Props: `loading`, `disabledReason?` (when present, the button is disabled and the reason renders as a tooltip).
 10. **Update the barrel export** `packages/components/src/index.ts` to expose the six components (`AppShell`, `TeamSidebar`, `CharacterCard`, `StatePanel`, `TeamMemberRow`, `ActionButton`).
-11. **Add a `Vitest` smoke test** for each component (`packages/components/tests/*.test.tsx`) using Testing Library: renders without crashing, primary prop is reflected in the DOM, the disabled-with-tooltip pattern works on `<ActionButton />`, and `<StatePanel variant="loading" | "empty" | "error">` each render their distinct content.
+11. **Add a `Vitest` smoke test** next to each component (`packages/components/src/<Name>.test.tsx`) using Testing Library: renders without crashing, primary prop is reflected in the DOM, the disabled-with-tooltip pattern works on `<ActionButton />`, and `<StatePanel variant="loading" | "empty" | "error">` each render their distinct content.
 
 ## Files touched
 
@@ -46,11 +46,11 @@ Slice 001 is done (`MUI` theme provider wired, `AppRouterCacheProvider` in place
 - `packages/components/src/TeamMemberRow.tsx`: created
 - `packages/components/src/ActionButton.tsx`: created
 - `packages/components/src/index.ts`: modified (re-export the six components)
-- `packages/components/tests/AppShell.test.tsx`: created
-- `packages/components/tests/CharacterCard.test.tsx`: created
-- `packages/components/tests/StatePanel.test.tsx`: created
-- `packages/components/tests/TeamMemberRow.test.tsx`: created
-- `packages/components/tests/ActionButton.test.tsx`: created
+- `packages/components/src/AppShell.test.tsx`: created
+- `packages/components/src/CharacterCard.test.tsx`: created
+- `packages/components/src/StatePanel.test.tsx`: created
+- `packages/components/src/TeamMemberRow.test.tsx`: created
+- `packages/components/src/ActionButton.test.tsx`: created
 
 ## Verification
 

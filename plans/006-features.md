@@ -38,7 +38,7 @@ Assemble the three screens (`/`, `/characters/[id]`, `/team`) and the persistent
 8. **Wire `<TeamSidebar />` for real** in `packages/components/src/TeamSidebar.tsx`, actually, no. `TeamSidebar` stays presentational (Slice 003 rule). Build `<TeamSidebarContainer />` at `apps/platform/src/components/TeamSidebarContainer.tsx` that owns the queries, joins team rows to character names/images, and renders `<TeamSidebar>` with the rows as children. Add it to the layout shell (see step 9).
 9. **Insert the layout shell** in `apps/platform/src/app/layout.tsx`. The structure becomes `<AppRouterCacheProvider>` → `<ThemeProvider>` → `<CssBaseline />` → `<Providers>` → `<AppShell topBar={<TopBar />} sidebar={<TeamSidebarContainer />}>{children}</AppShell>`. `<TopBar />` is a tiny client component under `apps/platform/src/components/TopBar.tsx` with the app name and a `next/link` to `/team`.
 10. **Surface API errors** at `apps/platform/src/lib/apiError.ts`. Tiny helper that takes an `RTK Query` error union and returns `{ code, message }` typed against the generated `Error` schema. Detail page and team page use it to render `422 TEAM_FULL` / `422 EVIL_FORBIDDEN` / `409 ALREADY_MEMBER` / `404 NOT_FOUND` inline. Toasts are out of scope; inline is enough per the spec.
-11. **Unit-test `isDarkSide`** at `apps/platform/tests/unit/darkSide.test.ts`. Cases:
+11. **Unit-test `isDarkSide`** next to it at `apps/platform/src/lib/darkSide.test.ts`. Cases:
     - Empty everything → `false`.
     - `name: "Darth Vader"` → `true` (rule 1, case-insensitive).
     - `name: "sith Lord"` → `true` (rule 1).
@@ -46,8 +46,8 @@ Assemble the three screens (`/`, `/characters/[id]`, `/team`) and the persistent
     - `formerAffiliations: ["Sith Order"]` alone → `false` (rule 2 ignores former).
     - `masters: [42]` with `masterNames: Map([[42, "Darth Sidious"]])` → `true` (rule 3).
     - `masters: [42]` with `masterNames: new Map()` → `false` (unresolved master can't fire rule 3).
-12. **Component-test the disabled-Add wiring** at `apps/platform/tests/components/CharacterDetail.test.tsx`. Render `<CharacterDetail>` with a Vader-shaped character; assert the `ActionButton` is disabled and the tooltip text contains "evil" (case-insensitive). Render again with a neutral character; assert the button is enabled.
-13. **Update the team API integration test** at `apps/platform/tests/integration/teamApi.test.ts`. The `EVIL_FORBIDDEN` path no longer relies on monkey-patching `isDarkSide`: feed the mocked `fetchCharacter` a Vader-shaped payload (`name: "Darth Vader"`) and a master id pointing at another Vader-shaped payload. Assert `422 EVIL_FORBIDDEN`. The four other branches stay as in Slice 004. The Slice 004 `charactersApi.test.ts` cases (proxy happy path, `404`, `502`) remain valid; no changes needed there.
+12. **Component-test the disabled-Add wiring** next to it at `apps/platform/src/components/CharacterDetail.test.tsx`. Render `<CharacterDetail>` with a Vader-shaped character; assert the `ActionButton` is disabled and the tooltip text contains "evil" (case-insensitive). Render again with a neutral character; assert the button is enabled.
+13. **Update the team API integration test** at `apps/platform/src/app/api/team/route.test.ts`. The `EVIL_FORBIDDEN` path no longer relies on monkey-patching `isDarkSide`: feed the mocked `fetchCharacter` a Vader-shaped payload (`name: "Darth Vader"`) and a master id pointing at another Vader-shaped payload. Assert `422 EVIL_FORBIDDEN`. The four other branches stay as in Slice 004. The Slice 004 character proxy tests (proxy happy path, `404`, `502`) remain valid; no changes needed there.
 14. **Walk `quickstart.md` end-to-end** against a clean checkout. Every scenario must pass with the real app. Where the doc says "the team page" or "the sidebar", verify both. If something in `quickstart.md` no longer matches what the app does, fix the app, the spec is the contract, not the implementation.
 
 ## Files touched
@@ -64,10 +64,10 @@ Assemble the three screens (`/`, `/characters/[id]`, `/team`) and the persistent
 - `apps/platform/src/components/CharacterDetail.tsx`: created
 - `apps/platform/src/components/TeamSidebarContainer.tsx`: created
 - `apps/platform/src/components/TopBar.tsx`: created
-- `apps/platform/tests/unit/darkSide.test.ts`: created
-- `apps/platform/tests/unit/teamService.test.ts`: modified (drop the empty-Map placeholder, cover the new master-resolution path)
-- `apps/platform/tests/components/CharacterDetail.test.tsx`: created
-- `apps/platform/tests/integration/teamApi.test.ts`: modified (`EVIL_FORBIDDEN` path uses real `isDarkSide`)
+- `apps/platform/src/lib/darkSide.test.ts`: created
+- `apps/platform/src/server/services/teamService.test.ts`: modified (drop the empty-Map placeholder, cover the new master-resolution path)
+- `apps/platform/src/components/CharacterDetail.test.tsx`: created
+- `apps/platform/src/app/api/team/route.test.ts`: modified (`EVIL_FORBIDDEN` path uses real `isDarkSide`)
 
 ## Verification
 
@@ -75,8 +75,8 @@ Assemble the three screens (`/`, `/characters/[id]`, `/team`) and the persistent
 2. Walk each of the six scenarios in [`quickstart.md`](quickstart.md). All pass.
 3. Specifically for AC-9: Darth Vader's detail page shows a disabled `Add to team` button; hovering it reveals the tooltip; clicking does nothing. Force `POST /api/team` with Vader's id via devtools network panel; server returns `422 EVIL_FORBIDDEN`.
 4. Specifically for AC-8: add five non-evil characters, attempt a sixth; the inline error appears and the team stays at five rows in the DB (`psql -c "select count(*) from team_members;"` returns 5).
-5. `pnpm --filter platform test:unit` is green; `darkSide.test.ts` covers the seven cases in step 11.
-6. `pnpm --filter platform test:integration` is green; the `EVIL_FORBIDDEN` test no longer patches `isDarkSide`.
+5. `pnpm --filter platform test` is green; `darkSide.test.ts` covers the seven cases in step 11.
+6. `pnpm --filter platform test` is green; the `EVIL_FORBIDDEN` test no longer patches `isDarkSide`.
 7. `pnpm --filter platform test` (Testing Library component tests) is green; `<CharacterDetail>` test covers both Vader-disabled and neutral-enabled.
 8. `pnpm typecheck && pnpm lint` are green across the workspace.
 9. Reload `/` after adding two characters. The sidebar still shows them (persistence).
@@ -94,5 +94,5 @@ Assemble the three screens (`/`, `/characters/[id]`, `/team`) and the persistent
 - [ ] `<TeamSidebarContainer>` is visible on every page and reflects the current team in real time
 - [ ] API errors (`409`, `422 TEAM_FULL`, `422 EVIL_FORBIDDEN`, `404 NOT_FOUND`) render inline using the generated `Error` shape
 - [ ] Every scenario in `quickstart.md` passes against a clean checkout
-- [ ] `pnpm test:unit`, `pnpm test:integration`, `pnpm test`, `pnpm typecheck`, `pnpm lint` are all green
+- [ ] `pnpm test`, `pnpm typecheck`, `pnpm lint` are all green
 - [ ] No new external dependency or generated file is introduced in this slice

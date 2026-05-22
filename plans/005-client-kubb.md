@@ -62,7 +62,7 @@ Every endpoint the browser calls is documented in `api.yaml`, so RTK Query endpo
 - `apps/platform/src/app/layout.tsx`: modified (insert `<Providers />`)
 - `apps/platform/src/app/page.tsx`: modified (smoke `useListCharactersQuery()` consumer)
 - `apps/platform/src/app/api/team/route.ts`: modified (replace hand-rolled guard with generated Zod)
-- `apps/platform/tests/integration/teamApi.test.ts`: modified if the 400-body shape changes
+- `apps/platform/src/app/api/team/route.test.ts`: modified if the 400-body shape changes
 - `.oxlintrc` (or equivalent): modified (restrict `@/gen/starwars` imports to `src/server/**` and `src/lib/darkSide.ts`)
 - `plans/research.md`: modified (close the "hand-rolled guard" open item)
 
@@ -72,7 +72,7 @@ Every endpoint the browser calls is documented in `api.yaml`, so RTK Query endpo
 2. Re-run `pnpm gen`. Output is identical (idempotent).
 3. Delete `apps/platform/src/gen/` and run `pnpm --filter platform build`. The `prebuild` hook regenerates it; build succeeds.
 4. `pnpm typecheck` is green. The team route handler now imports the generated Zod and types from `@/gen/api`; the proxy fetcher imports the `starwars-api` type from `@/gen/starwars`.
-5. `pnpm --filter platform test:unit` and `pnpm --filter platform test:integration` are green; the Slice 004 integration tests still pass (with the 400-body shape adjusted where needed).
+5. `pnpm --filter platform test` and `pnpm --filter platform test` are green; the Slice 004 integration tests still pass (with the 400-body shape adjusted where needed).
 6. `pnpm --filter platform dev` boots. Visit `http://localhost:3000/`. The smoke component renders "N characters" (where N matches the `starwars-api` `/all.json` length, currently 87) after the loading state. Devtools network panel shows requests **only** to `/api/characters`, zero to `akabab.github.io`.
 7. `pnpm lint` reports any forbidden `@/gen/starwars` import outside `src/server/**` / `src/lib/darkSide.ts` (introduce a deliberate violation in a scratch branch to confirm).
 
@@ -89,6 +89,6 @@ Every endpoint the browser calls is documented in `api.yaml`, so RTK Query endpo
 - [ ] The home page's smoke component renders the character count via `useListCharactersQuery` and the browser's network panel shows zero requests to `akabab.github.io`
 - [ ] `POST /api/team` validates with the generated Zod schema (not the hand-rolled guard)
 - [ ] `@/gen/starwars` is never imported from browser code (lint rule enforces it)
-- [ ] `pnpm typecheck`, `pnpm lint`, `pnpm test:unit`, `pnpm test:integration` are green
+- [ ] `pnpm typecheck`, `pnpm lint`, `pnpm test` are green
 - [ ] `plans/research.md` closes the "hand-rolled guard" open item with a pointer to Slice 005
 - [ ] `isDarkSide` is still a stub; real rules and server-side master-resolution land in Slice 006

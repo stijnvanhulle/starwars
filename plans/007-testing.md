@@ -6,7 +6,7 @@ Add Playwright e2e specs and a CI pipeline that runs unit + integration + e2e ag
 
 ## Goal (demoable outcome)
 
-`pnpm --filter platform test:e2e` (Playwright) runs four specs against a freshly migrated Postgres and a built Next.js app: browse, add+remove, cap-of-5, dark-side. All pass. On GitHub Actions, a single workflow runs `pnpm typecheck`, `pnpm lint`, `pnpm test:unit`, `pnpm test:integration`, `pnpm test:e2e` against a Postgres service container, and a Changesets-versioning step lands. A `CHANGELOG.md` entry exists for the initial release.
+`pnpm --filter platform test:e2e` (Playwright) runs four specs against a freshly migrated Postgres and a built Next.js app: browse, add+remove, cap-of-5, dark-side. All pass. On GitHub Actions, a single workflow runs `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm test:e2e` against a Postgres service container, and a Changesets-versioning step lands. A `CHANGELOG.md` entry exists for the initial release.
 
 ## Prerequisites
 
@@ -56,7 +56,7 @@ Add Playwright e2e specs and a CI pipeline that runs unit + integration + e2e ag
    2. The existing `.github/setup` composite action (Node 22, pnpm, install).
    3. `pnpm --filter platform db:migrate` with `DATABASE_URL=postgres://platform:platform@localhost:5432/platform`.
    4. `pnpm --filter platform gen` (so generated code exists even though it's gitignored).
-   5. `pnpm typecheck`, `pnpm lint`, `pnpm test:unit`, `pnpm test:integration` in parallel where Turborepo allows.
+   5. `pnpm typecheck`, `pnpm lint`, `pnpm test` in parallel where Turborepo allows.
    6. `pnpm --filter platform exec playwright install --with-deps chromium`.
    7. `pnpm --filter platform build`.
    8. `pnpm --filter platform test:e2e`.
@@ -111,4 +111,4 @@ Add Playwright e2e specs and a CI pipeline that runs unit + integration + e2e ag
 - [ ] `README.md` covers tech stack, use cases, folder structure, and current status per the prompt
 - [ ] `plans/research.md` has no unresolved open items at slice close
 - [ ] `plans/plan.md` Progress Tracking shows all slices and the three Close-out items as done
-- [ ] `pnpm typecheck`, `pnpm lint`, `pnpm test:unit`, `pnpm test:integration`, `pnpm test:e2e` are green locally and in CI
+- [ ] `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm test:e2e` are green locally and in CI

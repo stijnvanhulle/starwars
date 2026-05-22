@@ -28,10 +28,13 @@ The browser talks to a single `Next.js` API. Character endpoints are a server-si
 
 ## Ground Rules
 
-- **Layered architecture**: Route handler → `Service` → `Repository` → `Drizzle`. Each layer has exactly one concern. The `Repository` is the **only** place `Drizzle` is imported.
-- **Contract-first**: One `OpenAPI 3.1` spec for the frontend-facing API (`api.openapi.yaml`, documents `/api/team` + the shared `Character` schema) and one for `starwars-api` (server-only). `Kubb` is the source of truth for types and `Zod`. The frontend never imports the `starwars-api` contract.
-- **One API for the browser**: The browser only talks to `/api/*` and every path it uses is documented in `api.openapi.yaml`. Character data is resolved server-side from the source API and reshaped before responding, so the frontend depends on a single contract and a single generated client.
-- **Test-first where it pays**: Service rules (cap of 5, evil guard) and the `isDarkSide` util get unit/integration tests **before** UI work in their phase. Pure presentational components do not block on tests.
+- **Layered architecture**: Route handler → `Service` → `Repository` → `DB`. Each layer has exactly one concern.\
+  The `Repository` is the **only** place `Drizzle` is imported.
+
+- **Contract-first**: One `OpenAPI 3.1` spec for the frontend-facing API (`api.openapi.yaml`, documents `/api/team` + the shared `Character` schema) and one for `starwars-api` (server-only).\
+  `Kubb` is the source of truth for types and `Zod`. The frontend never imports the `starwars-api` contract.
+
+- **Test-first approach**: Service rules and the `isDarkSide` util get unit/integration tests **before** UI work in their phase. Pure presentational components do not block on tests.
 - **Independent phases**: Each `plans/00X-*.md` boots from a fresh `pnpm install` and ends in a runnable, demoable state.
 - **No premature abstraction**: Components live in `packages/components` only once a second consumer exists or they're explicitly part of the design system shell (sidebar, card). Otherwise they stay in `apps/platform`.
 
@@ -39,21 +42,21 @@ The browser talks to a single `Next.js` API. Character endpoints are a server-si
 
 ```mermaid
 flowchart LR
-  subgraph browser["Browser, apps/platform"]
-    ui["React + MUI components"]
-    api["api (RTK Query → Kubb fetch client)<br/>single slice, /api/* only"]
-    ui --> api
+  subgraph browser["Browser"]
+    ui["React + MUI"]
+    rtk["api (RTK Query)"]
+    ui --> rtk
   end
 
-  `starwars-api`[("starwars-api<br/>`starwars-api` static JSON")]
+  starwarsApi[("starwars-api")]
 
-  subgraph nextapi["Next.js route handlers, /api/*"]
-    chRoute["/api/characters route.ts<br/>thin proxy"]
-    teamRoute["/api/team route.ts<br/>thin: parse + map errors"]
-    fetcher["starwars-api fetcher<br/>request-scoped cache, server-only"]
-    service["TeamService, scoped to default team<br/>cap of 5, evil guard"]
-    teamRepo["TeamRepository, Drizzle"]
-    memberRepo["TeamMemberRepository, Drizzle"]
+  subgraph nextapi["Next.js /api/*"]
+    chRoute["/api/characters"]
+    teamRoute["/api/team"]
+    fetcher["fetcher"]
+    service["TeamService"]
+    teamRepo["TeamRepository"]
+    memberRepo["TeamMemberRepository"]
     chRoute --> fetcher
     teamRoute --> service
     service --> fetcher
@@ -62,16 +65,16 @@ flowchart LR
   end
 
   subgraph pg["Postgres"]
-    teams[("teams<br/>seeded: slug = 'default'")]
-    members[("team_members<br/>FK teamId → teams.id")]
-    teams -- "1..N" --> members
+    teams[("teams")]
+    members[("team_members")]
+    teams --> members
   end
 
-  api -- "GET /api/characters<br/>GET /api/characters/:id<br/>GET/POST/DELETE /api/team" --> chRoute
-  api -- "(team paths)" --> teamRoute
-  fetcher -- "GET /all.json<br/>GET /id/{id}.json" --> `starwars-api`
-  teamRepo -- "SELECT slug='default'" --> teams
-  memberRepo -- "SELECT / INSERT / DELETE<br/>WHERE teamId = :default" --> members
+  rtk --> chRoute
+  rtk --> teamRoute
+  fetcher --> starwarsApi
+  teamRepo --> teams
+  memberRepo --> members
 ```
 
 ## Project Structure
@@ -88,7 +91,7 @@ apps/platform/
     db/                           # schema, client, migrations
     gen/                          # Kubb output: api/ (frontend) + starwars/ (server, gitignored)
     lib/                          # evil rules, helpers
-  tests/                          # Vitest
+  # Tests colocate next to source: foo.ts ↔ foo.test.ts
   e2e/                            # Playwright
   kubb.config.ts
   openapi/
@@ -130,15 +133,15 @@ The slice files in `plans/00X-*.md` are this feature's `tasks.md` equivalent, sp
 
 ### Execution Slices (one file each)
 
-| Slice file                 | Depends on                                   | Demoable outcome                                                                                                                                                                                                                                                                                                                                                                                                 |
-| -------------------------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `plans/001-setup.md`       | none                                         | `pnpm dev` serves an `MUI`-themed `Next.js` page at `localhost:3000`. `pnpm typecheck`/`lint`/`test` green. `packages/core` and `packages/demo` removed.                                                                                                                                                                                                                                                         |
-| `plans/002-database.md`    | 001                                          | `docker compose up -d postgres && pnpm --filter platform db:migrate` creates `teams` and `team_members` and seeds the default team. Repository CRUD covered by `Vitest` integration tests against a real `Postgres`.                                                                                                                                                                                             |
-| `plans/003-design.md`      | 001                                          | Design tokens land in the `MUI` theme (palette, typography, spacing, radius). `packages/components` exports the layout shell (`<AppShell />`, `<TeamSidebar />` placeholder, `<CharacterCard />`, `<StatePanel />` for loading/empty/error). Storybook-style preview route `/design` renders every component in each state. Screen sketches for `/`, `/characters/[id]`, `/team` checked into `plans/design.md`. |
-| `plans/004-api.md`         | 002 + Planning Phase 1 `api.yaml` + `starwars.yaml` | `/api/characters` (proxy) and `/api/team` route handlers. Proxy uses a server-only `starwars-api` fetcher; team handlers go through `Service` + `Repository`. `isDarkSide` stub returns `false` with a `TODO(006)`. Duplicate POST → 409. Sixth POST → 422 `TEAM_FULL`. Integration tests green.                                                                                                                  |
-| `plans/005-client-kubb.md` | 003 + 004                                    | `pnpm --filter platform gen` produces `src/gen/api/` (types + client + `Zod`, for the browser) and `src/gen/starwars/` (types + `Zod`, server-only). `store.ts` wires the single `api` RTK Query slice into `<Providers>`.                                                                                                                                                                                       |
-| `plans/006-features.md`    | 005                                          | All UI requirements live: list, detail with prev/next, persistent `<TeamSidebar />`, `/team`, real `isDarkSide`, evil-Add disabled. Screens built from the 003 components. `Vitest` covers `isDarkSide` and key components.                                                                                                                                                                                      |
-| `plans/007-testing.md`     | 006                                          | `Playwright` specs cover browse/team/cap/evil. CI runs `Postgres` service container, migrations, unit + integration + e2e. One `Changesets` entry.                                                                                                                                                                                                                                                               |
+| Slice file                 | Depends on                                          | Demoable outcome                                                                                                                                                                                                                                                                                                                                                                                                 |
+| -------------------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `plans/001-setup.md`       | none                                                | `pnpm dev` serves an `MUI`-themed `Next.js` page at `localhost:3000`. `pnpm typecheck`/`lint`/`test` green. `packages/core` and `packages/demo` removed.                                                                                                                                                                                                                                                         |
+| `plans/002-database.md`    | 001                                                 | `docker compose up -d postgres && pnpm --filter platform db:migrate` creates `teams` and `team_members` and seeds the default team. Repository CRUD covered by `Vitest` integration tests against a real `Postgres`.                                                                                                                                                                                             |
+| `plans/003-design.md`      | 001                                                 | Design tokens land in the `MUI` theme (palette, typography, spacing, radius). `packages/components` exports the layout shell (`<AppShell />`, `<TeamSidebar />` placeholder, `<CharacterCard />`, `<StatePanel />` for loading/empty/error). Storybook-style preview route `/design` renders every component in each state. Screen sketches for `/`, `/characters/[id]`, `/team` checked into `plans/design.md`. |
+| `plans/004-api.md`         | 002 + Planning Phase 1 `api.yaml` + `starwars.yaml` | `/api/characters` (proxy) and `/api/team` route handlers. Proxy uses a server-only `starwars-api` fetcher; team handlers go through `Service` + `Repository`. `isDarkSide` stub returns `false` with a `TODO(006)`. Duplicate POST → 409. Sixth POST → 422 `TEAM_FULL`. Integration tests green.                                                                                                                 |
+| `plans/005-client-kubb.md` | 003 + 004                                           | `pnpm --filter platform gen` produces `src/gen/api/` (types + client + `Zod`, for the browser) and `src/gen/starwars/` (types + `Zod`, server-only). `store.ts` wires the single `api` RTK Query slice into `<Providers>`.                                                                                                                                                                                       |
+| `plans/006-features.md`    | 005                                                 | All UI requirements live: list, detail with prev/next, persistent `<TeamSidebar />`, `/team`, real `isDarkSide`, evil-Add disabled. Screens built from the 003 components. `Vitest` covers `isDarkSide` and key components.                                                                                                                                                                                      |
+| `plans/007-testing.md`     | 006                                                 | `Playwright` specs cover browse/team/cap/evil. CI runs `Postgres` service container, migrations, unit + integration + e2e. One `Changesets` entry.                                                                                                                                                                                                                                                               |
 
 ## Planning Phase 3: Frontend Design
 
@@ -156,12 +159,12 @@ Gate for Slice 003: `plans/design.md` has tokens, layout shell, one sketch per s
 
 ## Complexity Tracking
 
-| Item                                         | Justification                                                                                                                                               |
-| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Item                                         | Justification                                                                                                                                                                                                                                                                         |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Two `OpenAPI` specs instead of one           | One contract for the frontend (`api.yaml`, every endpoint the browser calls plus the shared schemas), one for the source API (server-only, used to type the proxy fetcher). The browser depends on a single contract and never sees the source-API spec. Cost: one extra `yaml` file. |
-| Server-side proxy for character data         | Avoids leaking the source-API URL to the browser, lets us cache and rate-limit centrally, and keeps the frontend on a single contract and a single generated client. Cost: two extra route handlers and a small fetch wrapper. |
-| `Drizzle` + `Postgres` for a single team row | The prompt explicitly requires the `DB` → `Repository` → `Service` → API layering. A simpler in-memory store would not satisfy that.                        |
-| `packages/components` from day one           | The prompt asks for it. Initial cost is one placeholder export; real components arrive in Slice 006.                                                        |
+| Server-side proxy for character data         | Avoids leaking the source-API URL to the browser, lets us cache and rate-limit centrally, and keeps the frontend on a single contract and a single generated client. Cost: two extra route handlers and a small fetch wrapper.                                                        |
+| `Drizzle` + `Postgres` for a single team row | The prompt explicitly requires the `DB` → `Repository` → `Service` → API layering. A simpler in-memory store would not satisfy that.                                                                                                                                                  |
+| `packages/components` from day one           | The prompt asks for it. Initial cost is one placeholder export; real components arrive in Slice 006.                                                                                                                                                                                  |
 
 ## Progress Tracking
 
@@ -208,7 +211,7 @@ Gate for Slice 003: `plans/design.md` has tokens, layout shell, one sketch per s
 - [ ] `Changesets` entry
 - [ ] `README.md` updated, tech stack, use cases, folder structure
 - [ ] `AGENTS.md` / `CLAUDE.md` refreshed:
-  - New scripts: `dev`, `db:migrate`, `db:generate`, `db:studio`, `gen`, `test:unit`, `test:integration`, `test:e2e`
+  - New scripts: `dev`, `db:migrate`, `db:generate`, `db:studio`, `gen`, `test`, `test:e2e`
   - New workspace layout: `apps/platform`, `packages/components`; `packages/core` and `packages/demo` removed
   - Skill notes: Drizzle in repositories only, Kubb's regen step, the `isDarkSide` single-implementation rule
 - [ ] `plans/research.md` open items closed or moved to follow-up issues
