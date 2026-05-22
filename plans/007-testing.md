@@ -90,8 +90,8 @@ No new product features. If a quickstart scenario fails in Playwright, the fix l
 - `.github/workflows/release.yml` — created (Changesets action)
 - `.changeset/*.md` — created (initial release entry)
 - `README.md` — modified (tech stack, use cases, folder structure, status)
-- `plans/research.md` — modified (close-out open items)
-- `plans/plan.md` — modified (flip the three Close-out checkboxes to done)
+- `plans/research.md` — modified (final open-item close-out)
+- `plans/plan.md` — modified (flip the relevant checkboxes to done)
 
 ## Verification
 

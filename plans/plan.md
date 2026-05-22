@@ -8,7 +8,7 @@ Transform the current `TypeScript` library monorepo into a `Next.js` app that br
 
 ## Phase Map
 
-- **Planning Phases (0 / 1 / 2)** — produce docs in `plans/` (`spec.md`, `research.md`, `data-model.md`, `contracts/*.yaml`, `quickstart.md`, and the seven slice files). No code.
+- **Planning Phases (0 / 1 / 2 / 3)** — produce docs in `plans/` (`spec.md`, `research.md`, `data-model.md`, `contracts/*.yaml`, `quickstart.md`, `design.md`, and the seven slice files). No code.
 - **Execution Slices (001 – 007)** — produce code. Each boots from a fresh `pnpm install` and ends in a demoable state.
 - Headings are prefixed `Planning Phase N` vs `Slice 00X` throughout so the two tracks never collide.
 - Status tags used in Progress Tracking: `todo` · `in-progress` · `blocked` · `done`.
@@ -128,6 +128,18 @@ The slice files in `plans/00X-*.md` are this feature's `tasks.md` equivalent, sp
 | `plans/006-features.md`    | 005                                     | All UI requirements live: list, detail with prev/next, persistent `<TeamSidebar />`, `/team`, real `isDarkSide`, evil-Add disabled. Screens built from the 003 components. `Vitest` covers `isDarkSide` and key components. |
 | `plans/007-testing.md`     | 006                                     | `Playwright` specs cover browse/team/cap/evil. CI runs `Postgres` service container, migrations, unit + integration + e2e. One `Changesets` entry.                                                |
 
+## Planning Phase 3: Frontend Design
+
+**Output**: [`plans/design.md`](./design.md) plus optional artifacts under `plans/design/`.
+
+Three passes, cheapest first. Stop when aligned.
+
+1. **ASCII (required).** Sketch the three screens and the layout shell directly in `plans/design.md`.
+2. **Claude design (optional, hi-fi).** Generate mockups via Claude's frontend-design / Artifacts when visual questions remain. Drop into `plans/design/`.
+3. **Wireframes (optional, formal).** Produce responsive wireframes with state coverage when decomposition is still ambiguous. Drop into `plans/design/`.
+
+Gate for Slice 003: `plans/design.md` has tokens, layout shell, one sketch per screen, component inventory, state matrix, accessibility floor.
+
 ## Complexity Tracking
 
 | Item                                         | Justification                                                                                                                                        |
@@ -162,19 +174,24 @@ The slice files in `plans/00X-*.md` are this feature's `tasks.md` equivalent, sp
 
 ### Execution Slices (each ends in a demoable state)
 
-- [ ] **001-setup** — _todo_ — depends on: — — `pnpm dev` boots MUI Next.js page; templates removed
-- [ ] **002-database** — _todo_ — depends on: 001 — `db:migrate` creates `team_members`; repo CRUD integration-tested
-- [ ] **003-design** — _todo_ — depends on: 001 — MUI theme tokens; `packages/components` shell (`<AppShell />`, `<TeamSidebar />` placeholder, `<CharacterCard />`, `<StatePanel />`); `/design` preview route
-- [ ] **004-api** — _todo_ — depends on: 002, Planning Phase 1 team contract — `/api/team` handlers + Service + Repository; 409/422 paths green
-- [ ] **005-client-kubb** — _todo_ — depends on: 003, 004, Planning Phase 1 starwars contract — `pnpm gen` emits `src/gen/`; RTK Query wired
-- [ ] **006-features** — _todo_ — depends on: 005 — list, detail (prev/next), `<TeamSidebar />`, `/team`, real `isDarkSide`
-- [ ] **007-testing** — _todo_ — depends on: 006 — Playwright e2e; CI runs Postgres + migrations + unit + integration + e2e
+- [ ] **001-setup** — _todo_
+- [ ] **002-database** — _todo_
+- [ ] **003-design** — _todo_
+- [ ] **004-api** — _todo_
+- [ ] **005-client-kubb** — _todo_
+- [ ] **006-features** — _todo_
+- [ ] **007-testing** — _todo_
 
-### Closeout
+### Final checks
 
-- [ ] Global verification — _todo_ — `quickstart.md` walked end-to-end against a clean checkout
-- [ ] `Changesets` entry — _todo_
-- [ ] `README.md` updated — _todo_ — tech stack, use cases, folder structure
+- [ ] Global verification — `quickstart.md` walked end-to-end against a clean checkout
+- [ ] `Changesets` entry
+- [ ] `README.md` updated — tech stack, use cases, folder structure
+- [ ] `AGENTS.md` / `CLAUDE.md` refreshed:
+  - New scripts: `dev`, `db:migrate`, `db:generate`, `db:studio`, `gen`, `test:unit`, `test:integration`, `test:e2e`
+  - New workspace layout: `apps/platform`, `packages/components`; `packages/core` and `packages/demo` removed
+  - Skill notes: Drizzle in repositories only, Kubb's regen step, the `isDarkSide` single-implementation rule
+- [ ] `plans/research.md` open items closed or moved to follow-up issues
 
 ## Evil rule (referenced from Planning Phase 1's `data-model.md` and Slice 006)
 
