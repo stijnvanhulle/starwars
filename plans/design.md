@@ -166,8 +166,8 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 - **Card.** White, `radius.lg` (16px), `border.card` (1px `neutral.200`). Square media + body (just the character's name as H3). No height/mass/affiliations preview, the spec puts those on the detail page. On hover: border-color flips to `accent.500`, no movement.
 - **Badges.** Top-left chip on the media: `On team` (pink solid) or `Dark side` (red solid), uppercase. Solid background only, no blur.
 - **Component.** `<CharacterCard name image onClick badge?>` from `packages/components`.
-- **Data.** `useGetAllCharactersQuery()` from `starwarsApi`, joined with `useListTeamQuery()` for the "On team" badge.
-- **States.** Loading → `<StatePanel variant="loading">`. Error → `<StatePanel variant="error" action={retry}>`. Empty (guard only; `akabab` always has data) → `<StatePanel variant="empty">`.
+- **Data.** `useListCharactersQuery()` from the single `api` slice (hits `/api/characters`, server-proxied from `starwars-api`), joined with `useListTeamQuery()` for the "On team" badge.
+- **States.** Loading → `<StatePanel variant="loading">`. Error → `<StatePanel variant="error" action={retry}>` (proxy may surface `502 BAD_GATEWAY` if the `starwars-api` is down). Empty (guard only; the `starwars-api` always has data) → `<StatePanel variant="empty">`.
 - The filter chip row from earlier mockups is dropped: the app doesn't show one and the spec doesn't ask for it.
 
 ### `/characters/[id]`: Character detail
@@ -206,7 +206,7 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 - **Action bar.** Wraps the primary CTA in a colored box: red-tinted with a warning icon + copy for the evil path; on the non-evil path it's just the pink Add button without a banner.
 - **`<ActionButton>` states.** Default pink (`accent.500`); hover `accent.600`; pressed `accent.700`; disabled `neutral.200` bg + `neutral.400` text + `disabledReason` tooltip on hover / `focus-within`. Already-on-team flips to outlined navy "Remove from team".
 - **Prev/Next.** First character's `Prev` is disabled (not wrapping). Last character's `Next` is disabled.
-- **Data.** `useGetCharacterQuery(id)` hero; `useGetAllCharactersQuery()` for prev/next + `masterNames`; `useListTeamQuery()` for membership.
+- **Data.** `useGetCharacterQuery(id)` hero; `useListCharactersQuery()` for prev/next (server already resolved `masters` to names, so `masterNames` is derived from `character.masters` directly); `useListTeamQuery()` for membership.
 
 ### `/team`: Team management
 
@@ -230,10 +230,10 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 ```
 
 - **Page header.** Breadcrumb (`Team`) + H1 + lead on the left, progress pill on the right: tabular `N / 5` label + five dots (filled pink for taken, gray `neutral.200` for open).
-- **Member rows.** White cards with `radius.lg` (16px) + `border.card`. Layout: 72px rounded-square avatar | name | Remove pill. Just the name — no affiliations, no invented "role" eyebrow. The spec only requires identifying members + a remove control; affiliations live on the detail page. Remove button is outline by default; on hover its border, bg, and text all flip to `semantic.error` family.
+- **Member rows.** White cards with `radius.lg` (16px) + `border.card`. Layout: 72px rounded-square avatar | name | Remove pill. Just the name, no affiliations, no invented "role" eyebrow. The spec only requires identifying members + a remove control; affiliations live on the detail page. Remove button is outline by default; on hover its border, bg, and text all flip to `semantic.error` family.
 - **Empty team.** When `team.length === 0`, the member list is replaced by `<StatePanel variant="empty" title="No team yet" description="Add characters from a detail page." action={...}>`. The empty-slot CTA cards from earlier mockups are dropped (not in spec, the app uses StatePanel for empty states).
 - **Component.** `<TeamMemberRow avatar name meta onRemove>`. The team panel reuses a compact variant (smaller avatar, single-line name, no meta chips).
-- **Data.** `useListTeamQuery()` joined locally with `useGetAllCharactersQuery()` for name/image/affiliations (the team API stores `characterId` only).
+- **Data.** `useListTeamQuery()` joined locally with `useListCharactersQuery()` for name/image/affiliations (the team API stores `characterId` only).
 
 ## Component inventory
 

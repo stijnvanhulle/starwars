@@ -4,7 +4,7 @@ This is the Phase 0 spec. It captures what we're building before any code lands,
 
 ## What it does
 
-You land on the home page and see a list of Star Wars characters pulled live from `akabab`. Click one and you're on its detail page (name, image, height, mass, affiliations) with `Prev` and `Next` to walk through the roster without going back to the list.
+You land on the home page and see a list of Star Wars characters, served by our `/api/characters` (a thin Next.js proxy in front of `starwars-api`). Click one and you're on its detail page (name, image, height, mass, affiliations) with `Prev` and `Next` to walk through the characters without going back to the list. The browser only ever talks to `/api/*`; the `starwars-api` URL is a server-side concern.
 
 From any detail page you can add the character to your team or kick them out. The team is shared (no auth): everyone hits a single seeded **default team** (`slug = 'default'`) that lives in Postgres alongside its members. It's visible everywhere through a sidebar. There's also a `/team` page if you'd rather manage it from one screen. The schema already carries a `Team` table so multi-team support is a future feature, not a migration, but only the default team is wired in.
 
@@ -12,7 +12,7 @@ Two rules the team has to obey: max five members, and nobody evil. Both are enfo
 
 ## User scenarios
 
-1. **Browse characters**. A visitor lands on `/` and sees a list of Star Wars characters fetched from `akabab`. Each item shows enough to identify the character (name + image) and links to a detail page.
+1. **Browse characters**. A visitor lands on `/` and sees a list of Star Wars characters fetched from `/api/characters` (server proxies `starwars-api`). Each item shows enough to identify the character (name + image) and links to a detail page.
 2. **View a character**. From the list, the visitor opens `/characters/[id]`. The page shows `name`, `image`, `height`, `mass`, and `affiliations`.
 3. **Navigate between characters**. On the detail page, `Prev` and `Next` buttons move to the adjacent character in the list without going back to `/`.
 4. **Add or remove from the team**. On the detail page, the visitor adds the character to the team or removes them. Evil characters cannot be added; the `Add` button is disabled with a tooltip explaining why.
@@ -24,7 +24,7 @@ Two rules the team has to obey: max five members, and nobody evil. Both are enfo
 
 One per requirement bullet from `prompt.md`. Each one is something we can write a test for.
 
-- **FR-1** The home page (`/`) lists characters from `akabab`'s `GET /all.json`.
+- **FR-1** The home page (`/`) lists characters from `GET /api/characters` (server proxies `starwars-api`'s `/all.json`). The browser does not call the `starwars-api` directly.
 - **FR-2** Every character has its own detail page at `/characters/[id]`.
 - **FR-3** That detail page shows the character's name, image, height, mass, and affiliations.
 - **FR-4** `Prev` and `Next` on the detail page move along the list order, with no detour through `/`.
@@ -34,7 +34,7 @@ One per requirement bullet from `prompt.md`. Each one is something we can write 
 
 ## Key entities
 
-- **`Character`**: comes from `akabab`, read-only. The UI uses `id`, `name`, `image`, `height`, `mass`, `affiliations`. The server's `isDarkSide` also looks at `masters` (and deliberately ignores `formerAffiliations`).
+- **`Character`**: comes from `/api/characters` (a server-side proxy in front of `starwars-api`), read-only. The UI uses `id`, `name`, `image`, `height`, `mass`, `affiliations`. The server's `isDarkSide` also looks at `masters` (and deliberately ignores `formerAffiliations`).
 - **`Team`**: ours, seeded. `id uuid pk`, `slug text unique`, `name text`, `createdAt timestamptz default now`. One row (`slug = 'default'`) inserted by the initial migration. The schema is multi-team ready; the app only uses the default.
 - **`TeamMember`**: ours, writable. `id uuid pk`, `teamId uuid fk → teams.id` (cascade), `characterId int`, `addedAt timestamptz default now`. Composite unique on `(teamId, characterId)`. Invariant: at most five rows per `teamId`, enforced in the service (not as a DB check, since the message needs to surface as a typed API error).
 
@@ -42,7 +42,7 @@ One per requirement bullet from `prompt.md`. Each one is something we can write 
 
 One row per requirement bullet in `prompt.md`. Each maps to a numbered scenario in `quickstart.md`.
 
-- [ ] **AC-1** `/` renders the character list from `akabab`. → quickstart §1
+- [ ] **AC-1** `/` renders the character list from `/api/characters`. The browser's network panel shows zero requests to `starwars-api` host. → quickstart §1
 - [ ] **AC-2** Every character has a reachable detail page at `/characters/[id]`. → quickstart §2
 - [ ] **AC-3** The detail page shows name, image, height, mass, and affiliations. → quickstart §2
 - [ ] **AC-4** `Prev` / `Next` on the detail page walk the list order. → quickstart §3

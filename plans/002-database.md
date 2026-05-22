@@ -89,7 +89,7 @@ Slice 001 is done. `data-model.md` is the source of truth for the table shape.
 - [ ] `apps/platform/src/db/migrations/0001_default_team.sql` inserts the default team idempotently
 - [ ] `pnpm --filter platform db:migrate` is idempotent (running twice leaves exactly one `slug = 'default'` row) and reports success
 - [ ] `TeamRepository` exposes `findBySlug`, `findDefault`
-- [ ] `TeamMemberRepository` exposes `insert`, `findAllByTeam`, `findByTeamAndCharacterId`, `deleteByTeamAndCharacterId`, `countByTeam` — all scoped by `teamId`
+- [ ] `TeamMemberRepository` exposes `insert`, `findAllByTeam`, `findByTeamAndCharacterId`, `deleteByTeamAndCharacterId`, `countByTeam`, all scoped by `teamId`
 - [ ] `drizzle-orm` is imported only from files under `apps/platform/src/db/**` and `apps/platform/src/server/repositories/**`
 - [ ] Integration tests cover the cases in step 11 (both repositories) and pass against the real container
 - [ ] `pnpm typecheck`, `pnpm lint`, `pnpm test:integration` are green

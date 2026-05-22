@@ -21,7 +21,7 @@ None. This is the first execution slice.
 5. **Wire the providers** in `apps/platform/src/app/layout.tsx`. Wrap children in `<AppRouterCacheProvider>` then `<ThemeProvider theme={lightTheme}>` and `<CssBaseline />`. Body uses the theme's font stack.
 6. **Build the placeholder home page** at `apps/platform/src/app/page.tsx`. One `Container`, one `Typography variant="h3"` with the app name ("Whale Star Wars Team Builder"), one `Button variant="contained"` that does nothing. Enough surface to confirm the theme is alive.
 7. **Scaffold `packages/components`** with `package.json` (`name: "@stijnvanhulle/components"`, `type: "module"`, `exports` field pointing at `dist/index.js`), `tsconfig.json`, `tsdown.config.ts`, and `src/index.ts` exporting a single placeholder named export (e.g. `export const PLACEHOLDER = "components";`). Real components arrive in Slice 003. Add it as a dependency in `apps/platform/package.json` (`"workspace:*"`).
-8. **Allow remote images from `akabab`.** In `apps/platform/next.config.ts`, add `images.remotePatterns` for `https://akabab.github.io/starwars-api/api/**`.
+8. **Allow remote images from the `starwars-api` image CDN.** Even though the data API is proxied, character images stay on their original CDN URLs (the proxy returns the URL verbatim; proxying image bytes is out of scope). In `apps/platform/next.config.ts`, add `images.remotePatterns` for `https://akabab.github.io/starwars-api/api/**` and any other host the `starwars-api` payload references.
 9. **Update root scripts.** Adjust the root `package.json`:
    - `dev`: `turbo run dev --filter=@stijnvanhulle/platform`
    - `build`: extend the existing filter to include `apps/*`
@@ -66,7 +66,7 @@ None. This is the first execution slice.
 - [ ] `packages/core` and `packages/demo` deleted; no dangling references in configs or scripts
 - [ ] `apps/platform` boots via `pnpm dev` and renders an `MUI`-themed page at `/`
 - [ ] `AppRouterCacheProvider` + `ThemeProvider` + `CssBaseline` wrap the app in `layout.tsx`
-- [ ] `next.config.ts` allows `akabab` image URLs
+- [ ] `next.config.ts` allows `starwars-api` image URLs
 - [ ] `packages/components` exists with a placeholder export and is linked from `apps/platform`
 - [ ] `pnpm typecheck`, `pnpm lint`, `pnpm test` all green
 - [ ] No code in this slice imports `Drizzle`, `Redux`, `Kubb`, or anything outside Next + MUI (those belong to later slices)

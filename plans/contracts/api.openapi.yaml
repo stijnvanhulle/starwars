@@ -1,0 +1,283 @@
+openapi: 3.1.0
+info:
+  title: Whale Star Wars API
+  version: 0.1.0
+  description: |
+    Read Star Wars characters and manage the active team. A team holds at most five members,
+    and evil characters cannot join.
+  contact:
+    name: Whale team
+    url: https://github.com/stijnvanhulle/starwars/issues
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+
+tags:
+  - name: characters
+    description: Read Star Wars character data.
+  - name: team
+    description: Read, add, and remove team members.
+
+servers:
+  - url: /
+    description: Same-origin app.
+
+security: []
+
+paths:
+  /api/characters:
+    get:
+      operationId: listCharacters
+      summary: List every character
+      description: Returns the full list of Star Wars characters.
+      tags:
+        - characters
+      responses:
+        '200':
+          description: Every known character.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Character'
+
+  /api/characters/{id}:
+    get:
+      operationId: getCharacter
+      summary: Get one character by id
+      description: Returns a single character by id.
+      tags:
+        - characters
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The character id.
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: The character.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Character'
+        '404':
+          description: No character exists with this id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                notFound:
+                  value:
+                    code: NOT_FOUND
+                    message: Character 9999 does not exist.
+
+  /api/team:
+    get:
+      operationId: getTeam
+      summary: List the active team
+      description: Returns every team member, sorted oldest first by the time they were added.
+      tags:
+        - team
+      responses:
+        '200':
+          description: The active team. An empty array means no members have been added yet.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TeamMember'
+
+    post:
+      operationId: addTeamMember
+      summary: Add a character to the team
+      description: |
+        Adds a character to the active team. The request is rejected if the character
+        is already a member, if the team already has five members, if the character is
+        evil, or if no character exists with the given id.
+      tags:
+        - team
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddTeamMemberRequest'
+      responses:
+        '201':
+          description: The character was added and the new team member is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamMember'
+        '404':
+          description: No character exists with this id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                notFound:
+                  value:
+                    code: NOT_FOUND
+                    message: Character 9999 does not exist.
+        '409':
+          description: The character is already on the team.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                alreadyMember:
+                  value:
+                    code: ALREADY_MEMBER
+                    message: Character 1 is already on the team.
+        '422':
+          description: The request was well-formed but a business rule was violated, either because the team is full or because the character is evil.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                teamFull:
+                  value:
+                    code: TEAM_FULL
+                    message: The team already has five members.
+                evilForbidden:
+                  value:
+                    code: EVIL_FORBIDDEN
+                    message: Darth Vader is evil and cannot join the team.
+
+  /api/team/{characterId}:
+    delete:
+      operationId: removeTeamMember
+      summary: Remove a character from the team
+      description: |
+        Removes a character from the active team. The endpoint returns the same response
+        whether the character was on the team or not.
+      tags:
+        - team
+      parameters:
+        - name: characterId
+          in: path
+          required: true
+          description: The character id.
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '204':
+          description: The character was removed, or was never on the team.
+
+components:
+  schemas:
+    TeamMember:
+      type: object
+      required:
+        - id
+        - teamId
+        - characterId
+        - addedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Server-generated primary key.
+          example: 3f0b2a3e-5b6e-4a3c-8f1c-2d4f6a8b0c1d
+        teamId:
+          type: string
+          format: uuid
+          description: The team this member belongs to.
+          example: 7a1c9d6e-0f2b-4b8a-9f3d-1c2e3a4b5c6d
+        characterId:
+          type: integer
+          minimum: 1
+          description: The character id. Each character can appear at most once per team.
+          example: 1
+        addedAt:
+          type: string
+          format: date-time
+          description: When the member was added, in UTC. The team list is sorted oldest first by this value.
+          example: '2026-05-22T10:15:30.000Z'
+
+    Character:
+      type: object
+      description: A Star Wars character.
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          minimum: 1
+          example: 1
+        name:
+          type: string
+          example: Luke Skywalker
+        image:
+          type: string
+          format: uri
+          description: URL of the character portrait.
+          example: https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg
+        height:
+          type: number
+          description: Height in meters.
+          example: 1.72
+        mass:
+          type: number
+          description: Mass in kilograms.
+          example: 73
+        affiliations:
+          type: array
+          description: Groups the character is currently affiliated with.
+          items:
+            type: string
+          example:
+            - Jedi Order
+            - Rebel Alliance
+        formerAffiliations:
+          type: array
+          description: Groups the character used to be affiliated with.
+          items:
+            type: string
+        masters:
+          type: array
+          description: Names of the character's masters.
+          items:
+            type: string
+          example:
+            - Obi-Wan Kenobi
+            - Yoda
+
+    AddTeamMemberRequest:
+      type: object
+      required:
+        - characterId
+      properties:
+        characterId:
+          type: integer
+          minimum: 1
+          example: 1
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          enum:
+            - NOT_FOUND
+            - ALREADY_MEMBER
+            - TEAM_FULL
+            - EVIL_FORBIDDEN
+          description: Machine-readable error code. The HTTP status narrows which values can appear here.
+        message:
+          type: string
+          description: Human-readable explanation of the error.

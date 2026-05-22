@@ -8,7 +8,7 @@ info:
   description: |
     Read-only static JSON published as GitHub Pages.
   license:
-    name: See upstream repository
+    name: See repository
     url: https://github.com/akabab/starwars-api
   contact:
     name: akabab/starwars-api

@@ -11,7 +11,7 @@ Add Playwright e2e specs and a CI pipeline that runs unit + integration + e2e ag
 ## Prerequisites
 
 - Slice 006 is done. Every quickstart scenario passes manually.
-- `akabab` is rate-limited from CI, so the e2e specs must mock it at the network layer rather than hitting the real host.
+- The `starwars-api` is rate-limited from CI. Since the browser only talks to `/api/*`, e2e specs mock the `starwars-api` at the **server-side** boundary (the `starwars-api.ts` fetcher) rather than intercepting browser network calls. This keeps the test surface aligned with how the app actually runs.
 
 ## Steps
 
@@ -23,7 +23,7 @@ Add Playwright e2e specs and a CI pipeline that runs unit + integration + e2e ag
    - `projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }]`.
 3. **Add the test setup** at `apps/platform/e2e/setup.ts`. Two helpers:
    - `resetTeam()`: opens a `pg` client, runs `TRUNCATE team_members RESTART IDENTITY`, closes. Called from a `test.beforeEach` in every spec so each test starts from an empty team.
-   - `mockAkabab(page, characters)`: uses `page.route('**/akabab.github.io/**', ...)` to return fixture payloads for `/all.json` and `/id/{id}.json`. Fixtures live at `apps/platform/e2e/fixtures/characters.ts` and include at least: Luke (neutral), Leia (neutral), three more neutrals, Vader (rule 1), a Sith-affiliated character (rule 2), and an apprentice whose `masters` resolve to Vader (rule 3). One fixture file shared by all specs.
+   - **`starwars-api` fixture mode** for the dev server itself. Add an `E2E_FIXTURES=1` env var read inside `src/server/starwars-api.ts`; when set, the module loads `apps/platform/e2e/fixtures/characters.ts` from disk and serves them in place of the real `starwars-api` fetch. The Playwright `webServer.env` passes `E2E_FIXTURES=1`. This keeps the test surface the same as production (browser → `/api/*` → `starwars-api.ts`), only the bottom of that chain is faked. Fixtures include at least: Luke (neutral), Leia (neutral), three more neutrals, Vader (rule 1), a Sith-affiliated character (rule 2), and an apprentice whose `masters` resolve to Vader (rule 3).
 4. **Write `apps/platform/e2e/browse.spec.ts`** for AC-1..AC-4:
    - List loads at `/`, shows the seven fixture characters.
    - Click Luke. URL becomes `/characters/1` (or whatever id the fixture pins). Detail shows name, image, height, mass, affiliations.
@@ -103,7 +103,7 @@ Add Playwright e2e specs and a CI pipeline that runs unit + integration + e2e ag
 ## Done criteria
 
 - [ ] Four Playwright specs cover AC-1..AC-9 and pass locally and in CI
-- [ ] `akabab` is mocked at the network boundary in every e2e spec; no real network calls leave CI
+- [ ] The `starwars-api` is faked via the `E2E_FIXTURES=1` server-side switch; no real network calls leave CI and the browser still hits only `/api/*`
 - [ ] `apps/platform/playwright.config.ts` runs against the built app (`pnpm start`), not the dev server, in CI
 - [ ] CI runs unit, integration, and e2e against a `postgres:17-alpine` service container on every push
 - [ ] CI uploads the Playwright report on failure

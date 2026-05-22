@@ -26,7 +26,7 @@ Covers **AC-1**.
 
 1. Open `http://localhost:3000/`.
 2. The page shows a grid of Star Wars characters. Each card has a name and an image.
-3. Network panel confirms one request to `akabab` (`/all.json`), no proxy through `/api`.
+3. Network panel confirms one request to `/api/characters` and **zero** requests to `akabab.github.io` or any other `starwars-api` host. The character data is proxied server-side.
 
 Pass when: the list is non-empty and every visible card has a name + image.
 
@@ -38,7 +38,7 @@ Covers **AC-2** and **AC-3**.
 2. URL becomes `/characters/[id]`.
 3. The page renders, in this order: name, image, height, mass, affiliations (as a list of chips or comma-separated text, the exact widget is up to Slice 006).
 
-Pass when: all five fields are visible and match the values returned by `GET /id/{id}.json` for that character.
+Pass when: all five fields are visible and match the values returned by `GET /api/characters/{id}` for that character. The browser does not call the `starwars-api` `/id/{id}.json` directly.
 
 ## Scenario 3: prev and next navigate the list
 
