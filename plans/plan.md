@@ -155,7 +155,7 @@ The slice files in `plans/00X-*.md` are this feature's `tasks.md` equivalent, sp
 - [x] `plans/001-setup.md` — _done_
 - [x] `plans/002-database.md` — _done_
 - [x] `plans/003-design.md` — _done_
-- [ ] `plans/004-api.md` — _todo_
+- [x] `plans/004-api.md` — _done_
 - [ ] `plans/005-client-kubb.md` — _todo_
 - [ ] `plans/006-features.md` — _todo_
 - [ ] `plans/007-testing.md` — _todo_
