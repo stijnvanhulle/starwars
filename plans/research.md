@@ -19,7 +19,7 @@ The original six-row table from `plan.md` moves here verbatim.
 | Where does character data live? | Direct `akabab` calls from `RTK Query`. | The prompt doesn't ask us to own character data, and proxying it through Next would just add latency for no win. |
 | Where does the team live? | `Postgres` via `Drizzle`. Single shared team, no auth. | This is a coding test, and one team is enough to exercise the `Repository` → `Service` layering the prompt explicitly wants. |
 | What does `Kubb` generate? | Both APIs. `team.yaml` → types + client + Zod. `starwars.yaml` → types + Zod (no client). | The prompt mandates Kubb. We skip Kubb's client for `starwars` because `RTK Query` is already doing the fetching there. |
-| Which Next.js router? | App Router. | It's the current default, and it's what `AppRouterCacheProvider` needs for MUI v7. |
+| Which Next.js router? | App Router. | It's the current default, and it's what `AppRouterCacheProvider` needs for MUI v9. |
 | Where does the app live? | `apps/platform`, with shared bits in `packages/components`. | Spelled out in the prompt. |
 | What about the template scaffolding? | Delete `packages/core` and `packages/demo`. | They're stand-ins from the monorepo starter and we're not using them. |
 
@@ -39,7 +39,7 @@ These came out of authoring [plans/contracts/team.openapi.yaml](plans/contracts/
 
 ## What this means for the later slices
 
-- **001** scaffolds `apps/platform` (Next.js + MUI v7 + App Router), removes the stub packages, drops in a `packages/components` placeholder, and whitelists `akabab`'s image host in `next.config.ts`.
+- **001** scaffolds `apps/platform` (Next.js + MUI v9 + App Router), removes the stub packages, drops in a `packages/components` placeholder, and whitelists `akabab`'s image host in `next.config.ts`.
 - **002** brings up Postgres 17 + Drizzle with the `pg` driver. `team_members` is the only table; everything else lives in `akabab`.
 - **003** keeps the route handlers thin. The cap of five and the evil guard belong in `TeamService`. `Drizzle` only gets imported inside `TeamMemberRepository`; that's the rule. The handler maps service errors to the four `code` values above, and the `DELETE` handler always returns 204.
 - **004** runs two Kubb pipelines off `plans/contracts/*.yaml`. `RTK Query` does the HTTP for both APIs, picking one `akabab` origin (see open question 1). The team API client is the Kubb-generated one; the starwars side uses Kubb only for types + Zod.

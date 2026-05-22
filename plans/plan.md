@@ -17,13 +17,13 @@ Transform the current `TypeScript` library monorepo into a `Next.js` app that br
 
 | Field            | Value                                                                                          |
 | ---------------- | ---------------------------------------------------------------------------------------------- |
-| Language/Version | `TypeScript` 6.x, Node 22, ESM-only                                                            |
-| Frontend         | `Next.js` (latest, App Router), `React` (Next-bundled), `MUI v7` with `AppRouterCacheProvider` |
-| State / Data     | `Redux Toolkit`, `RTK Query`                                                                   |
-| Codegen          | `Kubb 5.0.0-beta.23` (`adapter-oas`, `plugin-ts`, `plugin-client`, `plugin-zod`)               |
-| Storage          | `Postgres 17` via `Drizzle ORM` + `drizzle-kit`, `pg` driver                                   |
-| Testing          | `Vitest` (unit + integration), `Playwright` (e2e), `Testing Library` (components)              |
-| Tooling          | `pnpm` workspaces, `Turborepo`, `tsdown`, `oxlint`, `oxfmt`, `Changesets`                      |
+| Language/Version | `TypeScript` `^6.0.3`, Node 22, ESM-only                                                       |
+| Frontend         | `Next.js` `16.2.6` (App Router), `React` (Next-bundled), `MUI v9` (`9.0.1`) with `AppRouterCacheProvider` |
+| State / Data     | `@reduxjs/toolkit` `^2.12.0`, `react-redux` `^9.3.0`, `RTK Query` (bundled with RTK)            |
+| Codegen          | `Kubb` `5.0.0-beta.23` (`adapter-oas`, `plugin-ts`, `plugin-client`, `plugin-zod`)              |
+| Storage          | `Postgres 17` via `drizzle-orm` `^0.45.2` + `drizzle-kit` `^0.31.10`, `pg` `^8.21.0` driver (`@types/pg` `^8.20.0`) |
+| Testing          | `Vitest` `^4.1.6` (unit + integration), `@playwright/test` `^1.60.0` (e2e), `Testing Library` (components)  |
+| Tooling          | `pnpm` `11.1.3`, `turbo` `^2.9.14`, `tsdown` `^0.22.0`, `oxlint` `^1.66.0`, `oxfmt` `^0.47.0`, `@changesets/cli` `^2.31.0` |
 | Project Type     | Web — monorepo with `apps/platform` + shared `packages/`                                       |
 
 ## Constitution Check
@@ -152,7 +152,7 @@ The slice files in `plans/00X-*.md` are this feature's `tasks.md` equivalent, sp
 
 ### Planning Phase 2 — Slice files authored
 
-- [ ] `plans/001-setup.md` — _todo_
+- [x] `plans/001-setup.md` — _done_
 - [ ] `plans/002-database.md` — _todo_
 - [ ] `plans/003-design.md` — _todo_
 - [ ] `plans/004-api.md` — _todo_

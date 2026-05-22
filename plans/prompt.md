@@ -4,16 +4,16 @@ We want to create a front-end application that fetches data from a Starwars API 
 
 ## Transform the current template to use following libraries:
 
-* `Next.js` (latest version)
-* `Material UI` as our component library (latest version)
-* `Typescript`
-* `React` (latest version, `Next.js` will already provide the version
-* `Redux`, `Redux Toolkit` for global stores
-* `RTK Query` for fetching data (from our Starwars API)
-* `Playwright` for e2e testing
-* `Vitest` for unit tests and integration tests
-* `Kubb` (v 5.0.0-beta.23) for our generated types and clients
-* Use of `PostgreSQL` as database with `Drizzle ORM` as layer between db and data (use `db` folder)
+* `Next.js` `16.2.6`
+* `Material UI` v9 (`9.0.1`) as our component library
+* `Typescript` `^6.0.3`
+* `React` (`Next.js` 16.2.6 provides the version)
+* `@reduxjs/toolkit` `^2.12.0` and `react-redux` `^9.3.0` for global stores
+* `RTK Query` (bundled with `@reduxjs/toolkit`) for fetching data (from our Starwars API)
+* `@playwright/test` `^1.60.0` for e2e testing
+* `Vitest` `^4.1.6` for unit tests and integration tests
+* `Kubb` `5.0.0-beta.23` for our generated types and clients
+* `PostgreSQL` 17 as database, with `drizzle-orm` `^0.45.2` and `drizzle-kit` `^0.31.10` (driver: `pg` `^8.21.0`, types: `@types/pg` `^8.20.0`) as the layer between db and data (use `db` folder)
 * Use the `Repository` concept to have a layer between `DB` and `services`
 * Use the `Services` concept to have a layer between `Repositories` an `API`
 
