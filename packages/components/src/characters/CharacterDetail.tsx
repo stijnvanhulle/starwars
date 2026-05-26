@@ -1,9 +1,14 @@
+import Alert from '@mui/material/Alert'
+import AlertTitle from '@mui/material/AlertTitle'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
+import Card from '@mui/material/Card'
+import CardMedia from '@mui/material/CardMedia'
+import Chip from '@mui/material/Chip'
+import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { PrimaryButton } from '../common/PrimaryButton'
 import { StatCard } from '../common/StatCard'
-import styles from './CharacterDetail.module.css'
 
 export type CharacterDetailItem = {
   id: number
@@ -31,6 +36,14 @@ export type CharacterDetailProps = {
 const EVIL_REASON = 'Evil characters cannot join the team.'
 const DARTH_OR_SITH = /darth|sith/i
 
+const pagerButtonSx = {
+  borderRadius: 9999,
+  borderWidth: 1.5,
+  fontWeight: 700,
+  fontSize: 13,
+  '&:hover': { borderColor: 'primary.main', color: 'primary.dark' },
+}
+
 export function CharacterDetail({
   character,
   onTeam,
@@ -47,120 +60,115 @@ export function CharacterDetail({
   const showEvilBanner = evil && !onTeam
   const actionLabel = onTeam ? 'Remove from team' : 'Add to team'
   const disabledReason = showEvilBanner ? EVIL_REASON : undefined
-  const darkChip = styles['chip-dark'] ?? ''
 
   return (
-    <Box className={styles.root}>
-      <Box className={styles.pager}>
-        <Box className={styles['pager-nav']}>
-          <Button
-            variant="outlined"
-            color="inherit"
-            onClick={onPrev}
-            disabled={onPrev === undefined}
-            sx={{
-              borderRadius: 9999,
-              borderWidth: 1.5,
-              fontWeight: 700,
-              fontSize: 13,
-              '&:hover': { borderColor: 'primary.main', color: 'primary.dark' },
-            }}
-          >
+    <Box>
+      <Stack direction="row" spacing={2} sx={{ alignItems: 'center', justifyContent: 'space-between', mb: 6 }}>
+        <Stack direction="row" spacing={2}>
+          <Button variant="outlined" color="inherit" onClick={onPrev} disabled={onPrev === undefined} sx={pagerButtonSx}>
             <Box component="span" aria-hidden sx={{ mr: 1 }}>
               ←
             </Box>
             Prev{prevName ? ` (${prevName})` : ''}
           </Button>
-          <Button
-            variant="outlined"
-            color="inherit"
-            onClick={onNext}
-            disabled={onNext === undefined}
-            sx={{
-              borderRadius: 9999,
-              borderWidth: 1.5,
-              fontWeight: 700,
-              fontSize: 13,
-              '&:hover': { borderColor: 'primary.main', color: 'primary.dark' },
-            }}
-          >
+          <Button variant="outlined" color="inherit" onClick={onNext} disabled={onNext === undefined} sx={pagerButtonSx}>
             Next{nextName ? ` (${nextName})` : ''}
             <Box component="span" aria-hidden sx={{ ml: 1 }}>
               →
             </Box>
           </Button>
-        </Box>
+        </Stack>
         {position && (
-          <Box className={styles.position}>
-            <Box component="strong">{position.index}</Box>
-            of {position.total}
-          </Box>
-        )}
-      </Box>
-
-      <Box className={styles.detail}>
-        <Box className={styles.hero}>
-          {character.image && <Box component="img" src={character.image} alt="" />}
-          {showEvilBanner && (
-            <Box component="span" className={styles.heroChip}>
-              Dark side
+          <Typography
+            sx={{
+              fontSize: 12,
+              fontWeight: 600,
+              color: 'text.disabled',
+              letterSpacing: '0.06em',
+              textTransform: 'uppercase',
+              fontVariantNumeric: 'tabular-nums',
+            }}
+          >
+            <Box component="strong" sx={{ color: 'text.primary', fontWeight: 800, mr: 1 }}>
+              {position.index}
             </Box>
+            of {position.total}
+          </Typography>
+        )}
+      </Stack>
+
+      <Card
+        variant="outlined"
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', sm: 'minmax(280px, 360px) minmax(0, 1fr)' },
+          gap: { xs: 6, sm: 8 },
+          p: 6,
+          borderRadius: 4,
+        }}
+      >
+        <Box sx={{ position: 'relative', borderRadius: 3, overflow: 'hidden', bgcolor: 'text.primary', aspectRatio: '4 / 5' }}>
+          {character.image && <CardMedia image={character.image} sx={{ width: '100%', height: '100%' }} />}
+          {showEvilBanner && (
+            <Chip
+              size="small"
+              color="error"
+              label="Dark side"
+              sx={{ position: 'absolute', top: 12, left: 12, fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase' }}
+            />
           )}
         </Box>
 
         <Box>
-          <Typography component="h1" className={styles.name}>
+          <Typography component="h1" sx={{ fontSize: 40, lineHeight: 1.1, fontWeight: 800, letterSpacing: '-0.02em', color: 'text.primary', mb: 5 }}>
             {character.name}
           </Typography>
 
-          <Box className={styles.stats}>
+          <Stack direction="row" spacing={2} sx={{ mb: 6, flexWrap: 'wrap' }}>
             {character.height !== undefined && <StatCard label="Height" value={Math.round(character.height * 100)} unit="cm" />}
             {character.mass !== undefined && <StatCard label="Mass" value={character.mass} unit="kg" />}
-          </Box>
+          </Stack>
 
           {character.affiliations && character.affiliations.length > 0 && (
-            <Box>
-              <Box className={styles.sectionLabel}>Affiliations</Box>
-              <Box className={styles.affiliations}>
+            <Box sx={{ mb: 5 }}>
+              <Typography sx={{ fontSize: 11, fontWeight: 700, color: 'text.disabled', letterSpacing: '0.08em', textTransform: 'uppercase', mb: 2 }}>
+                Affiliations
+              </Typography>
+              <Stack direction="row" spacing={1.5} sx={{ flexWrap: 'wrap', rowGap: 1.5 }}>
                 {character.affiliations.map((a) => {
                   const dark = DARTH_OR_SITH.test(a)
-                  return (
-                    <Box key={a} component="span" className={`${styles.chip} ${dark ? darkChip : ''}`}>
-                      <Box component="span" className={styles.chipDot} />
-                      {a}
-                    </Box>
-                  )
+                  return <Chip key={a} label={a} size="small" color={dark ? 'error' : 'default'} variant={dark ? 'filled' : 'outlined'} />
                 })}
-              </Box>
+              </Stack>
             </Box>
           )}
 
           {showEvilBanner ? (
-            <Box className={styles.actionsBox}>
-              <Box className={styles.actionsIcon}>!</Box>
-              <Box className={styles.actionsCopy}>
-                <Box className={styles.actionsTitle}>On the dark side</Box>
-                <Box className={styles.actionsDesc}>This character is evil and cannot join your team.</Box>
-              </Box>
-              <PrimaryButton label={actionLabel} onClick={onAddOrRemove} loading={loading} disabledReason={disabledReason} />
-            </Box>
+            <Alert
+              severity="error"
+              action={<PrimaryButton label={actionLabel} onClick={onAddOrRemove} loading={loading} disabledReason={disabledReason} />}
+              sx={{ alignItems: 'center', '& .MuiAlert-action': { alignItems: 'center', pt: 0 } }}
+            >
+              <AlertTitle sx={{ mb: 0 }}>On the dark side</AlertTitle>
+              This character is evil and cannot join your team.
+            </Alert>
           ) : (
-            <Box className={styles.actionRow}>
+            <Stack direction="row" spacing={3} sx={{ alignItems: 'center' }}>
               <PrimaryButton label={actionLabel} onClick={onAddOrRemove} loading={loading} />
               {errorMessage !== undefined && (
-                <Typography role="alert" className={styles.errorText}>
+                <Typography role="alert" color="error">
                   {errorMessage}
                 </Typography>
               )}
-            </Box>
+            </Stack>
           )}
           {showEvilBanner && errorMessage !== undefined && (
-            <Typography role="alert" className={styles.errorText} sx={{ mt: 2 }}>
+            <Typography role="alert" color="error" sx={{ mt: 2 }}>
               {errorMessage}
             </Typography>
           )}
         </Box>
-      </Box>
+      </Card>
     </Box>
   )
 }

@@ -3,23 +3,10 @@
 import { useRouter } from 'next/navigation'
 import { CharacterDetail, CharacterDetailSkeleton, StatePanel } from '@stijnvanhulle/components'
 import { describeApiError } from '@/lib/apiError'
+import { isDarkSide } from '@/lib/darkSide'
 import { useAddTeamMemberMutation, useGetCharacterQuery, useGetTeamQuery, useListCharactersQuery, useRemoveTeamMemberMutation } from '@/store/api'
 
 type Props = { id: number }
-
-const DARTH_OR_SITH = /darth|sith/i
-
-/**
- * `isDarkSide` mirrored for the browser. The server is the source of truth
- * (rejects with `422 EVIL_FORBIDDEN`); this copy decides whether the Add
- * button is disabled before the server is asked. Kept in sync with
- * `src/lib/darkSide.ts` by both checking the same `Character.affiliations`
- * field and the same case-insensitive Darth/Sith pattern.
- */
-function isDarkSideOnClient(character: { name: string; affiliations?: ReadonlyArray<string> }): boolean {
-  if (DARTH_OR_SITH.test(character.name)) return true
-  return (character.affiliations ?? []).some((a) => DARTH_OR_SITH.test(a))
-}
 
 export function CharacterDetailContainer({ id }: Props) {
   const router = useRouter()
@@ -38,7 +25,7 @@ export function CharacterDetailContainer({ id }: Props) {
 
   const character = detail.data
   const onTeam = (team.data ?? []).some((m) => m.characterId === character.id)
-  const evil = isDarkSideOnClient(character)
+  const evil = isDarkSide(character)
   const mutating = addState.isLoading || removeState.isLoading
   const mutationError = describeApiError(addState.error ?? removeState.error)
 

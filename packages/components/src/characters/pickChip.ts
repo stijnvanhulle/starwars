@@ -12,5 +12,6 @@ export function pickChip(character: { name: string; affiliations?: ReadonlyArray
   if (onTeam) return 'on-team'
   if (DARTH_OR_SITH.test(character.name)) return 'dark-side'
   if ((character.affiliations ?? []).some((a) => DARTH_OR_SITH.test(a))) return 'dark-side'
+
   return undefined
 }

@@ -1,22 +1,10 @@
 'use client'
 
-import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { RosterSkeleton, TeamMemberRow, TeamSidebar } from '@stijnvanhulle/components'
+import { TeamSidebarSkeleton, TeamMemberRow, TeamSidebar } from '@stijnvanhulle/components'
 import { useGetTeamQuery, useListCharactersQuery, useRemoveTeamMemberMutation } from '@/store/api'
-
-const CTA_BASE = {
-  display: 'block',
-  width: '100%',
-  py: 2.5,
-  px: 4,
-  borderRadius: 9999,
-  fontSize: 13,
-  fontWeight: 700,
-  textAlign: 'center' as const,
-  textDecoration: 'none',
-}
 
 export function TeamSidebarContainer() {
   const pathname = usePathname()
@@ -36,39 +24,49 @@ export function TeamSidebarContainer() {
 
   const onTeamPage = pathname === '/team'
   const cta = onTeamPage ? (
-    <Box
+    <Button
       component={Link}
       href="/"
+      variant="outlined"
+      fullWidth
       sx={{
-        ...CTA_BASE,
+        py: 1.5,
+        borderRadius: 9999,
+        fontSize: 13,
+        fontWeight: 700,
         bgcolor: '#FFFFFF',
-        border: '1.5px solid #E2E8F0',
+        borderColor: '#E2E8F0',
+        borderWidth: 1.5,
         color: '#121A52',
-        '&:hover': { borderColor: '#FF348A', color: '#E61F75' },
+        '&:hover': { borderColor: '#FF348A', color: '#E61F75', borderWidth: 1.5 },
       }}
     >
       + Add characters
-    </Box>
+    </Button>
   ) : (
-    <Box
+    <Button
       component={Link}
       href="/team"
+      variant="contained"
+      disableElevation
+      fullWidth
       sx={{
-        ...CTA_BASE,
+        py: 1.5,
+        borderRadius: 9999,
+        fontSize: 13,
+        fontWeight: 700,
         bgcolor: '#1E2A8D',
-        border: 'none',
-        color: '#FFFFFF',
         '&:hover': { bgcolor: '#152178' },
       }}
     >
       Manage team
-    </Box>
+    </Button>
   )
 
   return (
     <TeamSidebar count={rows.length} cta={cta}>
       {team.isLoading ? (
-        <RosterSkeleton />
+        <TeamSidebarSkeleton />
       ) : rows.length === 0 ? null : (
         rows.map((row) => <TeamMemberRow key={row.key} name={row.name} image={row.image} variant="compact" onRemove={() => removeMember(row.characterId)} />)
       )}

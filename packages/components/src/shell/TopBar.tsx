@@ -1,4 +1,4 @@
-import Box from '@mui/material/Box'
+import Stack from '@mui/material/Stack'
 import type { ReactNode } from 'react'
 
 export type TopBarProps = {
@@ -8,18 +8,9 @@ export type TopBarProps = {
 
 export function TopBar({ title, teamLink }: TopBarProps) {
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        width: '100%',
-        fontSize: 14,
-        fontWeight: 800,
-      }}
-    >
+    <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between', width: '100%', fontSize: 14, fontWeight: 800 }}>
       {title}
       {teamLink}
-    </Box>
+    </Stack>
   )
 }

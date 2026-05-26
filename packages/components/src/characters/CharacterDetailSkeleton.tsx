@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box'
-import Paper from '@mui/material/Paper'
+import Card from '@mui/material/Card'
 import Skeleton from '@mui/material/Skeleton'
 import Stack from '@mui/material/Stack'
 
@@ -14,7 +14,7 @@ export function CharacterDetailSkeleton() {
         <Skeleton variant="text" width={80} />
       </Stack>
 
-      <Paper
+      <Card
         variant="outlined"
         sx={{
           display: 'grid',
@@ -24,22 +24,13 @@ export function CharacterDetailSkeleton() {
           borderRadius: 4,
         }}
       >
-        <Box sx={{ aspectRatio: '4 / 5', width: '100%' }}>
-          <Skeleton variant="rounded" animation="wave" width="100%" height="100%" sx={{ borderRadius: 3, transform: 'none' }} />
-        </Box>
+        <Skeleton variant="rounded" animation="wave" sx={{ aspectRatio: '4 / 5', width: '100%', borderRadius: 3, transform: 'none' }} />
         <Box>
           <Skeleton variant="text" width="60%" sx={{ fontSize: 40, mb: 5 }} />
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr 1fr', sm: 'repeat(2, minmax(0, 180px))' },
-              gap: 2,
-              mb: 6,
-            }}
-          >
-            <Skeleton variant="rounded" height={72} sx={{ borderRadius: 3 }} />
-            <Skeleton variant="rounded" height={72} sx={{ borderRadius: 3 }} />
-          </Box>
+          <Stack direction="row" spacing={2} sx={{ mb: 6 }}>
+            <Skeleton variant="rounded" width="100%" height={72} sx={{ borderRadius: 3, maxWidth: 180 }} />
+            <Skeleton variant="rounded" width="100%" height={72} sx={{ borderRadius: 3, maxWidth: 180 }} />
+          </Stack>
           <Skeleton variant="text" width={120} sx={{ mb: 2 }} />
           <Stack direction="row" spacing={1.5} sx={{ flexWrap: 'wrap', mb: 5 }}>
             <Skeleton variant="rounded" width={110} height={28} sx={{ borderRadius: 9999 }} />
@@ -48,7 +39,7 @@ export function CharacterDetailSkeleton() {
           </Stack>
           <Skeleton variant="rounded" width={160} height={44} sx={{ borderRadius: 9999 }} />
         </Box>
-      </Paper>
+      </Card>
     </Box>
   )
 }

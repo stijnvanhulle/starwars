@@ -1,7 +1,10 @@
 import Box from '@mui/material/Box'
-import ButtonBase from '@mui/material/ButtonBase'
+import Card from '@mui/material/Card'
+import CardActionArea from '@mui/material/CardActionArea'
+import CardContent from '@mui/material/CardContent'
+import CardMedia from '@mui/material/CardMedia'
+import Chip from '@mui/material/Chip'
 import Typography from '@mui/material/Typography'
-import styles from './CharacterCard.module.css'
 
 export type CharacterCardChip = 'on-team' | 'dark-side'
 
@@ -18,27 +21,39 @@ const CHIP_LABEL: Record<CharacterCardChip, string> = {
   'dark-side': 'Dark side',
 }
 
-const CHIP_CLASS: Record<CharacterCardChip, string> = {
-  'on-team': styles['badge-onTeam'] ?? '',
-  'dark-side': styles['badge-darkSide'] ?? '',
+const CHIP_COLOR: Record<CharacterCardChip, 'primary' | 'error'> = {
+  'on-team': 'primary',
+  'dark-side': 'error',
 }
 
 export function CharacterCard({ name, image, chip, onClick, disabled }: CharacterCardProps) {
   return (
-    <ButtonBase className={styles.card} onClick={onClick} disabled={disabled} aria-label={name} component="button">
-      <Box component="span" className={styles.media}>
-        {image && <Box component="img" src={image} alt="" className={styles.image} />}
-        {chip && (
-          <Box component="span" className={`${styles.badge} ${CHIP_CLASS[chip]}`}>
-            {CHIP_LABEL[chip]}
-          </Box>
-        )}
-      </Box>
-      <Box component="span" className={styles.body}>
-        <Typography component="h3" className={styles.name}>
-          {name}
-        </Typography>
-      </Box>
-    </ButtonBase>
+    <Card variant="outlined" sx={{ borderRadius: 4, overflow: 'hidden', transition: 'border-color 0.12s ease', '&:hover': { borderColor: 'primary.main' } }}>
+      <CardActionArea onClick={onClick} disabled={disabled} aria-label={name}>
+        <Box sx={{ position: 'relative' }}>
+          <CardMedia image={image} sx={{ aspectRatio: '1 / 1', bgcolor: 'grey.100' }} />
+          {chip && (
+            <Chip
+              size="small"
+              color={CHIP_COLOR[chip]}
+              label={CHIP_LABEL[chip]}
+              sx={{
+                position: 'absolute',
+                top: 12,
+                left: 12,
+                fontWeight: 700,
+                letterSpacing: '0.04em',
+                textTransform: 'uppercase',
+              }}
+            />
+          )}
+        </Box>
+        <CardContent sx={{ p: 4, borderTop: 1, borderColor: 'divider' }}>
+          <Typography component="h3" sx={{ fontSize: 16, fontWeight: 800, color: 'text.primary', lineHeight: 1.2, letterSpacing: '-0.01em' }}>
+            {name}
+          </Typography>
+        </CardContent>
+      </CardActionArea>
+    </Card>
   )
 }

@@ -1,5 +1,3 @@
-import type { StarwarsApiCharacter } from '@/server/starwars-api'
-
 const DARTH_OR_SITH = /darth|sith/i
 const DARTH = /darth/i
 
@@ -15,12 +13,20 @@ function toArray(value: unknown): ReadonlyArray<string> {
   return []
 }
 
+export type DarkSideCandidate = {
+  name: string
+  affiliations?: unknown
+  masters?: unknown
+}
+
 /**
  * Three-rule predicate, OR'd left to right. Each rule short-circuits to false
  * when its source array is empty so a partial upstream payload never flips a
- * character to evil.
+ * character to evil. Shared between the API server (full
+ * `StarwarsApiCharacter`) and the browser (proxied `Character` without
+ * `masters`); the missing field is treated as empty.
  */
-export function isDarkSide(character: StarwarsApiCharacter): boolean {
+export function isDarkSide(character: DarkSideCandidate): boolean {
   if (DARTH_OR_SITH.test(character.name)) return true
   if (toArray(character.affiliations).some((a) => DARTH_OR_SITH.test(a))) return true
   if (toArray(character.masters).some((m) => DARTH.test(m))) return true

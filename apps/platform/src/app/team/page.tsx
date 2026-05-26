@@ -1,5 +1,6 @@
 'use client'
 
+import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
@@ -31,15 +32,7 @@ export default function TeamPage() {
 
   return (
     <Box>
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 6,
-          mb: 6,
-        }}
-      >
+      <Stack direction="row" spacing={6} sx={{ alignItems: 'center', justifyContent: 'space-between', mb: 6 }}>
         <Typography
           component="h1"
           sx={{
@@ -53,11 +46,11 @@ export default function TeamPage() {
           Your team
         </Typography>
         <ProgressPill current={rows.length} total={TEAM_CAP} />
-      </Box>
+      </Stack>
       {removeState.isError && (
-        <Typography role="alert" sx={{ color: '#DC2626', mb: 3 }}>
+        <Alert severity="error" sx={{ mb: 3 }}>
           {describeApiError(removeState.error)}
-        </Typography>
+        </Alert>
       )}
       {rows.length === 0 ? (
         <StatePanel variant="empty" title="Your team is empty" description="Pick characters from the home page to start building your team." />

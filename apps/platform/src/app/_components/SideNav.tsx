@@ -1,9 +1,10 @@
 'use client'
 
+import ListItemButton from '@mui/material/ListItemButton'
+import Stack from '@mui/material/Stack'
+import Tooltip from '@mui/material/Tooltip'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import Box from '@mui/material/Box'
-import Tooltip from '@mui/material/Tooltip'
 import type { ReactNode } from 'react'
 
 const NAV: Array<{ href: string; label: string; icon: ReactNode; match: (p: string) => boolean }> = [
@@ -38,19 +39,8 @@ const NAV: Array<{ href: string; label: string; icon: ReactNode; match: (p: stri
 export function SideNav() {
   const pathname = usePathname() ?? '/'
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: 1,
-        py: 4,
-        position: 'sticky',
-        top: 0,
-        height: '100vh',
-      }}
-    >
-      <Box
+    <Stack spacing={1} sx={{ alignItems: 'center', py: 4, position: 'sticky', top: 0, height: '100vh' }}>
+      <Stack
         component={Link}
         href="/"
         aria-label="Whale"
@@ -58,7 +48,6 @@ export function SideNav() {
           width: 40,
           height: 40,
           borderRadius: 2,
-          display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           color: '#FFFFFF',
@@ -80,37 +69,34 @@ export function SideNav() {
           <path d="M3 17c2-5 7-8 13-8s11 3 13 8c-2 5-7 8-13 8s-11-3-13-8z" />
           <circle cx="12" cy="15" r="1.5" fill="currentColor" stroke="none" />
         </svg>
-      </Box>
+      </Stack>
       {NAV.map((item) => {
         const active = item.match(pathname)
         return (
           <Tooltip key={item.href} title={item.label} placement="right">
-            <Box
+            <ListItemButton
               component={Link}
               href={item.href}
+              selected={active}
               aria-label={item.label}
               aria-current={active ? 'page' : undefined}
+              alignItems={'center'}
               sx={{
                 width: 48,
                 height: 48,
+                flex: 'none',
                 borderRadius: 3,
-                display: 'flex',
-                alignItems: 'center',
                 justifyContent: 'center',
                 color: active ? '#FFFFFF' : 'rgba(255, 255, 255, 0.7)',
-                bgcolor: active ? '#1E2A8D' : 'transparent',
-                textDecoration: 'none',
-                '&:hover': {
-                  bgcolor: active ? '#1E2A8D' : 'rgba(255, 255, 255, 0.08)',
-                  color: '#FFFFFF',
-                },
+                '&.Mui-selected, &.Mui-selected:hover': { bgcolor: '#1E2A8D', color: '#FFFFFF' },
+                '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.08)', color: '#FFFFFF' },
               }}
             >
               {item.icon}
-            </Box>
+            </ListItemButton>
           </Tooltip>
         )
       })}
-    </Box>
+    </Stack>
   )
 }
