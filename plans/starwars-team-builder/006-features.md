@@ -2,7 +2,8 @@
 
 ## Context
 
-Assemble the three screens (`/`, `/characters/[id]`, `/team`) and the persistent `<TeamSidebar />` from earlier slices. Real `isDarkSide` rules land in `src/lib/darkSide.ts` and are wired into both the server guard (with master resolution via `starwars-api`) and the UI Add-button state. No new infrastructure, if something here needs a new dep or generated file, it belongs in an earlier slice.
+Assemble the three screens (`/`, `/characters/[id]`, `/team`) and the persistent `<TeamSidebar />` from earlier slices. Real `isDarkSide` rules land in `src/lib/darkSide.ts` and are wired into both the server guard (with master resolution via `starwars-api`) and the UI Add-button state.
+No new infrastructure, if something here needs a new dep or generated file, it belongs in an earlier slice.
 
 ## Goal (demoable outcome)
 

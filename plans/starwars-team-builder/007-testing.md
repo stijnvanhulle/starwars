@@ -2,7 +2,8 @@
 
 ## Context
 
-Add Playwright e2e specs and a CI pipeline that runs unit + integration + e2e against a Postgres service container. Plus the Changesets entry and the README refresh. No new product features; if an e2e spec fails, the fix lives in Slice 006.
+Add Playwright e2e specs and a CI pipeline that runs unit + integration + e2e against a Postgres service container. Plus the Changesets entry and the README refresh.
+No new product features; if an e2e spec fails, the fix lives in Slice 006.
 
 ## Goal (demoable outcome)
 

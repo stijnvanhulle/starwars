@@ -60,11 +60,14 @@ Persisted in Postgres via Drizzle. Defined in `apps/platform/src/db/schema.ts`, 
 | `teamId`      | `uuid`        | (none)              | FK to `teams.id` with `ON DELETE CASCADE`. Always the default team for now.        |
 | `characterId` | `integer`     | (none)              | Matches `starwars-api` `Character.id`. No FK (character lives outside our DB).            |
 | `addedAt`     | `timestamptz` | `now()`             | Used for stable sort in `GET /api/team` (oldest first).                            |
+| `deletedAt`   | `timestamptz` | `null`              | Soft-delete marker. `null` means active; a timestamp means the member was removed. Every read filters `deletedAt IS NULL`. |
 
 Indexes:
 
-- `team_members_team_id_character_id_unique` on `(teamId, characterId)` (enforces the dedupe rule that surfaces as `409 ALREADY_MEMBER`).
+- `team_members_team_id_character_id_active_unique` on `(teamId, characterId)` as a **partial unique index** with predicate `WHERE deleted_at IS NULL` (enforces the dedupe rule that surfaces as `409 ALREADY_MEMBER` only for active rows, so a previously-removed member can be re-added).
 - `team_members_team_id_idx` on `teamId` (every list query filters by it).
+
+`DELETE /api/team/{characterId}` is a soft delete: the row stays in the table with `deletedAt` set to `now()`. The API still returns `204` and the row is hidden from every read path. Re-adding the same character after removal is allowed; it inserts a new row rather than reviving the old one, so `addedAt` reflects the latest add.
 
 The Drizzle table name is `team_members` (snake_case in SQL, camelCase in TS via the column mapping).
 
@@ -96,8 +99,8 @@ Other `starwars-api` fields are present on the server-side generated type but ar
 
 | Invariant                                          | Enforced in                                | Surfaces as            |
 | -------------------------------------------------- | ------------------------------------------ | ---------------------- |
-| `count(team_members where teamId = :default) <= 5` | `TeamService.add()` wraps dup-check, cap-check, and `insert` in a single `db.transaction(...)` so two concurrent adds cannot both observe count = 4 | `422 TEAM_FULL`        |
-| `(teamId, characterId)` unique across `team_members` | DB composite unique index, double-checked by service inside the same transaction | `409 ALREADY_MEMBER`   |
+| `count(team_members where teamId = :default and deletedAt is null) <= 5` | `TeamService.add()` wraps dup-check, cap-check, and `insert` in a single `db.transaction(...)` so two concurrent adds cannot both observe count = 4. Soft-deleted rows do not count. | `422 TEAM_FULL`        |
+| `(teamId, characterId)` unique across active `team_members` | DB partial unique index `WHERE deleted_at IS NULL`, double-checked by service inside the same transaction. Soft-deleted rows are ignored so a removed character can be re-added. | `409 ALREADY_MEMBER`   |
 | Default team row exists                            | Seeded by the initial migration; resolved by the service factory during construction (once per request) | request error if missing |
 | Evil characters cannot be added                    | `TeamService.add()` calls `isDarkSide()` after fetching the character from `starwars-api` | `422 EVIL_FORBIDDEN`  |
 | Character must exist in `starwars-api`                   | `TeamService.add()` fetches `/id/{id}.json` before the evil check | `404 NOT_FOUND` if `fetchCharacter` returns `null` (any non-200 from upstream) |

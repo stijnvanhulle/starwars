@@ -21,19 +21,18 @@ Every endpoint the browser calls is documented in `api.yaml`, so RTK Query endpo
 ## Steps
 
 1. **Verify the mirrored contracts**. `apps/platform/openapi/api.yaml` and `apps/platform/openapi/starwars.yaml` are already in place from Slice 004 with the do-not-edit header. Confirm they match `plans/starwars-team-builder/contracts/`.
-2. **Install `Kubb` packages** in `apps/platform`: `kubb@5.0.0-beta.23` (unified package, exports `defineConfig`), `@kubb/adapter-oas@5.0.0-beta.23` (replaces v4's `@kubb/plugin-oas`), `@kubb/plugin-ts@5.0.0-beta.23`, `@kubb/plugin-client@5.0.0-beta.23`, `@kubb/plugin-zod@5.0.0-beta.23`. Pinned exactly per the prompt; no `^`.
+2. **Install `Kubb` packages** in `apps/platform`: `kubb@5.0.0-beta.31` (unified package, exports `defineConfig`), `@kubb/adapter-oas@5.0.0-beta.31`, `@kubb/plugin-ts@5.0.0-beta.31`, `@kubb/plugin-client@5.0.0-beta.31`, `@kubb/plugin-zod@5.0.0-beta.31`. Pinned exactly per the prompt; no `^`.
 3. **Write `apps/platform/kubb.config.ts`** as an array `defineConfig([apiCfg, starwarsCfg])` (v5 supports multiple configs from one file). `defineConfig` comes from `'kubb'`, not `'@kubb/core'`. Each entry uses the v5 layered shape:
-   - Top-level `adapter`: `adapterOas({ integerType: 'number' })` from `'@kubb/adapter-oas'`. The `integerType: 'number'` override is required because v5 defaults to `'bigint'`, but `Character.id`, `height`, `mass`, and `TeamMember.characterId` are plain `number` everywhere else in the app.
-   - **`output.barrel`**: `{ type: 'named' }` (v4's `output.barrelType: 'named'` no longer exists) so consumers can `import { listCharacters } from '@/gen/api'`.
+   - Top-level `adapter`: `adapterOas({ integerType: 'number' })` from `'@kubb/adapter-oas'`.
+   - **`output.barrel`**: `{ type: 'named' }`.
    - **api** (`input.path: './openapi/api.yaml'`, `output.path: './src/gen/api'`): plugins `pluginTs()`, `pluginClient({ baseURL: '/', client: { importPath: '../fetchClient' } })`, `pluginZod()`. This is the only generated bundle the browser imports.
-   - **starwars** (`input.path: './openapi/starwars.yaml'`, `output.path: './src/gen/starwars'`): plugins `pluginTs()`, `pluginZod()`. No `pluginClient`. Server-only; keep imports under `src/server/**`.
-   `pluginOas` is gone, its config now lives on the top-level `adapter`. Do not pass `version` to `pluginZod` (v5 is always Zod v4) and do not pass `mapper` to `pluginTs` (use `adapter.resolver` if a rename is ever needed).
+   - **starwars** (`input.path: './openapi/starwars.yaml'`, `output.path: './src/gen/starwars'`): plugins `pluginTs()`, `pluginZod()`.
 4. **Add a tiny fetch client wrapper** at `apps/platform/src/gen/fetchClient.ts`. Default-export a function `client(config) => Promise<Response>` that wraps native `fetch`, throws on non-2xx, returns the parsed JSON. The `pluginClient` generated code imports this; we own it so we can plug in error handling later without re-generating.
 5. **Ignore generated output**. Add `apps/platform/src/gen/` to `.gitignore` (the whole directory is regenerated). Keep `apps/platform/src/gen/fetchClient.ts` checked in (it's the seam, not generated). One way: ignore `src/gen/api/` and `src/gen/starwars/` explicitly rather than the parent folder.
 6. **Add the `gen` script** to `apps/platform/package.json`: `"gen": "kubb generate --config kubb.config.ts"`. Also add a `prebuild` hook (`"prebuild": "pnpm gen"`) so CI never builds against stale generated code.
 7. **Install Redux packages**: `@reduxjs/toolkit@^2.12.0`, `react-redux@^9.3.0`. (Pin per the Technical Context table.)
 8. **Build the single `api` slice** at `apps/platform/src/store/api.ts`. `createApi` with `reducerPath: 'api'`, `baseQuery: fetchBaseQuery({ baseUrl: '/api' })`, and these endpoints, all backed by the generated `@/gen/api` client and types:
-   - `listCharacters` → `GET /characters`, returns `Character[]`. No tags. The source API is static for the session and refetch-on-focus handles staleness.
+   - `listCharacters` → `GET /characters`, returns `Character[]`. The source API is static for the session and refetch-on-focus handles staleness.
    - `getCharacter` → `GET /characters/{id}`, returns `Character`.
    - `getTeam` → `GET /team`, returns `TeamMember[]`. Provides tag `'team'`. (Matches the contract's `operationId: getTeam`; the generated hook is `useGetTeamQuery`.)
    - `addTeamMember` → `POST /team` with body `{ characterId }`, returns `TeamMember`. Invalidates `'team'`.
