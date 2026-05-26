@@ -77,7 +77,7 @@ Time spent on the Whale Star Wars team-builder exercise, by phase.
 
 - Node.js `>= 22`
 - pnpm `>= 11`
-- Docker
+- Docker (only for the dev/prod database; `pnpm test` runs against pglite in-process)
 
 ## Commands
 
@@ -86,7 +86,7 @@ pnpm install         # Install dependencies
 pnpm dev             # Start the Next.js dev server (apps/platform)
 pnpm build           # Build all workspaces
 pnpm start           # Run the built apps/platform (next start)
-pnpm test            # Run tests (requires `docker compose up -d postgres`)
+pnpm test            # Run tests (uses pglite in-memory; no Docker needed)
 pnpm test:watch      # Vitest watch mode (root config)
 pnpm test:bench      # Run benchmarks
 pnpm test:e2e        # Playwright (apps/platform; specs land in slice 007)

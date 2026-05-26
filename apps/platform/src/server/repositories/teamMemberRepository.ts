@@ -7,6 +7,7 @@ const activeFilter = (teamId: string) => and(eq(teamMembers.teamId, teamId), isN
 export const teamMemberRepository = {
   async insert(teamId: string, characterId: number): Promise<TeamMember> {
     const [row] = await db.insert(teamMembers).values({ teamId, characterId }).returning()
+
     if (!row) {
       throw new Error('Insert returned no row')
     }
@@ -23,17 +24,19 @@ export const teamMemberRepository = {
     })
   },
 
-  async softDeleteByTeamAndCharacterId(teamId: string, characterId: number): Promise<boolean> {
+  async deleteByTeamAndCharacterId(teamId: string, characterId: number): Promise<boolean> {
     const result = await db
       .update(teamMembers)
       .set({ deletedAt: sql`now()` })
       .where(and(activeFilter(teamId), eq(teamMembers.characterId, characterId)))
-      .returning({ id: teamMembers.id })
+      .returning()
+
     return result.length > 0
   },
 
   async countByTeam(teamId: string): Promise<number> {
     const [row] = await db.select({ value: count() }).from(teamMembers).where(activeFilter(teamId))
+
     return row?.value ?? 0
   },
 } as const

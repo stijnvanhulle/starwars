@@ -11,7 +11,7 @@ export const teamRepository = {
     const row = await this.findBySlug('default')
 
     if (!row) {
-      throw new Error('Default team is missing. Did the 0001 seed migration run?')
+      throw new Error('Default team is missing.')
     }
     return row
   },

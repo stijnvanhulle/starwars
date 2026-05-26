@@ -73,7 +73,6 @@ None. This is the first execution slice.
 - `apps/platform/e2e/`: created by Slice 007 alongside the first spec (no placeholder file in this slice)
 - `.gitignore`: modified (only if existing wildcards do not already cover `apps/*/.next/`, `apps/*/.turbo/`, `apps/*/node_modules/`)
 - `cspell.json`: modified (only if it referenced the deleted packages)
-- `.github/workflows/pr.yml`: unchanged in this slice; later slices extend it (Postgres in Slice 002, codegen in Slice 005, Playwright in Slice 007)
 - `.github/workflows/release.yml`: created (Changesets action on push to `main`)
 
 ## Verification
