@@ -125,7 +125,7 @@ The contract specs are checked into `plans/starwars-team-builder/contracts/` and
 
 ## Planning Phase 2: Task split into Execution Slices
 
-The slice files in `plans/starwars-team-builder/00X-*.md` are this feature's `tasks.md` equivalent. They share a skeleton defined in `plans/starwars-team-builder/template.md`.
+The slice files in `plans/starwars-team-builder/00X-*.md` are this feature's `tasks.md` equivalent. They share the canonical skeleton at `plans/templates/slice.md`.
 
 ### Execution Slices (one file each)
 
