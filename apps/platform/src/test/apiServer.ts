@@ -1,7 +1,7 @@
-import { createServer, IncomingMessage } from 'node:http'
+import type { IncomingMessage } from 'node:http';
+import { createServer } from 'node:http'
 
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
-
 
 export type ApiTestServer = {
   baseUrl: string
@@ -36,7 +36,6 @@ export function parseQuery(url: URL): Record<string, string | Array<string>> {
   }
   return query
 }
-
 
 /**
  * Boots a one-handler HTTP server that adapts incoming requests to a Pages Router handler.

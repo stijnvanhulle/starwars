@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { firstOf } from '@/lib/utils'
+import { firstOf } from '../lib/utils'
 
 /**
  * Positive integer `characterId`. Accepts a query-string value (raw string, or the

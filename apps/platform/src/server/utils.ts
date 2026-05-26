@@ -1,4 +1,4 @@
-import { errorMessage } from '@/lib/utils'
+import { errorMessage } from '../lib/utils'
 import type { DomainErrorCode } from './constants'
 import type { StarwarsApiCharacter } from './starwars-api'
 
