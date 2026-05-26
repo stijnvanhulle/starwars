@@ -62,11 +62,11 @@ Slice 001 is done (`MUI` theme provider wired, `AppRouterCacheProvider` in place
 
 ## Done criteria
 
-- [ ] `plans/starwars-team-builder/design.md` is filled in (no `_TBD_`) and includes lo-fi wireframes for `/`, `/characters/[id]`, `/team`
-- [ ] Hi-fi mockups are either checked in under `plans/starwars-team-builder/design/` and linked from `plans/starwars-team-builder/design.md`, or explicitly noted as skipped
-- [ ] `apps/platform/src/theme/theme.ts` reflects the tokens in `design.md`
-- [ ] `packages/components` exports `AppShell`, `TeamSidebar`, `CharacterCard`, `StatePanel`, `TeamMemberRow`, `ActionButton`
-- [ ] `<ActionButton disabledReason>` is disabled and the reason renders as a tooltip (the pattern Vader's Add button uses in 006)
-- [ ] Each component has a passing Vitest smoke test
-- [ ] `turbo run test`, `pnpm typecheck`, and `pnpm lint` are green
-- [ ] No new app routes are added in this slice; first consumer is Slice 006
+- [x] `plans/starwars-team-builder/design.md` is filled in (no `_TBD_`) and includes lo-fi wireframes for `/`, `/characters/[id]`, `/team`
+- [x] Hi-fi mockups are either checked in under `plans/starwars-team-builder/design/` and linked from `plans/starwars-team-builder/design.md`, or explicitly noted as skipped
+- [x] `apps/platform/src/theme/theme.ts` reflects the tokens in `design.md`
+- [x] `packages/components` exports `AppShell`, `TeamSidebar`, `CharacterCard`, `StatePanel`, `TeamMemberRow`, `ActionButton`
+- [x] `<ActionButton disabledReason>` is disabled and the reason renders as a tooltip (the pattern Vader's Add button uses in 006)
+- [x] Each component has a passing Vitest smoke test
+- [x] `turbo run test`, `pnpm typecheck`, and `pnpm lint` are green
+- [x] No new app routes are added in this slice; first consumer is Slice 006

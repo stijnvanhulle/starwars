@@ -3,7 +3,9 @@
   "extends": "../../configs/bundler.json",
   "compilerOptions": {
     "outDir": "dist",
-    "types": ["../../reset.d.ts"]
+    "jsx": "react-jsx",
+    "lib": ["dom", "dom.iterable", "ES2022"],
+    "types": ["../../reset.d.ts", "node"]
   },
   "include": ["src/**/*", "./package.json", "./tsdown.config.ts", "./vitest.config.ts"]
 }

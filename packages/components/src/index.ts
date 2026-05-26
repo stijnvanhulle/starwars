@@ -1,4 +1,6 @@
-/**
- * Placeholder export. Real components land in Slice 003.
- */
-export const PLACEHOLDER = 'components'
+export { AppShell, type AppShellProps } from './shell/AppShell'
+export { TeamSidebar, type TeamSidebarProps } from './team/TeamSidebar'
+export { TeamMemberRow, type TeamMemberRowProps } from './team/TeamMemberRow'
+export { CharacterCard, type CharacterCardProps } from './characters/CharacterCard'
+export { StatePanel, type StatePanelProps, type StatePanelVariant } from './common/StatePanel'
+export { ActionButton, type ActionButtonProps } from './common/ActionButton'
