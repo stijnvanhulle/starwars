@@ -77,7 +77,7 @@ Pass when: sidebar and `/team` are always in sync after any add or remove, on an
 
 Covers **AC-8** and **AC-9**.
 
-1. Reset the team (`DELETE` each member, or truncate `team_members`).
+1. Reset the team by calling `DELETE /api/team/{characterId}` for every current member (the API is the only supported reset path; the table is append-only with a soft-delete column, so removed rows stay as tombstones with `deleted_at` set and the cap-counting query ignores them).
 2. Add five non-evil characters.
 3. Open a sixth non-evil character's detail page. Click `Add to team`. The request returns `422 TEAM_FULL`. The UI shows a clear error message (toast, inline, whatever Slice 006 picks) and the team stays at five.
 4. Open Darth Vader's detail page. The `Add to team` button is disabled. Hovering it shows a tooltip explaining the character is evil.

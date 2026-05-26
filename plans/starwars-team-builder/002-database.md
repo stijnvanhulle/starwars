@@ -35,7 +35,7 @@ Slice 001 is done. `data-model.md` is the source of truth for the table shape.
 9. **Write the repositories** at `apps/platform/src/server/repositories/`. Two files; both are the **only** places outside `db/` that import `drizzle-orm`.
    - `teamRepository.ts`: `findBySlug(slug): Promise<Team | undefined>`, `findDefault(): Promise<Team>` (throws if the seed row is missing).
    - `teamMemberRepository.ts`: methods are now all scoped by `teamId` **and filter out soft-deleted rows** (`deletedAt IS NULL`) on every read. `insert(teamId, characterId): Promise<TeamMember>`, `findAllByTeam(teamId): Promise<TeamMember[]>` (active only, ordered by `addedAt asc`), `findByTeamAndCharacterId(teamId, characterId): Promise<TeamMember | undefined>` (active only), `softDeleteByTeamAndCharacterId(teamId, characterId): Promise<boolean>` (UPDATE setting `deletedAt = now()` only when the row is currently active; returns `true` if a row was flipped, `false` otherwise; never issues a SQL `DELETE`), `countByTeam(teamId): Promise<number>` (active only). Export inferred `Team` and `TeamMember` types from `schema.ts`'s `InferSelectModel`.
-10. **Extend the Vitest config** at `apps/platform/vitest.config.ts` (created in Slice 001 with the include glob and `passWithNoTests`). Add `test.setupFiles` pointing at a setup that resets `team_members` between tests (`TRUNCATE team_members RESTART IDENTITY CASCADE`) while leaving the seeded `teams` row alone, and `test.poolOptions.threads.singleThread = true` so concurrent tests do not race on the table. Drop `passWithNoTests` now that real tests exist. Every test lives next to its source as `foo.test.ts` (or `.tsx`); there is no unit/integration distinction by filename or directory. Tests that need Postgres assume `docker compose up -d postgres` has been run; tests that don't (pure units) simply skip the DB.
+10. **Extend the Vitest config** at `apps/platform/vitest.config.ts` (created in Slice 001 with the include glob and `passWithNoTests`). Add `test.setupFiles` pointing at a setup that soft-resets `team_members` between tests (`UPDATE team_members SET deleted_at = now() WHERE deleted_at IS NULL`) while leaving the seeded `teams` row alone, and `test.poolOptions.threads.singleThread = true` so concurrent tests do not race on the table. The repository's read methods filter `deletedAt IS NULL`, so each test starts with no active members; tombstones from prior tests are invisible and the partial unique index does not block re-inserts. We deliberately never `TRUNCATE` or hard-`DELETE` against `team_members`; the table is append-only with a soft-delete column. Drop `passWithNoTests` now that real tests exist. Every test lives next to its source as `foo.test.ts` (or `.tsx`); there is no unit/integration distinction by filename or directory. Tests that need Postgres assume `docker compose up -d postgres` has been run; tests that don't (pure units) simply skip the DB.
 11. **Write the repository tests** next to the repositories under `apps/platform/src/server/repositories/`. Two files. Each test resolves the default team via `teamRepository.findDefault()` at the top and reuses its `id`.
     `teamRepository.test.ts` covers:
     - `findBySlug('default')` returns the seeded row.
@@ -49,7 +49,18 @@ Slice 001 is done. `data-model.md` is the source of truth for the table shape.
     - After `softDeleteByTeamAndCharacterId(defaultId, 42)`, a fresh `insert(defaultId, 42)` succeeds and produces a **new row** (different `id`, later `addedAt`) — the partial unique index does not block re-adding a removed character.
     - `findAllByTeam(defaultId)` orders by `addedAt asc` over active rows only (insert three rows with short waits, soft-delete the middle one, assert the remaining two are in order).
     - `countByTeam(defaultId)` reflects active rows only (insert two, soft-delete one, expect `1`).
-12. **Wire CI prerequisites in this repo's existing GitHub Actions** so the integration tests can run against a Postgres service container. Add a `services.postgres` block to the workflow that runs `pnpm test`, exporting `DATABASE_URL` for the step. The CI changes are minimal and check-only here; full e2e CI lands in Slice 007.
+12. **Extend the CI workflow** at `.github/workflows/ci.yml` (created in Slice 001) with the pieces Postgres-backed tests need:
+    - Add a `services.postgres` block:
+      ```yaml
+      services:
+        postgres:
+          image: postgres:17-alpine
+          env: { POSTGRES_USER: platform, POSTGRES_PASSWORD: platform, POSTGRES_DB: platform }
+          ports: [5432:5432]
+          options: --health-cmd "pg_isready -U platform" --health-interval 5s --health-retries 10
+      ```
+    - Add `DATABASE_URL=postgres://platform:platform@localhost:5432/platform` to the job env.
+    - Insert a `turbo run db:migrate` step between `setup` and `typecheck`/`lint`/`test`. No guard is needed; the task now exists.
 
 ## Files touched
 
@@ -71,7 +82,7 @@ Slice 001 is done. `data-model.md` is the source of truth for the table shape.
 - `apps/platform/src/server/repositories/teamRepository.test.ts`: created
 - `apps/platform/src/server/repositories/teamMemberRepository.test.ts`: created
 - `.gitignore`: modified (add `.env*` if not already covered; ignore `apps/platform/.env`)
-- `.github/workflows/ci.yml`: modified (add `postgres` service to the test job)
+- `.github/workflows/ci.yml`: modified (add the Postgres service container, `DATABASE_URL` job env, and a `turbo run db:migrate` step before tests)
 
 ## Verification
 

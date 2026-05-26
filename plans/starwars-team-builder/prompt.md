@@ -12,10 +12,10 @@ We want to create a front-end application that fetches data from a Starwars API 
 * `RTK Query` (bundled with `@reduxjs/toolkit`) for fetching data (from our Starwars API)
 * `@playwright/test` `^1.60.0` for e2e testing
 * `Vitest` `^4.1.6` for unit tests and integration tests
-* `Kubb` `5.0.0-beta.23` for our generated types and clients
+* `Kubb` `5.0.0-beta.31` for our generated types and clients
 * `PostgreSQL` 17 as database, with `drizzle-orm` `^0.45.2` and `drizzle-kit` `^0.31.10` (driver: `pg` `^8.21.0`, types: `@types/pg` `^8.20.0`) as the layer between db and data (use `db` folder)
 * Use the `Repository` concept to have a layer between `DB` and `services`
-* Use the `Services` concept to have a layer between `Repositories` an `API`
+* Use the `Services` concept to have a layer between `Repositories` and `API`
 
 Starwars API: https://akabab.github.io/starwars-api/
 

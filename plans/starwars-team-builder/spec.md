@@ -38,7 +38,7 @@ One per requirement bullet from `prompt.md`. Each one is something we can write 
 
 - `Character`: comes from `/api/characters` (a server-side proxy in front of `starwars-api`), read-only. The UI uses `id`, `name`, `image`, `height`, `mass`, `affiliations`. `isDarkSide` also reads `masters` (already `string[]` from the source API; substring match for `"Darth"`).
 - `Team`: ours, seeded. `id uuid pk`, `slug text unique`, `name text`, `createdAt timestamptz default now`. One row (`slug = 'default'`) inserted by the initial migration. The schema is multi-team ready. The app only uses the default.
-- `TeamMember`: ours, writable. `id uuid pk`, `teamId uuid fk → teams.id` (cascade), `characterId int`, `addedAt timestamptz default now`. Composite unique on `(teamId, characterId)`. Invariant: at most five rows per `teamId`, enforced in the service.
+- `TeamMember`: ours, writable. `id uuid pk`, `teamId uuid fk → teams.id` (cascade), `characterId int`, `addedAt timestamptz default now`, `deletedAt timestamptz null` (soft-delete tombstone). Partial unique on `(teamId, characterId) WHERE deleted_at IS NULL` so the same character cannot be in the team twice at once, but a previously-removed character can be re-added. Invariant: at most five active rows per `teamId`, enforced in the service.
 
 ## Acceptance checklist
 

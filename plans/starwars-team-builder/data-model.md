@@ -31,7 +31,7 @@ erDiagram
 
 The dotted line is the soft reference: `team_members.characterId` points at a `starwars-api` character, but there is no database foreign key because the character row lives outside our database. The service validates existence by fetching `/id/{id}.json` before insert.
 
-For now the app operates against a single seeded **default team** (`slug = 'default'`). The `Team` table exists so the multi-team case is a future addition, not a schema migration. The service factory resolves the default team id during service construction (once per request) and threads it through. `(teamId, characterId)` is unique, so the same character can never appear twice in the same team. The five-member cap is per-team.
+For now the app operates against a single seeded **default team** (`slug = 'default'`). The `Team` table exists so the multi-team case is a future addition, not a schema migration. The service factory resolves the default team id during service construction (once per request) and threads it through. `(teamId, characterId)` is unique **across active rows only** (the index predicate is `WHERE deleted_at IS NULL`), so the same character cannot appear twice in the team at the same time, but a previously-removed character can be re-added (the table then carries one active row plus one or more tombstones for the same pair). The five-member cap counts active rows only and is per-team.
 
 ## `Team`
 

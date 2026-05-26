@@ -43,7 +43,8 @@ Every endpoint the browser calls is documented in `api.yaml`, so RTK Query endpo
 11. **Adopt the generated Zod in the POST handler**. In `apps/platform/src/app/api/team/route.ts`, replace Slice 004's hand-rolled `isAddTeamMemberRequest` guard with the generated `addTeamMemberRequestSchema` from `@/gen/api`. On parse failure, return `400` with the Zod error message (still not in the contract's enumerated error codes; the 400-body shape stays a plain `{ message }`). Update the matching integration test if needed.
 12. **Wire the proxy fetcher to the generated `starwars-api` type**. In `apps/platform/src/server/starwars-api.ts`, replace the hand-rolled `StarwarsApiCharacter` interface with the generated `Character` type from `@/gen/starwars`. The downconverter `toCharacter` now takes that generated type and returns the `@/gen/api` `Character`. No browser code imports `@/gen/starwars`; enforce with an oxlint rule restricting that import path to `src/server/**` and `src/lib/darkSide.ts`.
 13. **Add a smoke client component** at `apps/platform/src/app/page.tsx` (replacing Slice 001's static placeholder): a `'use client'` component that calls `useListCharactersQuery()` and renders the character count plus a loading/error state via Slice 003's `<StatePanel />`. This is throwaway scaffolding; Slice 006 replaces the body with the real character list. It exists in this slice only to prove the wiring works in the browser.
-14. **Resolve Slice 004's open question** about `isAddTeamMemberRequest`: it is replaced by the generated Zod in step 11. Update `plans/starwars-team-builder/research.md` to mark that open item closed and reference Slice 005.
+14. **Extend the CI workflow** at `.github/workflows/ci.yml` (Slice 001's skeleton + Slice 002's Postgres add) with a `turbo run gen` step between the `setup` action and `typecheck`/`lint`/`test`/`build`, so generated code exists before any task that reads `@/gen/*`. No guard is needed; the `gen` task is defined in step 6 of this slice.
+15. **Resolve Slice 004's open question** about `isAddTeamMemberRequest`: it is replaced by the generated Zod in step 11. Update `plans/starwars-team-builder/research.md` to mark that open item closed and reference Slice 005.
 
 ## Files touched
 
@@ -62,6 +63,7 @@ Every endpoint the browser calls is documented in `api.yaml`, so RTK Query endpo
 - `apps/platform/src/app/layout.tsx`: modified (insert `<Providers />`)
 - `apps/platform/src/app/page.tsx`: modified (smoke `useListCharactersQuery()` consumer)
 - `apps/platform/src/app/api/team/route.ts`: modified (replace hand-rolled guard with generated Zod)
+- `.github/workflows/ci.yml`: modified (add a `turbo run gen` step before typecheck/build)
 - `apps/platform/src/app/api/team/route.test.ts`: modified if the 400-body shape changes
 - `.oxlintrc` (or equivalent): modified (restrict `@/gen/starwars` imports to `src/server/**` and `src/lib/darkSide.ts`)
 - `plans/starwars-team-builder/research.md`: modified (close the "hand-rolled guard" open item)
