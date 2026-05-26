@@ -1,5 +1,6 @@
 import Box from '@mui/material/Box'
 import type { ReactNode } from 'react'
+import styles from './AppShell.module.css'
 
 export type AppShellProps = {
   topBar: ReactNode
@@ -8,57 +9,24 @@ export type AppShellProps = {
   children: ReactNode
 }
 
-/**
- * Three-column shell: 80px sticky nav, fluid main, optional 280px right pane.
- * Top bar sits inside the main column and is sticky over the scrolling content.
- */
 export function AppShell({ topBar, sidebar, rightPane, children }: AppShellProps) {
-  const cols = rightPane === undefined ? '80px minmax(0, 1fr)' : '80px minmax(0, 1fr) 280px'
+  const withRight = rightPane !== undefined
+  const shellClass = `${styles.shell} ${withRight ? styles['shell-withRight'] : ''}`.trim()
   return (
-    <Box
-      sx={{
-        display: 'grid',
-        gridTemplateColumns: { xs: '80px 1fr', lg: cols },
-        minHeight: '100vh',
-        bgcolor: '#F5F7FB',
-      }}
-    >
-      <Box component="aside" sx={{ bgcolor: '#0F1664', color: '#FFFFFF' }}>
+    <Box className={shellClass}>
+      <Box component="aside" className={styles.sidebar}>
         {sidebar}
       </Box>
-      <Box sx={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-        <Box
-          component="header"
-          sx={{
-            position: 'sticky',
-            top: 0,
-            zIndex: 10,
-            bgcolor: '#F5F7FB',
-            borderBottom: '1px solid #E2E8F0',
-            px: 8,
-            py: 4,
-          }}
-        >
+      <Box className={styles.main}>
+        <Box component="header" className={styles.topbar}>
           {topBar}
         </Box>
-        <Box component="main" sx={{ p: 8, maxWidth: 1200, width: '100%' }}>
+        <Box component="main" className={styles.content}>
           {children}
         </Box>
       </Box>
-      {rightPane !== undefined && (
-        <Box
-          component="aside"
-          sx={{
-            display: { xs: 'none', lg: 'block' },
-            position: 'sticky',
-            top: 0,
-            alignSelf: 'start',
-            maxHeight: '100vh',
-            overflowY: 'auto',
-            p: 4,
-            pl: 0,
-          }}
-        >
+      {withRight && (
+        <Box component="aside" className={styles.rightPane}>
           {rightPane}
         </Box>
       )}

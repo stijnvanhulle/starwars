@@ -35,7 +35,7 @@ Existing tests still pass. New tests cover the bookmark reducers, the pagination
 5. **Bookmark control on the detail page**. Extend `<CharacterDetail>` with `bookmarked: boolean` + `onBookmarkToggle?: () => void` props and render a heart icon button next to the `Add to team` action (filled when bookmarked, outlined otherwise). The component stays presentational; the wiring lives in `CharacterDetailContainer.tsx` (`useAppSelector(selectBookmarks)` + `useAppDispatch()` + `dispatch(toggle(id))`).
 6. **Bookmarks page** at `apps/platform/src/app/bookmarks/page.tsx`. Client component. Reads `selectBookmarks` plus `useListCharactersQuery()` and renders a `<CharacterList>` of the bookmarked ids with `onSelect` pushing to the detail page. Empty state uses `<StatePanel variant="empty">`. A small "Clear all" outline button dispatches `clear()`.
 7. **Nav glyph for bookmarks**. Add a third icon to `apps/platform/src/app/_components/SideNav.tsx` linking to `/bookmarks`. When `selectBookmarks(state).length > 0`, a small count badge sits in the top-right of the icon. Active state matches the other two items.
-
+8. **Rename @stijnvanhulle to @whale**
 ### Pagination
 
 8. **Add `<Pagination />` to the components library** at `packages/components/src/common/Pagination.tsx`. Thin wrapper over MUI `Pagination` (already in the dep graph; no install). Props: `page`, `count`, `onChange(page)`. Whale-styled: pink active page button, hairline borders, radius-pill. Export from the package barrel.

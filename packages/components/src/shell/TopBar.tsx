@@ -6,10 +6,6 @@ export type TopBarProps = {
   teamLink?: ReactNode
 }
 
-/**
- * Quiet header strip. Title (or breadcrumb) on the left, an optional slot on
- * the right.
- */
 export function TopBar({ title, teamLink }: TopBarProps) {
   return (
     <Box

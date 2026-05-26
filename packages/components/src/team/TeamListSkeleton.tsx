@@ -1,35 +1,31 @@
-import Box from '@mui/material/Box'
-import Stack from '@mui/material/Stack'
+import Paper from '@mui/material/Paper'
 import Skeleton from '@mui/material/Skeleton'
+import Stack from '@mui/material/Stack'
 
 export type TeamListSkeletonProps = {
   count?: number
 }
 
-/**
- * Row-shaped skeletons matching the `/team` page's `TeamMemberRow` layout.
- */
 export function TeamListSkeleton({ count = 3 }: TeamListSkeletonProps) {
   return (
     <Stack spacing={3} aria-busy aria-live="polite">
       {Array.from({ length: count }, (_, i) => (
-        <Box
+        <Paper
           key={i}
+          variant="outlined"
           sx={{
             display: 'grid',
             gridTemplateColumns: '72px minmax(0, 1fr) auto',
             alignItems: 'center',
             gap: 5,
             p: 4,
-            bgcolor: '#FFFFFF',
-            border: '1px solid #E2E8F0',
             borderRadius: 4,
           }}
         >
           <Skeleton variant="rounded" width={72} height={72} sx={{ borderRadius: 3 }} />
           <Skeleton variant="text" width="40%" sx={{ fontSize: 20 }} />
           <Skeleton variant="rounded" width={110} height={36} sx={{ borderRadius: 9999 }} />
-        </Box>
+        </Paper>
       ))}
     </Stack>
   )

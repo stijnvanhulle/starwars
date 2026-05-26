@@ -1,17 +1,14 @@
 import Box from '@mui/material/Box'
 import Skeleton from '@mui/material/Skeleton'
+import Stack from '@mui/material/Stack'
 
 export type RosterSkeletonProps = {
   count?: number
 }
 
-/**
- * Compact roster placeholder used inside `TeamSidebar` while the team query
- * is in flight.
- */
 export function RosterSkeleton({ count = 2 }: RosterSkeletonProps) {
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }} aria-busy aria-live="polite">
+    <Stack spacing={1.5} aria-busy aria-live="polite">
       {Array.from({ length: count }, (_, i) => (
         <Box
           key={i}
@@ -29,6 +26,6 @@ export function RosterSkeleton({ count = 2 }: RosterSkeletonProps) {
           <Skeleton variant="circular" width={24} height={24} />
         </Box>
       ))}
-    </Box>
+    </Stack>
   )
 }

@@ -3,8 +3,7 @@
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { useRouter } from 'next/navigation'
-import { CharacterListSkeleton, StatePanel, pickChip } from '@stijnvanhulle/components'
-import { CharacterCard } from '@/components/CharacterCard/CharacterCard'
+import { CharacterCard, CharacterListSkeleton, StatePanel, pickChip } from '@stijnvanhulle/components'
 import { describeApiError } from '@/lib/apiError'
 import { useGetTeamQuery, useListCharactersQuery } from '@/store/api'
 

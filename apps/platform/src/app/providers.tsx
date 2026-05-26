@@ -4,12 +4,11 @@ import type { ReactNode } from 'react'
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v16-appRouter'
 import { ThemeProvider } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
-import { AppShell } from '@stijnvanhulle/components'
+import { AppShell, lightTheme } from '@stijnvanhulle/components'
 import { AppTopBar } from '@/app/_components/AppTopBar'
 import { SideNav } from '@/app/_components/SideNav'
 import { TeamSidebarContainer } from '@/app/_components/TeamSidebarContainer'
 import { Providers as StoreProviders } from '@/store/Providers'
-import { lightTheme } from '@/theme/theme'
 
 type ProvidersProps = {
   children: ReactNode

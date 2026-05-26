@@ -1,26 +1,20 @@
-import { defineConfig, type UserConfig } from 'tsdown'
+import { defineConfig } from 'tsdown'
 
-const shared: Partial<UserConfig> = {
-  platform: 'node',
+export default defineConfig({
+  entry: { index: 'src/index.ts' },
+  format: 'esm',
+  platform: 'browser',
+  dts: true,
   sourcemap: true,
-  shims: true,
+  shims: false,
   exports: true,
   fixedExtension: false,
-  deps: {
-    neverBundle: [/^@stijnvanhulle\//],
-    alwaysBundle: [/@internals/],
-    onlyBundle: false,
-  },
   outputOptions: {
     keepNames: true,
+    assetFileNames: 'style.css',
   },
-}
-
-export default defineConfig([
-  {
-    entry: { index: 'src/index.ts' },
-    format: 'esm',
-    dts: true,
-    ...shared,
+  deps: {
+    neverBundle: [/^@stijnvanhulle\//],
+    onlyBundle: false,
   },
-])
+})
