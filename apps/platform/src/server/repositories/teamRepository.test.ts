@@ -34,8 +34,13 @@ describe('teamRepository', () => {
   })
 
   it('findDefault throws when the seed row is missing', async () => {
-    await db.delete(teams).where(eq(teams.slug, 'default')).returning()
+    const team = await teamRepository.findDefault()
+    await db.delete(teams).where(eq(teams.slug, 'default'))
 
-    await expect(teamRepository.findDefault()).rejects.toThrow(/Default team is missing/)
+    try {
+      await expect(teamRepository.findDefault()).rejects.toThrow(/Default team is missing/)
+    } finally {
+      await db.insert(teams).values(team)
+    }
   })
 })
