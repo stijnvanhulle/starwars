@@ -95,11 +95,7 @@ describe('POST /api/team', () => {
     })
 
     expect(res.status).toBe(400)
-    expect(await res.json()).toMatchInlineSnapshot(`
-      {
-        "message": "Invalid request body",
-      }
-    `)
+    expect(await res.json()).toMatchObject({ message: expect.any(String) })
   })
 
   it('405 on an unsupported method with Allow listing GET, POST', async () => {

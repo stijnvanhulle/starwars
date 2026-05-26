@@ -32,5 +32,29 @@ export default defineConfig({
     'typescript/prefer-function-type': 'error',
     'react/self-closing-comp': 'error',
     'react/no-array-index-key': 'warn',
+    'no-restricted-imports': [
+      'error',
+      {
+        patterns: [
+          {
+            group: ['@/gen/starwars', '@/gen/starwars/*'],
+            message:
+              'The starwars-api types are server-only. Import only from src/server/** or src/lib/darkSide.ts.',
+          },
+        ],
+      },
+    ],
   },
+  overrides: [
+    {
+      files: [
+        '**/src/server/**',
+        '**/src/lib/**',
+        '**/src/pages/api/**',
+      ],
+      rules: {
+        'no-restricted-imports': 'off',
+      },
+    },
+  ],
 })

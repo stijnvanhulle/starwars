@@ -4,6 +4,7 @@ import type { ReactNode } from 'react'
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v16-appRouter'
 import { ThemeProvider } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
+import { Providers as StoreProviders } from '@/store/Providers'
 import { lightTheme } from '@/theme/theme'
 
 type ProvidersProps = {
@@ -15,7 +16,7 @@ export function Providers({ children }: ProvidersProps) {
     <AppRouterCacheProvider>
       <ThemeProvider theme={lightTheme}>
         <CssBaseline />
-        {children}
+        <StoreProviders>{children}</StoreProviders>
       </ThemeProvider>
     </AppRouterCacheProvider>
   )

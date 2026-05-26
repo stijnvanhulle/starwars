@@ -23,6 +23,7 @@
     "clean": "turbo run clean",
     "dev": "turbo run dev",
     "format": "oxfmt -c oxfmt.config.ts apps packages internals configs",
+    "gen": "turbo run gen",
     "graph": "npx nx graph ",
     "lint": "oxlint -c oxlint.config.ts --disable-nested-config ./apps ./packages",
     "lint:fix": "oxlint -c oxlint.config.ts --disable-nested-config --fix ./apps ./packages",

@@ -6,12 +6,3 @@ import { firstOf } from '@/lib/utils'
  * `string[]` Next.js hands back for repeated keys) and coerces it to a number.
  */
 export const characterIdSchema = z.preprocess(firstOf, z.coerce.number().int().min(1))
-
-/**
- * `POST /api/team` body. Matches `AddTeamMemberRequest` in `api.openapi.yaml`.
- */
-export const addTeamMemberBodySchema = z.object({
-  characterId: z.number().int().min(1),
-})
-
-export type AddTeamMemberBody = z.infer<typeof addTeamMemberBodySchema>

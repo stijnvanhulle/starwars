@@ -1,0 +1,4 @@
+# Kubb-generated code. Regenerate via `pnpm gen`. fetchClient.ts is the seam,
+# checked in by hand.
+src/gen/api/
+src/gen/starwars/

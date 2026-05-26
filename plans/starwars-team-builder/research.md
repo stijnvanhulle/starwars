@@ -14,7 +14,7 @@ All Phase 0/1 open questions are now resolved. Listed here with their resolution
 
 All open items are resolved.
 
-1. ~~**`400` on malformed `POST /api/team` body.**~~ **Closed in Slice 004.** The hand-rolled `isAddTeamMemberRequest(body)` guard returns `{ "message": "Invalid request body" }` with a plain `{ message }` envelope (no `code`), matching the `502` fallback. Both stay intentionally undocumented in `api.openapi.yaml`: the contract enumerates only the four matched-path domain codes (`NOT_FOUND`, `ALREADY_MEMBER`, `TEAM_FULL`, `EVIL_FORBIDDEN`), so operational signals (`400` malformed body, `502` upstream outage) sit outside the closed enum. Slice 005 swaps the guard for the generated Zod parser but keeps the same envelope and the same "implicit, not in the contract" stance.
+1. ~~**`400` on malformed `POST /api/team` body.**~~ **Closed in Slice 005.** The route now validates the body with the generated `addTeamMemberRequestSchema` from `@/gen/api` (Kubb, `pluginZod`) and returns the first Zod issue message in a `{ "message": "..." }` envelope. The 400 stays intentionally undocumented in `api.openapi.yaml`, matching the same "implicit, not in the contract" stance as the `502` upstream fallback.
 
 ## Decisions (Phase 0)
 

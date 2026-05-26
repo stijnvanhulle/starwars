@@ -3,14 +3,14 @@ import { isDarkSide } from '@/lib/darkSide'
 import { mapError } from '@/server/utils'
 import { teamMemberRepository } from '@/server/repositories/teamMemberRepository'
 import { teamRepository } from '@/server/repositories/teamRepository'
-import { addTeamMemberBodySchema } from '@/server/schemas'
+import { addTeamMemberRequestSchema } from '@/gen/api'
 import { addTeamMember, listTeamMembers } from '@/server/services/teamService'
 import { fetchCharacter } from '@/server/starwars-api'
 
 /**
  * `GET /api/team`
  * Returns the default team's active members (`getTeam`). `POST
- * /api/team` validates the body with `addTeamMemberBodySchema` and adds the character
+ * /api/team` validates the body with the generated `addTeamMemberRequestSchema` and adds the character
  * via `addTeamMember`. Service errors come back as the documented `404`, `409`, and
  * `422` envelopes from `api.openapi.yaml`.
  */
@@ -27,10 +27,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return
   }
   if (req.method === 'POST') {
-    const parsed = addTeamMemberBodySchema.safeParse(req.body)
+    const parsed = addTeamMemberRequestSchema.safeParse(req.body)
 
     if (!parsed.success) {
-      res.status(400).json({ message: 'Invalid request body' })
+      res.status(400).json({ message: parsed.error.issues[0]?.message ?? 'Invalid request body' })
       return
     }
     try {

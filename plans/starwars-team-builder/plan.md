@@ -202,11 +202,11 @@ Gate for Slice 003: `plans/starwars-team-builder/design.md` has tokens, layout s
 
 ### Execution Slices (each ends in a demoable state)
 
-- [ ] **001-setup**: todo
-- [ ] **002-database**: todo
-- [ ] **003-design**: todo
-- [ ] **004-api**: todo
-- [ ] **005-client-kubb**: todo
+- [x] **001-setup**: todo
+- [x] **002-database**: todo
+- [x] **003-design**: todo
+- [x] **004-api**: todo
+- [x] **005-client-kubb**: done
 - [ ] **006-features**: todo
 - [ ] **007-testing**: todo
 

@@ -1,15 +1,8 @@
-const SOURCE = 'https://akabab.github.io/starwars-api/api'
+import type { Character as StarwarsApiCharacter } from '@/gen/starwars'
 
-export type StarwarsApiCharacter = {
-  id: number
-  name: string
-  image?: string
-  height?: number
-  mass?: number
-  affiliations?: Array<string>
-  formerAffiliations?: Array<string>
-  masters?: Array<string>
-}
+export type { Character as StarwarsApiCharacter } from '@/gen/starwars'
+
+const SOURCE = 'https://akabab.github.io/starwars-api/api'
 
 export async function fetchAllCharacters(): Promise<Array<StarwarsApiCharacter>> {
   const res = await fetch(`${SOURCE}/all.json`)

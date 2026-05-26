@@ -1,6 +1,9 @@
 import { errorMessage } from '@/lib/utils'
+import type { Character } from '@/gen/api'
 import type { DomainErrorCode } from './constants'
 import type { StarwarsApiCharacter } from './starwars-api'
+
+export type { Character } from '@/gen/api'
 
 export type DomainError = Error & {
   readonly name: 'DomainError'
@@ -76,16 +79,6 @@ export function mapError({ error, upstreamAsNotFound = false }: MapErrorParams):
   }
   console.error('[api] unhandled error', error)
   return { status: 502, body: { message: errorMessage(error, 'Upstream request failed.') } }
-}
-
-export type Character = {
-  id: number
-  name: string
-  image?: string
-  height?: number
-  mass?: number
-  affiliations?: Array<string>
-  masters?: Array<string>
 }
 
 const CHARACTER_KEYS = ['id', 'name', 'image', 'height', 'mass', 'affiliations', 'masters'] as const
