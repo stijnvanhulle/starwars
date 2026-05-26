@@ -40,7 +40,12 @@ export default function HomePage() {
         <Typography sx={{ fontSize: 16, lineHeight: 1.5, color: '#334155' }}>Pick five characters for your team. Evil characters can&apos;t join.</Typography>
       </Box>
 
-      <CharacterList state={state} characters={characters} errorMessage={describeApiError(error) ?? undefined} onSelect={(id) => router.push(`/characters/${id}`)} />
+      <CharacterList
+        state={state}
+        characters={characters}
+        errorMessage={describeApiError(error) ?? undefined}
+        onSelect={(id) => router.push(`/characters/${id}`)}
+      />
     </Box>
   )
 }
