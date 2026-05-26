@@ -42,7 +42,7 @@ A character is defined as evil when:
 ## Style
 
 * Ask questions and do not assume you are correct, we will validate every phase before starting the implementation.
-* Every phase will be part of the plans(`/plan/starwars-team-builder/001-setup.md`) folder with a well-defined name.
+* Every phase will be part of the plans(`/plans/starwars-team-builder/001-setup.md`) folder with a well-defined name.
 * Use the same plan structure between plans
 * Every plan should be executed independently
 * Update `README.MD` with tech stack, uses cases and folder structure

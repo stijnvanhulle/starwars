@@ -74,8 +74,8 @@ Read-only. The browser fetches characters from our own `/api/characters` and `/a
 
 Two Kubb-generated types, one per side of the proxy:
 
-- **Frontend**: `Character` is generated from `plan/starwars-team-builder/contracts/api.openapi.yaml` alongside the documented `listCharacters` and `getCharacter` operations. Every browser-side component and the generated RTK Query endpoints import it from there.
-- **Server**: the source-API shape is generated from `plan/starwars-team-builder/contracts/starwars.openapi.yaml`. Only the proxy fetcher touches it; the route handlers downconvert it to the frontend `Character` before responding.
+- **Frontend**: `Character` is generated from `plans/starwars-team-builder/contracts/api.openapi.yaml` alongside the documented `listCharacters` and `getCharacter` operations. Every browser-side component and the generated RTK Query endpoints import it from there.
+- **Server**: the source-API shape is generated from `plans/starwars-team-builder/contracts/starwars.openapi.yaml`. Only the proxy fetcher touches it; the route handlers downconvert it to the frontend `Character` before responding.
 
 Fields the app actually reads (identical on both sides of the proxy, the `starwars-api` just carries extra ones we drop):
 

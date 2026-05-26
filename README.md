@@ -27,7 +27,7 @@ Time spent on the Whale Star Wars team-builder exercise, by phase.
 
 | Phase | Output | Time  |
 |---|---|-------|
-| Planning | `plan/starwars-team-builder/plan.md`, `plan/starwars-team-builder/spec.md`, `plan/starwars-team-builder/research.md`, `plan/starwars-team-builder/contracts/*.yaml`, six slice files | TBD   |
+| Planning | `plans/starwars-team-builder/plan.md`, `plans/starwars-team-builder/spec.md`, `plans/starwars-team-builder/research.md`, `plans/starwars-team-builder/contracts/*.yaml`, six slice files | TBD   |
 | Implementation | Slices 001 to 005 (Next.js + MUI shell, Postgres + Drizzle, `/api/team`, Kubb-generated clients, features) | _TBD_ |
 | Testing | Slice 006 (Vitest unit + integration, Playwright e2e, CI Postgres service) | _TBD_ |
 

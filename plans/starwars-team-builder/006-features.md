@@ -20,7 +20,7 @@ Assemble the three screens (`/`, `/characters/[id]`, `/team`) and the persistent
    2. `character.affiliations?.some(a => /darth|sith/i.test(a)) ?? false`. The frontend `Character` carries only current affiliations (the proxy strips `formerAffiliations`), so there is no "former" branch to guard against here.
    3. `character.masters?.some(m => /darth/i.test(m)) ?? false`. `masters` is `string[]` upstream (entries sometimes carry a parenthetical role like `"Darth Sidious (Sith Master)"`); substring match covers that.
    Defensive defaults if a field is missing: treat absent `affiliations` / `masters` as empty arrays (the rule short-circuits to `false` for that rule, not for the whole predicate). Pure, synchronous, no fetches inside. `TeamService.add()`'s `isDarkSide(character)` call from Slice 004 has everything it needs; there is no separate master-resolution step.
-2. **Add a request-scoped character cache** at `apps/platform/src/server/starwars-api.ts`. Replace the bare `fetchCharacter` / `fetchAllCharacters` with `createCharacterFetcher()` that returns a `{ all, byId }` pair backed by an internal `Map<number, Promise<StarwarsApiCharacter | null>>` so a single request never fetches the same id twice. The proxy routes (`/api/characters`, `/api/characters/{id}`) and the service factory in `createTeamService()` both call this once per request and thread the fetcher through.
+2. **Add a request-scoped character cache** at `apps/platform/src/server/starwars-api.ts`. Replace the bare `fetchCharacter` / `fetchAllCharacters` with `createCharacterFetcher()` that returns a `{ all, byId }` pair backed by an internal `Map<number, Promise<StarwarsApiCharacter | null>>` so a single request never fetches the same id twice. Update every call site from Slice 004 to construct one fetcher per request and thread it through: `/api/characters/route.ts` (calls `all()`), `/api/characters/[id]/route.ts` (calls `byId(id)`), and `createTeamService()` (passes `byId` to the service as the existence-check helper). The named `fetchCharacter` / `fetchAllCharacters` exports are removed; the integration tests' `vi.mock('@/server/starwars-api')` is rewritten to mock `createCharacterFetcher` instead.
 3. **Build `<CharacterList />`** at `packages/components/src/characters/CharacterList.tsx`. Reads `useListCharactersQuery()` (from the `api` slice → `GET /api/characters`), renders `<StatePanel variant="loading|error">` for the in-flight and failed states, and a responsive grid of `<CharacterCard />` (from Slice 003) for the success state. Each card links to `/characters/[id]` using `next/link`.
 4. **Replace the smoke `page.tsx`** from Slice 005 with the real home page. Server component shell, client `<CharacterList />` inside. Title and copy come from `design.md`.
 5. **Build the detail page** at `apps/platform/src/app/characters/[id]/page.tsx`. Server component reads the route param, passes it to a client `<CharacterDetail id={id} />`. The client component:
@@ -50,7 +50,12 @@ Assemble the three screens (`/`, `/characters/[id]`, `/team`) and the persistent
 
 - `apps/platform/src/lib/darkSide.ts`: real rules replace the Slice 004 stub
 - `apps/platform/src/lib/apiError.ts`: created
-- `apps/platform/src/server/starwars-api.ts`: request-scoped `createCharacterFetcher()`
+- `apps/platform/src/server/starwars-api.ts`: request-scoped `createCharacterFetcher()` replaces the named `fetchCharacter` / `fetchAllCharacters` exports
+- `apps/platform/src/app/api/characters/route.ts`: updated to construct a fetcher and call `all()`
+- `apps/platform/src/app/api/characters/[id]/route.ts`: updated to construct a fetcher and call `byId(id)`
+- `apps/platform/src/server/services/teamService.ts`: factory wires `byId` into the service in place of `fetchCharacter`
+- `apps/platform/src/app/api/characters/route.test.ts`: mock rewritten against `createCharacterFetcher`
+- `apps/platform/src/app/api/team/route.test.ts`: mock rewritten against `createCharacterFetcher`
 - `apps/platform/src/app/layout.tsx`: `AppShell` + `TopBar` + `TeamSidebarContainer` wired in
 - `apps/platform/src/app/page.tsx`: home page renders `<CharacterList />`
 - `apps/platform/src/app/characters/[id]/page.tsx`: created
@@ -81,7 +86,7 @@ Assemble the three screens (`/`, `/characters/[id]`, `/team`) and the persistent
 ## Done criteria
 
 - [ ] `src/lib/darkSide.ts` implements the three rules with the documented short-circuit and is pure + synchronous
-- [ ] `TeamService.add()` resolves masters via `starwars-api` and threads them into `isDarkSide`
+- [ ] `TeamService.add()` calls the real `isDarkSide(character)` on the `starwars-api`-shaped payload returned by the request-scoped fetcher; `character.masters` is already `string[]`, so no separate resolution step is needed
 - [ ] Request-scoped `createCharacterFetcher()` dedupes repeat fetches within one request
 - [ ] `/` renders the character list with loading and error states
 - [ ] `/characters/[id]` shows name, image, height, mass, affiliations, and prev/next navigation

@@ -6,7 +6,7 @@ Pin the tokens from [`design.md`](design.md) into the `MUI` theme and ship the l
 
 ## Goal (demoable outcome)
 
-`pnpm dev` still boots cleanly with the new `MUI` theme tokens applied. `packages/components` exports `<AppShell />`, `<TeamSidebar />`, `<CharacterCard />`, `<StatePanel />`, `<TeamMemberRow />`, and `<ActionButton />`, each covered by a Vitest smoke test that renders the component in its key states. `plan/starwars-team-builder/design.md` is checked in with the screen sketches for `/`, `/characters/[id]`, and `/team`. No new app routes are added; the components are consumed for the first time in Slice 006.
+`pnpm dev` still boots cleanly with the new `MUI` theme tokens applied. `packages/components` exports `<AppShell />`, `<TeamSidebar />`, `<CharacterCard />`, `<StatePanel />`, `<TeamMemberRow />`, and `<ActionButton />`, each covered by a Vitest smoke test that renders the component in its key states. `plans/starwars-team-builder/design.md` is checked in with the screen sketches for `/`, `/characters/[id]`, and `/team`. No new app routes are added; the components are consumed for the first time in Slice 006.
 
 ## Prerequisites
 
@@ -15,10 +15,10 @@ Slice 001 is done (`MUI` theme provider wired, `AppRouterCacheProvider` in place
 ## Steps
 
 1. **Produce wireframes and (optionally) a hi-fi mockup** before any component code. The point is to disagree on layout in a doc, not in TSX.
-   - **Wireframes (required, lo-fi):** ASCII or mermaid sketches checked in under `plan/starwars-team-builder/design.md`. One per screen: `/`, `/characters/[id]`, `/team`. Show the grid, the regions, and where each component lands. No colors, no copy beyond labels.
-   - **Mockups (optional, hi-fi):** a colored render of at least the home page and the detail page, demonstrating the palette, type, and spacing from the tokens in step 2. Skip entirely if the wireframes + tokens are enough to align on. If you do produce them, check the source (or an exported PNG/SVG) into `plan/starwars-team-builder/design/` and link it from `plan/starwars-team-builder/design.md`.
-   - **Tooling is open.** ASCII or mermaid in markdown is always acceptable. Claude's frontend-design / Artifacts works well for fast hi-fi from a prompt. Any other tool is fine as long as the output lands in `plan/starwars-team-builder/`, the deliverable is the artifact, not the tool that produced it.
-2. **Write the rest of `plan/starwars-team-builder/design.md`** around those wireframes. Sections:
+   - **Wireframes (required, lo-fi):** ASCII or mermaid sketches checked in under `plans/starwars-team-builder/design.md`. One per screen: `/`, `/characters/[id]`, `/team`. Show the grid, the regions, and where each component lands. No colors, no copy beyond labels.
+   - **Mockups (optional, hi-fi):** a colored render of at least the home page and the detail page, demonstrating the palette, type, and spacing from the tokens in step 2. Skip entirely if the wireframes + tokens are enough to align on. If you do produce them, check the source (or an exported PNG/SVG) into `plans/starwars-team-builder/design/` and link it from `plans/starwars-team-builder/design.md`.
+   - **Tooling is open.** ASCII or mermaid in markdown is always acceptable. Claude's frontend-design / Artifacts works well for fast hi-fi from a prompt. Any other tool is fine as long as the output lands in `plans/starwars-team-builder/`, the deliverable is the artifact, not the tool that produced it.
+2. **Write the rest of `plans/starwars-team-builder/design.md`** around those wireframes. Sections:
    - Design tokens (palette, typography scale, spacing scale, radius, elevation, motion durations). One accent, one neutral ramp (50..900), semantic states (`success`, `warning`, `error`, `info`).
    - Layout shell sketch: top bar with app name, sidebar 280px on desktop / drawer on mobile, content slot. Cross-reference the wireframes from step 1.
    - Screen notes for `/`, `/characters/[id]`, `/team`. Each lists the components it consumes and the data shape bound to each. Pairs with the corresponding wireframe.
@@ -36,8 +36,8 @@ Slice 001 is done (`MUI` theme provider wired, `AppRouterCacheProvider` in place
 
 ## Files touched
 
-- `plan/starwars-team-builder/design.md`: created (includes wireframes for `/`, `/characters/[id]`, `/team`)
-- `plan/starwars-team-builder/design/`: created if hi-fi mockups are produced (exported PNG/SVG or tool source files); skipped otherwise
+- `plans/starwars-team-builder/design.md`: created (includes wireframes for `/`, `/characters/[id]`, `/team`)
+- `plans/starwars-team-builder/design/`: created if hi-fi mockups are produced (exported PNG/SVG or tool source files); skipped otherwise
 - `apps/platform/src/theme/theme.ts`: modified (tokens replace the 001 placeholder values)
 - `packages/components/src/shell/AppShell.tsx`: created
 - `packages/components/src/team/TeamSidebar.tsx`: created
@@ -57,12 +57,12 @@ Slice 001 is done (`MUI` theme provider wired, `AppRouterCacheProvider` in place
 1. `pnpm install && pnpm --filter @stijnvanhulle/components build && pnpm dev`. App boots without errors; the placeholder page from Slice 001 still renders with the new theme tokens applied (devtools shows the new font / primary color).
 2. `pnpm --filter @stijnvanhulle/components test` is green.
 3. `pnpm typecheck && pnpm lint` are green.
-4. `plan/starwars-team-builder/design.md` is checked in and renders cleanly (every code fence closes; no `_TBD_` markers remain).
+4. `plans/starwars-team-builder/design.md` is checked in and renders cleanly (every code fence closes; no `_TBD_` markers remain).
 
 ## Done criteria
 
-- [ ] `plan/starwars-team-builder/design.md` is filled in (no `_TBD_`) and includes lo-fi wireframes for `/`, `/characters/[id]`, `/team`
-- [ ] Hi-fi mockups are either checked in under `plan/starwars-team-builder/design/` and linked from `plan/starwars-team-builder/design.md`, or explicitly noted as skipped
+- [ ] `plans/starwars-team-builder/design.md` is filled in (no `_TBD_`) and includes lo-fi wireframes for `/`, `/characters/[id]`, `/team`
+- [ ] Hi-fi mockups are either checked in under `plans/starwars-team-builder/design/` and linked from `plans/starwars-team-builder/design.md`, or explicitly noted as skipped
 - [ ] `apps/platform/src/theme/theme.ts` reflects the tokens in `design.md`
 - [ ] `packages/components` exports `AppShell`, `TeamSidebar`, `CharacterCard`, `StatePanel`, `TeamMemberRow`, `ActionButton`
 - [ ] `<ActionButton disabledReason>` is disabled and the reason renders as a tooltip (the pattern Vader's Add button uses in 006)

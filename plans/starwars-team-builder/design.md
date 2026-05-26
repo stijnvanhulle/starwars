@@ -2,7 +2,7 @@
 
 Authored in Planning Phase 3 (ASCII pass + Claude design hi-fi pass). Gates Slice 003. This file stays the source of truth for tokens, sketches, components, and states.
 
-**Hi-fi mockups** (`plan/starwars-team-builder/design/`, open in any browser):
+**Hi-fi mockups** (`plans/starwars-team-builder/design/`, open in any browser):
 
 - [home.html](./design/home.html). character list grid with sidebar
 - [character-detail.html](./design/character-detail.html). Darth Vader page showing the disabled-with-tooltip Add button and dark-side warning
@@ -53,7 +53,7 @@ Top bar sits on the same `surface.app` background as the content (no separate wh
 
 ### Typography
 
-Whale uses **Sofia Pro Soft** for headings (paid Adobe font) and **Nunito Sans** for body. We mirror the body face exactly (Nunito Sans is free on Google Fonts); for headings we fall back to Nunito Sans 800 if Sofia Pro Soft is not licensed. The hi-fi sketches under `plan/starwars-team-builder/design/` load Nunito Sans only.
+Whale uses **Sofia Pro Soft** for headings (paid Adobe font) and **Nunito Sans** for body. We mirror the body face exactly (Nunito Sans is free on Google Fonts); for headings we fall back to Nunito Sans 800 if Sofia Pro Soft is not licensed. The hi-fi sketches under `plans/starwars-team-builder/design/` load Nunito Sans only.
 
 | Token         | Value                                                                                  |
 | ------------- | -------------------------------------------------------------------------------------- |
@@ -254,10 +254,13 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 | `TeamMemberRow`        | `team/`       | Two variants: `compact` (sidebar) and `full` (`/team`)     |
 | `StatePanel`           | `common/`     | Loading / empty / error variants                           |
 | `ActionButton`         | `common/`     | Loading + `disabledReason` (tooltip) patterns              |
-| `Pill` / `Chip`        | `common/`     | Affiliation chips, meta chips, badges                      |
-| `Pager`                | `common/`     | Prev/Next + position counter on the detail page            |
-| `ProgressDots`         | `common/`     | The `n / 5` dots on `/team`                                |
-| `Tooltip`              | `common/`     | Hover/focus tooltip; used by `ActionButton`                |
+
+> The patterns below are not exported components. They render inline inside their host component using MUI primitives, so they don't need a slot in `packages/components`.
+>
+> - **Pill / Chip** — affiliation chips, meta chips: use MUI `<Chip variant="outlined">` directly wherever needed.
+> - **Pager** — Prev/Next + position counter on the detail page: two `<ActionButton>`s plus a `<Typography>` counter laid out inline inside `<CharacterDetail>`.
+> - **ProgressDots** — `n / 5` dots on the team sidebar / team page: render inline (`Array.from({ length: 5 }).map(...)`) inside `<TeamSidebar>` / `<TeamMemberRow>`.
+> - **Tooltip** — wraps disabled controls: use MUI `<Tooltip>` directly. `<ActionButton>` already integrates it for the `disabledReason` pattern.
 
 All UI components live in `packages/components` from day one; `apps/platform/src/components` is reserved for app-level wiring that isn't a reusable component (route layouts, providers).
 

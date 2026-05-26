@@ -16,11 +16,11 @@ Every endpoint the browser calls is documented in `api.yaml`, so RTK Query endpo
 ## Prerequisites
 
 - Slice 003 is done (`packages/components` exports the primitives).
-- Slice 004 is done (`/api/characters` and `/api/team` exist; `apps/platform/openapi/api.yaml` and `apps/platform/openapi/starwars.yaml` are mirrored from `plan/starwars-team-builder/contracts/`).
+- Slice 004 is done (`/api/characters` and `/api/team` exist; `apps/platform/openapi/api.yaml` and `apps/platform/openapi/starwars.yaml` are mirrored from `plans/starwars-team-builder/contracts/`).
 
 ## Steps
 
-1. **Verify the mirrored contracts**. `apps/platform/openapi/api.yaml` and `apps/platform/openapi/starwars.yaml` are already in place from Slice 004 with the do-not-edit header. Confirm they match `plan/starwars-team-builder/contracts/`.
+1. **Verify the mirrored contracts**. `apps/platform/openapi/api.yaml` and `apps/platform/openapi/starwars.yaml` are already in place from Slice 004 with the do-not-edit header. Confirm they match `plans/starwars-team-builder/contracts/`.
 2. **Install `Kubb` packages** in `apps/platform`: `kubb@5.0.0-beta.23` (unified package, exports `defineConfig`), `@kubb/adapter-oas@5.0.0-beta.23` (replaces v4's `@kubb/plugin-oas`), `@kubb/plugin-ts@5.0.0-beta.23`, `@kubb/plugin-client@5.0.0-beta.23`, `@kubb/plugin-zod@5.0.0-beta.23`. Pinned exactly per the prompt; no `^`.
 3. **Write `apps/platform/kubb.config.ts`** as an array `defineConfig([apiCfg, starwarsCfg])` (v5 supports multiple configs from one file). `defineConfig` comes from `'kubb'`, not `'@kubb/core'`. Each entry uses the v5 layered shape:
    - **Top-level `adapter`**: `adapterOas({ integerType: 'number' })` from `'@kubb/adapter-oas'`. The `integerType: 'number'` override is required, v5 defaults to `'bigint'`, but `Character.id`, `height`, `mass` and `TeamMember.characterId` are plain `number` everywhere else in the app.
@@ -39,11 +39,12 @@ Every endpoint the browser calls is documented in `api.yaml`, so RTK Query endpo
    - `addTeamMember` → `POST /team` with body `{ characterId }`, returns `TeamMember`. Invalidates `'team'`.
    - `removeTeamMember` → `DELETE /team/${characterId}`. Invalidates `'team'`.
    One slice means one `reducerPath`, one middleware, one cache. The sidebar re-renders automatically when team mutations invalidate the `'team'` tag.
+9. **Wire the Redux store and typed hooks**. Create `apps/platform/src/store/store.ts` calling `configureStore({ reducer: { [api.reducerPath]: api.reducer }, middleware: (gdm) => gdm().concat(api.middleware) })`; export `store`, `RootState`, `AppDispatch`. Create `apps/platform/src/store/hooks.ts` exporting the typed `useAppDispatch` and `useAppSelector` (`TypedUseSelectorHook<RootState>`). These are the only Redux entry points the rest of the app touches.
 10. **Build `<Providers />`** at `apps/platform/src/store/Providers.tsx`. Client component (`'use client'`), wraps children in `<ReduxProvider store={store}>`. Replace the placeholder layout from Slice 001 so `layout.tsx` now nests `<AppRouterCacheProvider>` → `<ThemeProvider>` → `<CssBaseline />` → `<Providers>` → `{children}`.
 11. **Adopt the generated Zod in the POST handler**. In `apps/platform/src/app/api/team/route.ts`, replace Slice 004's hand-rolled `isAddTeamMemberRequest` guard with the generated `addTeamMemberRequestSchema` from `@/gen/api`. On parse failure, return `400` with the Zod error message (still not in the contract's enumerated error codes; the 400-body shape stays a plain `{ message }`). Update the matching integration test if needed.
 12. **Wire the proxy fetcher to the generated `starwars-api` type**. In `apps/platform/src/server/starwars-api.ts`, replace the hand-rolled `StarwarsApiCharacter` interface with the generated `Character` type from `@/gen/starwars`. The downconverter `toCharacter` now takes that generated type and returns the `@/gen/api` `Character`. No browser code imports `@/gen/starwars`; enforce with an oxlint rule restricting that import path to `src/server/**` and `src/lib/darkSide.ts`.
 13. **Add a smoke client component** at `apps/platform/src/app/page.tsx` (replacing Slice 001's static placeholder): a `'use client'` component that calls `useListCharactersQuery()` and renders the character count plus a loading/error state via Slice 003's `<StatePanel />`. This is throwaway scaffolding; Slice 006 replaces the body with the real character list. It exists in this slice only to prove the wiring works in the browser.
-14. **Resolve Slice 004's open question** about `isAddTeamMemberRequest`: it is replaced by the generated Zod in step 11. Update `plan/starwars-team-builder/research.md` to mark that open item closed and reference Slice 005.
+14. **Resolve Slice 004's open question** about `isAddTeamMemberRequest`: it is replaced by the generated Zod in step 11. Update `plans/starwars-team-builder/research.md` to mark that open item closed and reference Slice 005.
 
 ## Files touched
 
@@ -64,7 +65,7 @@ Every endpoint the browser calls is documented in `api.yaml`, so RTK Query endpo
 - `apps/platform/src/app/api/team/route.ts`: modified (replace hand-rolled guard with generated Zod)
 - `apps/platform/src/app/api/team/route.test.ts`: modified if the 400-body shape changes
 - `.oxlintrc` (or equivalent): modified (restrict `@/gen/starwars` imports to `src/server/**` and `src/lib/darkSide.ts`)
-- `plan/starwars-team-builder/research.md`: modified (close the "hand-rolled guard" open item)
+- `plans/starwars-team-builder/research.md`: modified (close the "hand-rolled guard" open item)
 
 ## Verification
 
@@ -72,7 +73,7 @@ Every endpoint the browser calls is documented in `api.yaml`, so RTK Query endpo
 2. Re-run `pnpm gen`. Output is identical on the second run.
 3. Delete `apps/platform/src/gen/` and run `pnpm --filter platform build`. The `prebuild` hook regenerates it; build succeeds.
 4. `pnpm typecheck` is green. The team route handler now imports the generated Zod and types from `@/gen/api`; the proxy fetcher imports the `starwars-api` type from `@/gen/starwars`.
-5. `pnpm --filter platform test` and `pnpm --filter platform test` are green; the Slice 004 integration tests still pass (with the 400-body shape adjusted where needed).
+5. `pnpm --filter platform test` is green; the Slice 004 unit and integration tests still pass (with the 400-body shape adjusted where needed).
 6. `pnpm --filter platform dev` boots. Visit `http://localhost:3000/`. The smoke component renders "N characters" (where N matches the `starwars-api` `/all.json` length, currently 87) after the loading state. Devtools network panel shows requests **only** to `/api/characters`, zero to `akabab.github.io`.
 7. `pnpm lint` reports any forbidden `@/gen/starwars` import outside `src/server/**` / `src/lib/darkSide.ts` (introduce a deliberate violation in a scratch branch to confirm).
 
@@ -90,5 +91,5 @@ Every endpoint the browser calls is documented in `api.yaml`, so RTK Query endpo
 - [ ] `POST /api/team` validates with the generated Zod schema (not the hand-rolled guard)
 - [ ] `@/gen/starwars` is never imported from browser code (lint rule enforces it)
 - [ ] `pnpm typecheck`, `pnpm lint`, `pnpm test` are green
-- [ ] `plan/starwars-team-builder/research.md` closes the "hand-rolled guard" open item with a pointer to Slice 005
+- [ ] `plans/starwars-team-builder/research.md` closes the "hand-rolled guard" open item with a pointer to Slice 005
 - [ ] `isDarkSide` is still a stub; real rules land in Slice 006 (`Character.masters` is `string[]`, so no resolution step is needed)

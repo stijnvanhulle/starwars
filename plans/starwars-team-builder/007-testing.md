@@ -67,9 +67,9 @@ Add Playwright e2e specs and a CI pipeline that runs unit + integration + e2e ag
     - **Tech stack**: bullet list pulled from `plan.md`'s Technical Context table.
     - **Use cases**: three sentences from `spec.md`.
     - **Folder structure**: the `tree` from `plan.md`'s Project Structure section.
-    - **Getting started**: link to `plan/starwars-team-builder/verification.md` for the user flow walk-through and to `plan/starwars-team-builder/001-setup.md` for the first execution slice.
-    - **Status**: current state ("All seven slices complete; see `plan/starwars-team-builder/plan.md` Progress Tracking").
-13. **Close out the open items** in `plan/starwars-team-builder/research.md`. The Phase 0/1 items were resolved earlier — confirm those closures are still recorded:
+    - **Getting started**: link to `plans/starwars-team-builder/verification.md` for the user flow walk-through and to `plans/starwars-team-builder/001-setup.md` for the first execution slice.
+    - **Status**: current state ("All seven slices complete; see `plans/starwars-team-builder/plan.md` Progress Tracking").
+13. **Close out the open items** in `plans/starwars-team-builder/research.md`. The Phase 0/1 items were resolved earlier — confirm those closures are still recorded:
     - Optional-field fallbacks (Slice 006 step 1): placeholder image, "Unknown" stats, hidden empty lists.
     - `isDarkSide` with missing fields (Slice 006 step 1): `?? false` short-circuit on the array probes.
     - Proxy cache scope (Slice 006 step 2): request-scoped `Map` memo inside `createCharacterFetcher`.
@@ -91,8 +91,8 @@ Add Playwright e2e specs and a CI pipeline that runs unit + integration + e2e ag
 - `.github/workflows/release.yml`: created (Changesets action)
 - `.changeset/*.md`: created (initial release entry)
 - `README.md`: modified (tech stack, use cases, folder structure, status)
-- `plan/starwars-team-builder/research.md`: modified (final open-item close-out)
-- `plan/starwars-team-builder/plan.md`: modified (flip the relevant checkboxes to done)
+- `plans/starwars-team-builder/research.md`: modified (final open-item close-out)
+- `plans/starwars-team-builder/plan.md`: modified (flip the relevant checkboxes to done)
 
 ## Verification
 
@@ -103,7 +103,7 @@ Add Playwright e2e specs and a CI pipeline that runs unit + integration + e2e ag
 5. Push the branch. GitHub Actions runs the full pyramid; the workflow finishes green. On failure, the Playwright report is downloadable from the run's artifacts.
 6. `pnpm changeset status` shows one pending changeset.
 7. `cat README.md` shows the four required sections from the prompt; no `_TBD_` markers.
-8. `plan/starwars-team-builder/research.md` has no items left under "Open" without either a decision or a follow-up link.
+8. `plans/starwars-team-builder/research.md` has no items left under "Open" without either a decision or a follow-up link.
 
 ## Done criteria
 
@@ -114,6 +114,6 @@ Add Playwright e2e specs and a CI pipeline that runs unit + integration + e2e ag
 - [ ] CI uploads the Playwright report on failure
 - [ ] Release workflow uses `changesets/action@v1`; one initial changeset is checked in
 - [ ] `README.md` covers tech stack, use cases, folder structure, and current status per the prompt
-- [ ] `plan/starwars-team-builder/research.md` has no unresolved open items at slice close
-- [ ] `plan/starwars-team-builder/plan.md` Progress Tracking shows all slices and the three Close-out items as done
+- [ ] `plans/starwars-team-builder/research.md` has no unresolved open items at slice close
+- [ ] `plans/starwars-team-builder/plan.md` Progress Tracking shows all slices and the three Close-out items as done
 - [ ] `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm test:e2e` are green locally and in CI
