@@ -69,6 +69,14 @@
     "downconverter",
     "prebuild",
     "oxlintrc",
-    "Kenobi"
+    "Kenobi",
+    "pglite",
+    "Pglite",
+    "PGlite",
+    "pretypecheck",
+    "prerender",
+    "ECONNREFUSED",
+    "readlink",
+    "tombstoned"
   ]
 }

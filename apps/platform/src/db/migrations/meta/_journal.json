@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1779811564478,
+      "tag": "0000_complex_squadron_sinister",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1779811564479,
+      "tag": "0001_default_team",
+      "breakpoints": false
+    }
+  ]
+}

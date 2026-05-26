@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: starwars-postgres
+    environment:
+      POSTGRES_USER: platform
+      POSTGRES_PASSWORD: platform
+      POSTGRES_DB: platform
+    ports:
+      - '127.0.0.1:5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U platform']
+      interval: 5s
+      retries: 10
+      start_period: 5s
+
+volumes:
+  pgdata:

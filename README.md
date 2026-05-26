@@ -50,25 +50,25 @@ Time spent on the Whale Star Wars team-builder exercise, by phase.
 
 ```
 .
-├── .changeset/          # Changeset configuration
-├── .claude/             # Claude Code workspace config
+├── .changeset/             # Changeset configuration
+├── .claude/                # Claude Code workspace config
 ├── .github/
-│   ├── ISSUE_TEMPLATE/  # Issue templates
-│   ├── setup/           # Reusable setup composite action
-│   └── workflows/       # CI workflows
-├── .skills/             # Claude Code skills
-├── configs/             # Shared TS bases + vitest config
-├── internals/           # Internal, non-published packages
-│   └── utils/
-├── packages/            # Publishable packages
-│   ├── core/
-│   └── demo/
-├── env.d.ts
+│   ├── ISSUE_TEMPLATE/     # Issue templates
+│   ├── setup/              # Reusable setup composite action
+│   └── workflows/          # pr.yml, release.yml, etc.
+├── .agents/skills/         # Cross-provider skills (humanizer, jsdoc, pr...)
+├── apps/
+│   └── platform/           # Next.js 16 + MUI v9 app (Star Wars team builder)
+├── configs/                # Shared TS bases + vitest config
+├── internals/utils/        # Internal, non-published helpers
+├── packages/
+│   └── components/         # Shared UI components, built with tsdown
+├── plans/starwars-team-builder/  # Spec, plan, slices, verification
+├── docker-compose.yml      # Postgres 17 for local dev + tests
 ├── oxfmt.config.ts
 ├── oxlint.config.ts
 ├── package.json
 ├── pnpm-workspace.yaml
-├── reset.d.ts
 ├── tsconfig.json
 └── turbo.json
 ```
@@ -77,38 +77,37 @@ Time spent on the Whale Star Wars team-builder exercise, by phase.
 
 - Node.js `>= 22`
 - pnpm `>= 11`
+- Docker (only for the dev/prod database; `pnpm test` runs against pglite in-process)
 
 ## Commands
 
 ```bash
 pnpm install         # Install dependencies
-pnpm build           # Build all packages
-pnpm test            # Run tests
-pnpm test:watch      # Watch mode
+pnpm dev             # Start the Next.js dev server (apps/platform)
+pnpm build           # Build all workspaces
+pnpm start           # Run the built apps/platform (next start)
+pnpm test            # Run tests (uses pglite in-memory; no Docker needed)
+pnpm test:watch      # Vitest watch mode (root config)
 pnpm test:bench      # Run benchmarks
+pnpm test:e2e        # Playwright (apps/platform; specs land in slice 007)
 pnpm lint            # Lint with oxlint
 pnpm lint:fix        # Lint + auto-fix
-pnpm format          # Format with oxfmt
-pnpm typecheck       # Type-check all packages
 pnpm lint:spell      # Spell check
+pnpm format          # Format with oxfmt
+pnpm typecheck       # Type-check all workspaces
 pnpm changeset       # Create a changeset
 pnpm clean           # Clean build artifacts
 pnpm upgrade         # Bump dependencies to latest (via taze)
 ```
 
-## Using this template
+Postgres-backed commands live in `apps/platform`:
 
-1. Click **Use this template** on GitHub.
-2. Update `package.json` `name`/`namespace`, `repository.url`, and the
-   author block.
-3. Replace `packages/core` and `packages/demo` with your own packages
-   (keep `internals/utils` if useful).
-4. Update `oxlint.config.ts` / `oxfmt.config.ts` ignore patterns if needed.
-5. Update `.changeset/config.json` `changelog.repo` and `fixed`/`ignore` arrays.
-6. Update `tsconfig.json` `paths` to match the new packages.
-7. Edit `README.md`, `AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `SECURITY.md`
-   for the new project.
-8. Push to `main` — CI runs immediately.
+```bash
+docker compose up -d postgres                                  # Start Postgres on :5432
+pnpm --filter @stijnvanhulle/platform run db:migrate           # Apply migrations
+pnpm --filter @stijnvanhulle/platform run db:generate          # Generate a new migration from schema.ts
+pnpm --filter @stijnvanhulle/platform run db:studio            # Drizzle Studio
+```
 
 ## Releasing
 

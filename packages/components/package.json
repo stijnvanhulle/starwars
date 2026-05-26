@@ -27,7 +27,7 @@
   "scripts": {
     "build": "tsdown",
     "clean": "rm -rf ./dist",
-    "test": "vitest --passWithNoTests",
+    "test": "vitest run --passWithNoTests",
     "typecheck": "tsc -p ./tsconfig.json --noEmit"
   },
   "devDependencies": {

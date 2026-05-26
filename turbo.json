@@ -29,11 +29,6 @@
       "cache": false,
       "outputs": ["playwright-report/**", "test-results/**"]
     },
-    "test": {
-      "dependsOn": ["^build"],
-      "outputs": [],
-      "inputs": ["src/**/*.ts", "src/**/*.tsx", "vitest.config.ts"]
-    },
     "lint": {
       "outputs": [],
       "inputs": ["src/**/*.ts", "src/**/*.tsx", "package.json"],
