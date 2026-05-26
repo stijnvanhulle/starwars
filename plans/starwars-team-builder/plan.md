@@ -10,8 +10,7 @@ The browser talks to a single `Next.js` API. Character endpoints are a server-si
 
 ## Phases
 
-- **Planning Phases**: produce md files in `plans/starwars-team-builder/` (`spec.md`, `research.md`, `data-model.md`, `contracts/*.yaml`, `verification.md`, `design.md`, and the slice files).
-- **Execution Slices**: produce code. Each boots from a fresh `pnpm install` and ends in a demoable state.
+Planning happens in markdown under `plans/starwars-team-builder/`: `spec.md`, `research.md`, `data-model.md`, `contracts/*.yaml`, `verification.md`, `design.md`, and the slice files. Execution then turns each slice into code, with each slice booting from a fresh `pnpm install` and ending in a demoable state.
 
 ## Technical Context
 
@@ -28,15 +27,25 @@ The browser talks to a single `Next.js` API. Character endpoints are a server-si
 
 ## Ground Rules
 
-- **Layered architecture**: Route handler → `Service` → `Repository` → `DB`. Each layer has exactly one concern.\
-  `Drizzle` imports are restricted to `apps/platform/src/db/**` (schema + client) and `apps/platform/src/server/repositories/**` (queries). No other directory imports it — services, routes, components, and tests all go through repositories.
+### Layered architecture
 
-- **Contract-first**: One `OpenAPI 3.1` spec for the frontend-facing API (`api.openapi.yaml`, documents `/api/characters`, `/api/characters/{id}`, `/api/team*` and the shared `Character` schema) and one for `starwars-api` (server-only).\
-  `Kubb` is the source of truth for types and `Zod`. The frontend never imports the `starwars-api` contract.
+Route handler → `Service` → `Repository` → `DB`, one concern per layer. `Drizzle` imports stay inside `apps/platform/src/db/**` (schema + client) and `apps/platform/src/server/repositories/**` (queries). Nothing else imports it. Services, routes, components, and tests all go through repositories.
 
-- **Test-first approach**: Service rules and the `isDarkSide` util get unit/integration tests **before** UI work in their phase. Pure presentational components do not block on tests.
-- **Independent phases**: Each `plans/starwars-team-builder/00X-*.md` boots from a fresh `pnpm install` and ends in a runnable, demoable state.
-- **Components in** `packages/components` **from day one**: every UI component listed in `design.md`'s inventory lives in `packages/components`. `apps/platform/src/components` is reserved for app-level wiring (route layouts, providers) that isn't itself a reusable component.
+### Contract-first
+
+One `OpenAPI 3.1` spec for the frontend-facing API (`api.openapi.yaml`, covers `/api/characters`, `/api/characters/{id}`, `/api/team*`, and the shared `Character` schema), and one for `starwars-api` (server-only). `Kubb` is the source of truth for types and `Zod`. The frontend never imports the `starwars-api` contract.
+
+### Test-first
+
+Service rules and the `isDarkSide` util get unit and integration tests before UI work in their phase. Pure presentational components do not block on tests.
+
+### Independent slices
+
+Each `plans/starwars-team-builder/00X-*.md` boots from a fresh `pnpm install` and ends in a runnable, demoable state.
+
+### Components from day one
+
+Every UI component listed in `design.md`'s inventory lives in `packages/components`. `apps/platform/src/components` is reserved for app-level wiring (route layouts, providers) that is not itself a reusable component.
 
 ## Data flow
 

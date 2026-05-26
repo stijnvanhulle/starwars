@@ -59,12 +59,12 @@ Add Playwright e2e specs and a CI pipeline that runs unit + integration + e2e ag
 8. **Add a release workflow** at `.github/workflows/release.yml` using the standard Changesets action: on push to `main`, run `changesets/action@v1` to either open a "Version Packages" PR or publish if one was merged. The product is private (apps don't publish), but the Changesets entry still drives the `CHANGELOG.md` and version bump for `apps/platform` and `packages/components`.
 9. **Author the initial Changesets entry**. `pnpm changeset add`. Mark `apps/platform` and `packages/components` as `minor` (this is the first releasable surface). Summary: "Initial release of the Whale Star Wars Team Builder." Commit the resulting `.changeset/*.md` file.
 10. **Refresh `README.md`** per the prompt:
-    - **Tech stack**: bullet list pulled from `plan.md`'s Technical Context table.
-    - **Use cases**: three sentences from `spec.md`.
-    - **Folder structure**: the `tree` from `plan.md`'s Project Structure section.
-    - **Getting started**: link to `plans/starwars-team-builder/verification.md` for the user flow walk-through and to `plans/starwars-team-builder/001-setup.md` for the first execution slice.
-    - **Status**: current state ("All seven slices complete; see `plans/starwars-team-builder/plan.md` Progress Tracking").
-11. **Close out the open items** in `plans/starwars-team-builder/research.md`. The Phase 0/1 items were resolved earlier — confirm those closures are still recorded:
+    1. Tech stack as a bullet list pulled from `plan.md`'s Technical Context table.
+    2. Use cases in three sentences from `spec.md`.
+    3. Folder structure copied from `plan.md`'s Project Structure tree.
+    4. Getting started, linking to `plans/starwars-team-builder/verification.md` for the user flow walk-through and `plans/starwars-team-builder/001-setup.md` for the first execution slice.
+    5. Status, e.g. "All seven slices complete; see `plans/starwars-team-builder/plan.md` Progress Tracking".
+11. **Close out the open items** in `plans/starwars-team-builder/research.md`. The Phase 0/1 items were resolved earlier. Confirm those closures are still recorded:
     - Optional-field fallbacks (Slice 006 step 1): placeholder image, "Unknown" stats, hidden empty lists.
     - `isDarkSide` with missing fields (Slice 006 step 1): `?? false` short-circuit on the array probes.
     - Proxy cache scope (Slice 006 step 2): request-scoped `Map` memo inside `createCharacterFetcher`.
@@ -94,7 +94,7 @@ Add Playwright e2e specs and a CI pipeline that runs unit + integration + e2e ag
 2. `pnpm test:e2e`. All four specs pass against the local Postgres. Total runtime under two minutes on a developer laptop.
 3. Force a regression: comment out the cap-of-5 check in `TeamService.add()`. Re-run `test:e2e`. `cap.spec.ts` fails with a clear assertion message about the team size. Revert.
 4. Force a regression: change `isDarkSide` to always return `false`. Re-run `test:e2e`. `darkSide.spec.ts` fails on the disabled-button assertion and on the 422 response. Revert.
-5. Push the branch. GitHub Actions runs the full pyramid; the workflow finishes green. On failure, the Playwright report is downloadable from the run's artifacts.
+5. Push the branch. GitHub Actions runs the full pyramid. The workflow finishes green. On failure, the Playwright report is downloadable from the run's artifacts.
 6. `pnpm changeset status` shows one pending changeset.
 7. `cat README.md` shows the four required sections from the prompt; no `_TBD_` markers.
 8. `plans/starwars-team-builder/research.md` has no items left under "Open" without either a decision or a follow-up link.

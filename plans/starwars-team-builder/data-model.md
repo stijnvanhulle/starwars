@@ -31,7 +31,7 @@ erDiagram
 
 The dotted line is the soft reference: `team_members.characterId` points at a `starwars-api` character, but there is no database foreign key because the character row lives outside our database. The service validates existence by fetching `/id/{id}.json` before insert.
 
-For now the app operates against a single seeded **default team** (`slug = 'default'`). The `Team` table exists so the multi-team case is a future addition, not a schema migration; the service factory resolves the default team id during service construction (once per request) and threads it through. `(teamId, characterId)` is unique, so the same character can never appear twice in the same team. The five-member cap is per-team.
+For now the app operates against a single seeded **default team** (`slug = 'default'`). The `Team` table exists so the multi-team case is a future addition, not a schema migration. The service factory resolves the default team id during service construction (once per request) and threads it through. `(teamId, characterId)` is unique, so the same character can never appear twice in the same team. The five-member cap is per-team.
 
 ## `Team`
 
@@ -74,8 +74,9 @@ Read-only. The browser fetches characters from our own `/api/characters` and `/a
 
 Two Kubb-generated types, one per side of the proxy:
 
-- **Frontend**: `Character` is generated from `plans/starwars-team-builder/contracts/api.openapi.yaml` alongside the documented `listCharacters` and `getCharacter` operations. Every browser-side component and the generated RTK Query endpoints import it from there.
-- **Server**: the source-API shape is generated from `plans/starwars-team-builder/contracts/starwars.openapi.yaml`. Only the proxy fetcher touches it; the route handlers downconvert it to the frontend `Character` before responding.
+On the frontend, `Character` is generated from `plans/starwars-team-builder/contracts/api.openapi.yaml` alongside the documented `listCharacters` and `getCharacter` operations. Every browser-side component and the generated RTK Query endpoints import it from there.
+
+On the server, the source-API shape is generated from `plans/starwars-team-builder/contracts/starwars.openapi.yaml`. Only the proxy fetcher touches it. The route handlers downconvert it to the frontend `Character` before responding.
 
 Fields the app actually reads (identical on both sides of the proxy, the `starwars-api` just carries extra ones we drop):
 

@@ -23,7 +23,7 @@ Every endpoint the browser calls is documented in `api.yaml`, so RTK Query endpo
 1. **Verify the mirrored contracts**. `apps/platform/openapi/api.yaml` and `apps/platform/openapi/starwars.yaml` are already in place from Slice 004 with the do-not-edit header. Confirm they match `plans/starwars-team-builder/contracts/`.
 2. **Install `Kubb` packages** in `apps/platform`: `kubb@5.0.0-beta.23` (unified package, exports `defineConfig`), `@kubb/adapter-oas@5.0.0-beta.23` (replaces v4's `@kubb/plugin-oas`), `@kubb/plugin-ts@5.0.0-beta.23`, `@kubb/plugin-client@5.0.0-beta.23`, `@kubb/plugin-zod@5.0.0-beta.23`. Pinned exactly per the prompt; no `^`.
 3. **Write `apps/platform/kubb.config.ts`** as an array `defineConfig([apiCfg, starwarsCfg])` (v5 supports multiple configs from one file). `defineConfig` comes from `'kubb'`, not `'@kubb/core'`. Each entry uses the v5 layered shape:
-   - **Top-level `adapter`**: `adapterOas({ integerType: 'number' })` from `'@kubb/adapter-oas'`. The `integerType: 'number'` override is required, v5 defaults to `'bigint'`, but `Character.id`, `height`, `mass` and `TeamMember.characterId` are plain `number` everywhere else in the app.
+   - Top-level `adapter`: `adapterOas({ integerType: 'number' })` from `'@kubb/adapter-oas'`. The `integerType: 'number'` override is required because v5 defaults to `'bigint'`, but `Character.id`, `height`, `mass`, and `TeamMember.characterId` are plain `number` everywhere else in the app.
    - **`output.barrel`**: `{ type: 'named' }` (v4's `output.barrelType: 'named'` no longer exists) so consumers can `import { listCharacters } from '@/gen/api'`.
    - **api** (`input.path: './openapi/api.yaml'`, `output.path: './src/gen/api'`): plugins `pluginTs()`, `pluginClient({ baseURL: '/', client: { importPath: '../fetchClient' } })`, `pluginZod()`. This is the only generated bundle the browser imports.
    - **starwars** (`input.path: './openapi/starwars.yaml'`, `output.path: './src/gen/starwars'`): plugins `pluginTs()`, `pluginZod()`. No `pluginClient`. Server-only; keep imports under `src/server/**`.
@@ -33,7 +33,7 @@ Every endpoint the browser calls is documented in `api.yaml`, so RTK Query endpo
 6. **Add the `gen` script** to `apps/platform/package.json`: `"gen": "kubb generate --config kubb.config.ts"`. Also add a `prebuild` hook (`"prebuild": "pnpm gen"`) so CI never builds against stale generated code.
 7. **Install Redux packages**: `@reduxjs/toolkit@^2.12.0`, `react-redux@^9.3.0`. (Pin per the Technical Context table.)
 8. **Build the single `api` slice** at `apps/platform/src/store/api.ts`. `createApi` with `reducerPath: 'api'`, `baseQuery: fetchBaseQuery({ baseUrl: '/api' })`, and these endpoints, all backed by the generated `@/gen/api` client and types:
-   - `listCharacters` → `GET /characters`, returns `Character[]`. No tags; the source API is static for the session and refetch-on-focus handles staleness.
+   - `listCharacters` → `GET /characters`, returns `Character[]`. No tags. The source API is static for the session and refetch-on-focus handles staleness.
    - `getCharacter` → `GET /characters/{id}`, returns `Character`.
    - `getTeam` → `GET /team`, returns `TeamMember[]`. Provides tag `'team'`. (Matches the contract's `operationId: getTeam`; the generated hook is `useGetTeamQuery`.)
    - `addTeamMember` → `POST /team` with body `{ characterId }`, returns `TeamMember`. Invalidates `'team'`.
@@ -72,8 +72,8 @@ Every endpoint the browser calls is documented in `api.yaml`, so RTK Query endpo
 1. `turbo run gen` exits 0. `apps/platform/src/gen/api/` contains `types.ts` (including `Character` and `TeamMember`), generated operation files for every documented endpoint (e.g. `listCharacters.ts`, `getCharacter.ts`, `getTeam.ts`), `*.zod.ts`, and `index.ts`. `apps/platform/src/gen/starwars/` contains `types.ts`, `*.zod.ts`, `index.ts`, and no `*.client.ts` files.
 2. Re-run `pnpm gen`. Output is identical on the second run.
 3. Delete `apps/platform/src/gen/` and run `turbo run build`. The `prebuild` hook regenerates it; build succeeds.
-4. `pnpm typecheck` is green. The team route handler now imports the generated Zod and types from `@/gen/api`; the proxy fetcher imports the `starwars-api` type from `@/gen/starwars`.
-5. `turbo run test` is green; the Slice 004 unit and integration tests still pass (with the 400-body shape adjusted where needed).
+4. `pnpm typecheck` is green. The team route handler now imports the generated Zod and types from `@/gen/api`. The proxy fetcher imports the `starwars-api` type from `@/gen/starwars`.
+5. `turbo run test` is green. The Slice 004 unit and integration tests still pass (with the 400-body shape adjusted where needed).
 6. `turbo run dev` boots. Visit `http://localhost:3000/`. The smoke component renders "N characters" (where N matches the `starwars-api` `/all.json` length, currently 87) after the loading state. Devtools network panel shows requests **only** to `/api/characters`, zero to `akabab.github.io`.
 7. `pnpm lint` reports any forbidden `@/gen/starwars` import outside `src/server/**` / `src/lib/darkSide.ts` (introduce a deliberate violation in a scratch branch to confirm).
 

@@ -94,4 +94,4 @@ Slice 001 is done. `data-model.md` is the source of truth for the table shape.
 - [ ] `drizzle-orm` is imported only from files under `apps/platform/src/db/**` and `apps/platform/src/server/repositories/**`
 - [ ] Integration tests cover the cases in step 11 (both repositories) and pass against the real container
 - [ ] `pnpm typecheck`, `pnpm lint`, `pnpm test` are green
-- [ ] No service rules (cap of 5, dark-side guard) leak into this slice; those land in Slice 004
+- [ ] No service rules (cap of 5, dark-side guard) leak into this slice. Those land in Slice 004

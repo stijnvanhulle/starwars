@@ -6,7 +6,7 @@ Pin the tokens from [`design.md`](design.md) into the `MUI` theme and ship the l
 
 ## Goal (demoable outcome)
 
-`pnpm dev` still boots cleanly with the new `MUI` theme tokens applied. `packages/components` exports `<AppShell />`, `<TeamSidebar />`, `<CharacterCard />`, `<StatePanel />`, `<TeamMemberRow />`, and `<ActionButton />`, each covered by a Vitest smoke test that renders the component in its key states. `plans/starwars-team-builder/design.md` is checked in with the screen sketches for `/`, `/characters/[id]`, and `/team`. No new app routes are added; the components are consumed for the first time in Slice 006.
+`pnpm dev` still boots cleanly with the new `MUI` theme tokens applied. `packages/components` exports `<AppShell />`, `<TeamSidebar />`, `<CharacterCard />`, `<StatePanel />`, `<TeamMemberRow />`, and `<ActionButton />`, each covered by a Vitest smoke test that renders the component in its key states. `plans/starwars-team-builder/design.md` is checked in with the screen sketches for `/`, `/characters/[id]`, and `/team`. No new app routes are added. The components are consumed for the first time in Slice 006.
 
 ## Prerequisites
 
@@ -54,7 +54,7 @@ Slice 001 is done (`MUI` theme provider wired, `AppRouterCacheProvider` in place
 
 ## Verification
 
-1. `pnpm install && turbo run build && pnpm dev`. App boots without errors; the placeholder page from Slice 001 still renders with the new theme tokens applied (devtools shows the new font / primary color).
+1. `pnpm install && turbo run build && pnpm dev`. App boots without errors. The placeholder page from Slice 001 still renders with the new theme tokens applied (devtools shows the new font / primary color).
 2. `turbo run test` is green.
 3. `pnpm typecheck && pnpm lint` are green.
 4. `plans/starwars-team-builder/design.md` is checked in and renders cleanly (every code fence closes; no `_TBD_` markers remain).

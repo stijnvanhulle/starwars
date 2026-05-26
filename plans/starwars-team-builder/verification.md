@@ -47,7 +47,7 @@ Covers **AC-4**.
 1. From `/`, open the third character in the list.
 2. Click `Next`. URL changes to the fourth character; page rerenders without a full reload to `/`.
 3. Click `Prev` twice. URL ends up on the second character.
-4. `Prev` on the first character and `Next` on the last are either disabled or wrap; the choice is up to Slice 006 as long as it's consistent.
+4. `Prev` on the first character and `Next` on the last are either disabled or wrap. The choice is up to Slice 006 as long as it's consistent.
 
 Pass when: prev/next walk the same order as the list on `/`, and the browser history holds one entry per character (back button works).
 
@@ -56,9 +56,9 @@ Pass when: prev/next walk the same order as the list on `/`, and the browser his
 Covers **AC-5**.
 
 1. On a non-evil character's detail page (e.g. Luke), click `Add to team`.
-2. A `POST /api/team` is sent; the button flips to `Remove from team`.
+2. A `POST /api/team` is sent. The button flips to `Remove from team`.
 3. The sidebar (Scenario 5) now contains Luke.
-4. Click `Remove from team`. A `DELETE /api/team/{characterId}` is sent; the button flips back to `Add to team`.
+4. Click `Remove from team`. A `DELETE /api/team/{characterId}` is sent. The button flips back to `Add to team`.
 
 Pass when: the team in the DB matches the UI after each click (verify with `psql` or via `GET /api/team`).
 
@@ -79,7 +79,7 @@ Covers **AC-8** and **AC-9**.
 
 1. Reset the team (`DELETE` each member, or truncate `team_members`).
 2. Add five non-evil characters.
-3. Open a sixth non-evil character's detail page. Click `Add to team`. The request returns `422 TEAM_FULL`; the UI shows a clear error message (toast, inline, whatever Slice 006 picks) and the team stays at five.
+3. Open a sixth non-evil character's detail page. Click `Add to team`. The request returns `422 TEAM_FULL`. The UI shows a clear error message (toast, inline, whatever Slice 006 picks) and the team stays at five.
 4. Open Darth Vader's detail page. The `Add to team` button is disabled. Hovering it shows a tooltip explaining the character is evil.
 5. Force the request anyway via devtools (`POST /api/team` with Vader's id). The server returns `422 EVIL_FORBIDDEN`.
 

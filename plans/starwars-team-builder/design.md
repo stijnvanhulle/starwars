@@ -12,7 +12,7 @@ Authored in Planning Phase 3 (ASCII pass + Claude design hi-fi pass). Gates Slic
 
 - **Left navy icon-only nav** (~80px wide, deep navy `#0F1664` bg) with white-stroke icons.
 - **Tinted main content area** on `#F5F7FB`, with white cards stacked on it.
-- **Two CTA colors**: pink (`#FF348A`) for primary creative actions, navy (`#1E2A8D`) for content/library actions. Secondary CTAs use a pink-on-white pill with pink border (the "Ask Alice" pattern).
+- Two CTA colors: pink (`#FF348A`) for primary creative actions, navy (`#1E2A8D`) for content/library actions. Secondary CTAs use a pink-on-white pill with pink border (the "Ask Alice" pattern).
 - **Soft-bordered cards** with `12px–16px` radius and a one-pixel border, not the chunky 24px halo the marketing site uses.
 - **Trial/upgrade strip** docked to the top of the app, full-width navy bar.
 
@@ -24,7 +24,7 @@ Pure values. Slice 003's `apps/platform/src/theme/theme.ts` imports them; no the
 
 ### Palette
 
-Mirrors [usewhale.io](https://usewhale.io/)'s pink-on-white system. One accent for primary actions; the four semantic states keep their own ramps.
+Mirrors [usewhale.io](https://usewhale.io/)'s pink-on-white system. One accent for primary actions. The four semantic states keep their own ramps.
 
 | Token              | Value     | Use                                                                    |
 | ------------------ | --------- | ---------------------------------------------------------------------- |
@@ -60,7 +60,7 @@ Whale uses **Sofia Pro Soft** for headings (paid Adobe font) and **Nunito Sans**
 | `font.body`   | `"Nunito Sans", system-ui, sans-serif`                                                 |
 | `font.head`   | `"Sofia Pro Soft", "Nunito Sans", system-ui, sans-serif`                               |
 | `font.mono`   | `JetBrains Mono, ui-monospace, monospace`                                              |
-| `size.xs`     | `0.75rem` (12px; uppercase chips, stat labels — pair with `letter-spacing: 0.08em`)    |
+| `size.xs`     | `0.75rem` (12px; uppercase chips, stat labels, pair with `letter-spacing: 0.08em`)    |
 | `size.sm`     | `0.875rem` (14px; secondary body, sidebar names, breadcrumbs, pill buttons)            |
 | `size.body`   | `1rem` (16px; body default)                                                            |
 | `size.h3`     | `1.125rem` (18px, line-height 24px, `letter-spacing: -0.01em`; card name + section h3) |
@@ -165,7 +165,7 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 
 - **Page header.** H1 `Star Wars characters` (40px, head font, navy) + lead "Pick five characters for your team. Evil characters can't join." (16px, `neutral.600`, max-width 720px). The breadcrumb (just `Characters`, no separator on the home page) sits in the top bar, not here.
 - **Grid.** `repeat(4, 1fr)` at ≥1240px, 3 cols ≥980px, 2 cols ≥560px, 1 col below. Gap `24px`.
-- **Card.** `neutral.0`, `radius.lg` (16px), `border.card` (1px `neutral.200`), `overflow: hidden`. Two regions split by a 1px `neutral.200` rule: square media (aspect 1/1, `neutral.100` placeholder, `object-fit: cover`) on top, body below with 16px padding holding the character name (`size.body` 16px, head font, 800, `letter-spacing: -0.01em`). No height/mass/affiliations preview; the spec puts those on the detail page. On hover the card border flips from `neutral.200` to `accent.500`; nothing moves.
+- **Card.** `neutral.0`, `radius.lg` (16px), `border.card` (1px `neutral.200`), `overflow: hidden`. Two regions split by a 1px `neutral.200` rule: square media (aspect 1/1, `neutral.100` placeholder, `object-fit: cover`) on top, body below with 16px padding holding the character name (`size.body` 16px, head font, 800, `letter-spacing: -0.01em`). No height/mass/affiliations preview. The spec puts those on the detail page. On hover the card border flips from `neutral.200` to `accent.500`; nothing moves.
 - **Badges.** Top-left chip on the media, `radius.pill`, 4×12 padding, `size.xs` (12px) / 700 / uppercase with `0.04em` tracking: `On team` (`accent.500` solid, white text) or `Dark side` (`semantic.error` solid, white text). Solid background only, no blur.
 - **Component.** `<CharacterCard name image onClick badge?>` from `packages/components`.
 - **Data.** `useListCharactersQuery()` from the single `api` slice (hits `/api/characters`, server-proxied from `starwars-api`), joined with `useGetTeamQuery()` for the "On team" badge.
@@ -206,7 +206,7 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 - **Pager.** Two outline pills (`radius.pill`, 1.5px `neutral.200` border on `neutral.0`) with the adjacent character's name in the label (`Prev (R2-D2)`, `Next (Leia Organa)`). Hover flips the border to `accent.500` and the text to `accent.600`. Position counter on the right reads `N of 87` with a bold `accent` `neutral.900` numerator and `neutral.400` "of 87" trailing.
 - **Hero card.** 4:5 image, `radius.md` (12px), `neutral.900` background while the image loads. Top-left chip: red `Dark side` (`semantic.error` solid) or pink `On team` (`accent.500` solid), `size.xs` (12px) uppercase, `0.04em` letter-spacing.
 - **Info column.** H1 (`size.h1`, 40px, head font, navy) + two stat cards in a `repeat(2, minmax(0, 180px))` grid (each card is `neutral.0`, `border.card`, `radius.md`, 12×16 padding; label `size.xs` uppercase `neutral.400`; value 24px in the head font with a small unit suffix in `neutral.400`). Then a `size.xs` uppercase `AFFILIATIONS` eyebrow, then affiliation chips: each is a `neutral.100` pill with a leading dot, Sith/Darth ones tinted with `semantic.error-bg` background + `semantic.error` text. The spec's five required fields (name, image, height, mass, affiliations) all land here and nothing else.
-- **Action bar.** For evil characters, the CTA sits in a red-tinted box (`semantic.error-bg` background with a `#FCA5A5` border, 16px padding, `radius.md`): a 32px white circle with `semantic.error` warning glyph on the left, a two-line copy block (`On the dark side` title in `semantic.error`, description in `#7F1D1D`) in the middle, and the disabled `Add to team` button on the right. On the non-evil path the banner is gone; the pink Add button stands alone under the affiliation chips.
+- **Action bar.** For evil characters, the CTA sits in a red-tinted box (`semantic.error-bg` background with a `#FCA5A5` border, 16px padding, `radius.md`): a 32px white circle with `semantic.error` warning glyph on the left, a two-line copy block (`On the dark side` title in `semantic.error`, description in `#7F1D1D`) in the middle, and the disabled `Add to team` button on the right. On the non-evil path the banner is gone. The pink Add button stands alone under the affiliation chips.
 - `<ActionButton>` **states.** Default pink (`accent.500`); hover `accent.600`; pressed `accent.700`; disabled `neutral.200` bg + `neutral.400` text + `disabledReason` tooltip on hover / `focus-within`. Already-on-team flips to outlined navy "Remove from team".
 - **Prev/Next.** Wrap around: first character's `Prev` jumps to the last; last character's `Next` jumps to the first. Always enabled.
 - **Data.** `useGetCharacterQuery(id)` hero; `useListCharactersQuery()` for prev/next ordering (`masters` arrives as `string[]` from the source API, no id resolution needed); `useGetTeamQuery()` for membership.
@@ -233,14 +233,14 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 ```
 
 - **Page header.** H1 `Your team` (head font, 40px) on the left, no lead copy. Progress pill on the right: a `neutral.0` pill with `border.card`, `radius.pill`, 8×16 padding, containing a bold tabular `N / 5` label and five 8px dots (filled `accent.500` for taken, `neutral.200` for open). Breadcrumb (`Team`) sits in the top bar, not here.
-- **Member rows.** Full-width `neutral.0` cards with `border.card` + `radius.lg`, 16px padding, laid out `72px | minmax(0, 1fr) | auto`. The 72px avatar uses `radius.md` (12px, soft-square — not a circle) and `object-fit: cover`. Name is an `<h2>` element styled at 20px (intentional override of the default `size.h2` to keep the row compact), head font, 800. Remove control is a pill button with a 1.5px `neutral.200` border, 8×16 padding, label `Remove` + an `✕` glyph. On hover the border, bg, and text all flip to the `semantic.error` family (`bg` to `semantic.error-bg`). No affiliations, no invented "role" eyebrow — the spec only requires identifying members and a remove control. Card border flips to `accent.500` on hover. Below 640px the row collapses: avatar/name on the top row, Remove stretches across the full width below.
+- **Member rows.** Full-width `neutral.0` cards with `border.card` + `radius.lg`, 16px padding, laid out `72px | minmax(0, 1fr) | auto`. The 72px avatar uses `radius.md` (12px, soft-square, not a circle) and `object-fit: cover`. Name is an `<h2>` element styled at 20px (intentional override of the default `size.h2` to keep the row compact), head font, 800. Remove control is a pill button with a 1.5px `neutral.200` border, 8×16 padding, label `Remove` + an `✕` glyph. On hover the border, bg, and text all flip to the `semantic.error` family (`bg` to `semantic.error-bg`). No affiliations, no invented "role" eyebrow. The spec only requires identifying members and a remove control. Card border flips to `accent.500` on hover. Below 640px the row collapses: avatar/name on the top row, Remove stretches across the full width below.
 - **Empty team.** When `team.length === 0`, the member list is replaced by `<StatePanel variant="empty" title="No team yet" description="Add characters from a detail page." action={...}>`. The empty-slot CTA cards from earlier mockups are dropped (not in spec, the app uses StatePanel for empty states).
 - **Component.** `<TeamMemberRow avatar name meta onRemove>`. The team panel reuses a compact variant (smaller avatar, single-line name, no meta chips).
 - **Data.** `useGetTeamQuery()` joined locally with `useListCharactersQuery()` for name/image/affiliations (the team API stores `characterId` only).
 
 ## Component inventory
 
-`packages/components/src/` is organised by feature. There are no per-feature barrels; the single top-level `src/index.ts` is the package entry, and consumers can also deep-import a component by its file path.
+`packages/components/src/` is organised by feature. There are no per-feature barrels. The single top-level `src/index.ts` is the package entry, and consumers can also deep-import a component by its file path.
 
 | Component              | Folder        | Notes                                                      |
 | ---------------------- | ------------- | ---------------------------------------------------------- |
@@ -257,10 +257,10 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 
 > The patterns below are not exported components. They render inline inside their host component using MUI primitives, so they don't need a slot in `packages/components`.
 >
-> - **Pill / Chip** — affiliation chips, meta chips: use MUI `<Chip variant="outlined">` directly wherever needed.
-> - **Pager** — Prev/Next + position counter on the detail page: two `<ActionButton>`s plus a `<Typography>` counter laid out inline inside `<CharacterDetail>`.
-> - **ProgressDots** — `n / 5` dots on the team sidebar / team page: render inline (`Array.from({ length: 5 }).map(...)`) inside `<TeamSidebar>` / `<TeamMemberRow>`.
-> - **Tooltip** — wraps disabled controls: use MUI `<Tooltip>` directly. `<ActionButton>` already integrates it for the `disabledReason` pattern.
+> - **Pill / Chip**, affiliation chips, meta chips: use MUI `<Chip variant="outlined">` directly wherever needed.
+> - **Pager**, Prev/Next + position counter on the detail page: two `<ActionButton>`s plus a `<Typography>` counter laid out inline inside `<CharacterDetail>`.
+> - **ProgressDots**, `n / 5` dots on the team sidebar / team page: render inline (`Array.from({ length: 5 }).map(...)`) inside `<TeamSidebar>` / `<TeamMemberRow>`.
+> - **Tooltip**, wraps disabled controls: use MUI `<Tooltip>` directly. `<ActionButton>` already integrates it for the `disabledReason` pattern.
 
 All UI components live in `packages/components` from day one; `apps/platform/src/components` is reserved for app-level wiring that isn't a reusable component (route layouts, providers).
 

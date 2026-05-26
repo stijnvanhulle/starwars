@@ -4,7 +4,7 @@ This is the Phase 0 spec. It captures what we're building before any code lands,
 
 ## What it does
 
-You land on the home page and see a list of Star Wars characters, served by our `/api/characters` (a thin Next.js proxy in front of `starwars-api`). Click one and you're on its detail page (name, image, height, mass, affiliations) with `Prev` and `Next` to walk through the characters without going back to the list. The browser only ever talks to `/api/*` for JSON; the `starwars-api` URL is a server-side concern. Character images are the documented exception: the proxy passes through the upstream image URL verbatim and the browser loads them from the source CDN, so `next.config` allowlists that host (see slice 001).
+You land on the home page and see a list of Star Wars characters, served by our `/api/characters` (a thin Next.js proxy in front of `starwars-api`). Click one and you're on its detail page (name, image, height, mass, affiliations) with `Prev` and `Next` to walk through the characters without going back to the list. The browser only ever talks to `/api/*` for JSON. The `starwars-api` URL is a server-side concern. Character images are the documented exception: the proxy passes through the upstream image URL verbatim and the browser loads them from the source CDN, so `next.config` allowlists that host (see slice 001).
 
 From any detail page you can add the character to your team or kick them out. The team is shared (no auth): everyone hits a single seeded **default team** (`slug = 'default'`) that lives in Postgres alongside its members. It's visible everywhere through a sidebar. There's also a `/team` page if you'd rather manage it from one screen.\
 \
@@ -17,7 +17,7 @@ Two rules the team has to obey: max five members, and nobody evil. Both are enfo
 1. **Browse characters**. A visitor lands on `/` and sees a list of Star Wars characters fetched from `/api/characters` (server proxies `starwars-api`). Each item shows enough to identify the character (name + image) and links to a detail page.
 2. **View a character**. From the list, the visitor opens `/characters/[id]`. The page shows `name`, `image`, `height`, `mass`, and `affiliations`.
 3. **Navigate between characters**. On the detail page, `Prev` and `Next` buttons move to the adjacent character in the list without going back to `/`. The list wraps: `Prev` on the first character goes to the last, `Next` on the last character goes to the first.
-4. **Add or remove from the team**. On the detail page, the visitor adds the character to the team or removes them. Evil characters cannot be added; the `Add` button is disabled with a tooltip explaining why.
+4. **Add or remove from the team**. On the detail page, the visitor adds the character to the team or removes them. Evil characters cannot be added. The `Add` button is disabled with a tooltip explaining why.
 5. **See the team from anywhere**. A persistent `<TeamSidebar />` shows the current team on every page. Each entry has a remove control.
 6. **Manage the team at** `/team`. The team page lists the current team members and lets the visitor remove any of them.
 7. **Team cap of 5**. Attempting to add a sixth member is refused with a clear error.
@@ -37,7 +37,7 @@ One per requirement bullet from `prompt.md`. Each one is something we can write 
 ## Key entities
 
 - `Character`: comes from `/api/characters` (a server-side proxy in front of `starwars-api`), read-only. The UI uses `id`, `name`, `image`, `height`, `mass`, `affiliations`. `isDarkSide` also reads `masters` (already `string[]` from the source API; substring match for `"Darth"`).
-- `Team`: ours, seeded. `id uuid pk`, `slug text unique`, `name text`, `createdAt timestamptz default now`. One row (`slug = 'default'`) inserted by the initial migration. The schema is multi-team ready; the app only uses the default.
+- `Team`: ours, seeded. `id uuid pk`, `slug text unique`, `name text`, `createdAt timestamptz default now`. One row (`slug = 'default'`) inserted by the initial migration. The schema is multi-team ready. The app only uses the default.
 - `TeamMember`: ours, writable. `id uuid pk`, `teamId uuid fk → teams.id` (cascade), `characterId int`, `addedAt timestamptz default now`. Composite unique on `(teamId, characterId)`. Invariant: at most five rows per `teamId`, enforced in the service.
 
 ## Acceptance checklist
