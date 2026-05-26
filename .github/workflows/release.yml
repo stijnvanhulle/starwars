@@ -10,6 +10,7 @@ on:
     branches: ['main', 'alpha', 'beta', 'rc']
     paths:
       - '.changeset/**'
+      - 'apps/**'
       - 'packages/**'
 
 # Deny all permissions at workflow level; each job declares only what it needs.
@@ -97,5 +98,5 @@ jobs:
           result-encoding: string
           script: |
             const publishedPackages = JSON.parse(process.env.PUBLISHED_PACKAGES || '[]');
-            const corePackage = publishedPackages.find(pkg => pkg.name === '@stijnvanhulle/template-core');
-            return corePackage?.version || '';
+            const componentsPackage = publishedPackages.find(pkg => pkg.name === '@stijnvanhulle/components');
+            return componentsPackage?.version || '';

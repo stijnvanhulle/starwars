@@ -7,9 +7,7 @@ const shared: Partial<UserConfig> = {
   exports: true,
   fixedExtension: false,
   deps: {
-    // Other @stijnvanhulle/* packages resolve from npm at runtime — never bundle them.
     neverBundle: [/^@stijnvanhulle\//],
-    // @internals/* packages are private and not published — inline them into the output.
     alwaysBundle: [/@internals/],
     onlyBundle: false,
   },

@@ -7,8 +7,7 @@
     "paths": {
       "#mocks": ["./internals/utils/src/mocks.ts"],
       "@internals/utils": ["./internals/utils/src/index.ts"],
-      "@stijnvanhulle/template-core": ["./packages/core/src/index.ts"],
-      "@stijnvanhulle/template-demo": ["./packages/demo/src/index.ts"]
+      "@stijnvanhulle/components": ["./packages/components/src/index.ts"]
     }
   },
   "include": ["./package.json", "./tsdown.config.ts", "./vitest.config.ts", "./src/**/*"],

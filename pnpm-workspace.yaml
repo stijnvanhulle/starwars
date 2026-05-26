@@ -1,4 +1,5 @@
 packages:
+  - apps/*
   - packages/*
   - internals/*
 allowBuilds:
@@ -6,6 +7,7 @@ allowBuilds:
   core-js: true
   es5-ext: true
   esbuild: true
+  sharp: true
 catalog:
   '@size-limit/file': ^12.1.0
   '@types/node': ^22.19.19

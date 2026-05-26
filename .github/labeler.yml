@@ -1,8 +1,8 @@
-'@stijnvanhulle/template-core':
-  - any: ['packages/core/**', '!packages/core/package.json']
+'@stijnvanhulle/components':
+  - any: ['packages/components/**', '!packages/components/package.json']
 
-'@stijnvanhulle/template-demo':
-  - any: ['packages/demo/**', '!packages/demo/package.json']
+'@stijnvanhulle/platform':
+  - any: ['apps/platform/**', '!apps/platform/package.json']
 
 '@internals/utils':
   - any: ['internals/utils/**']

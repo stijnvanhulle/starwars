@@ -1,0 +1,44 @@
+{
+  "name": "@stijnvanhulle/platform",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Starwars team builder platform",
+  "license": "MIT",
+  "author": "Stijn Van Hulle <stijn@stijnvanhulle.be>",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "oxlint -c ../../oxlint.config.ts --disable-nested-config ./src",
+    "pretypecheck": "next typegen",
+    "typecheck": "tsc -p ./tsconfig.json --noEmit",
+    "test": "vitest run --config ./vitest.config.ts --passWithNoTests",
+    "playwright:install": "playwright install --with-deps chromium",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:report": "playwright show-report"
+  },
+  "dependencies": {
+    "@emotion/cache": "^11.14.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/material": "9.0.1",
+    "@mui/material-nextjs": "9.0.1",
+    "@stijnvanhulle/components": "workspace:*",
+    "next": "16.2.6",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "@types/node": "catalog:",
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
