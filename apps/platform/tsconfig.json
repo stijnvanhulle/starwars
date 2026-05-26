@@ -3,7 +3,7 @@
   "extends": "../../configs/base.json",
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["dom", "dom.iterable", "ES2022"],
+    "lib": ["dom", "dom.iterable", "ES2022", "ESNext.Disposable"],
     "jsx": "preserve",
     "module": "ESNext",
     "moduleResolution": "Bundler",

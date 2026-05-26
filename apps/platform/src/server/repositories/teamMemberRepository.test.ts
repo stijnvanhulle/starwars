@@ -13,11 +13,11 @@ describe('teamMemberRepository', () => {
   })
 
   it('findAllByTeam on an empty table returns []', async () => {
-    expect(await teamMemberRepository.findAllByTeam(teamId)).toEqual([])
+    expect(await teamMemberRepository.findAllByTeam({ teamId })).toEqual([])
   })
 
   it('insert returns a TeamMember with deletedAt null', async () => {
-    const row = await teamMemberRepository.insert(teamId, 42)
+    const row = await teamMemberRepository.insert({ teamId, characterId: 42 })
 
     expect(row).toMatchInlineSnapshot(
       { id: expect.stringMatching(/^[0-9a-f-]{36}$/), teamId: expect.any(String), addedAt: expect.any(Date) },
@@ -35,31 +35,33 @@ describe('teamMemberRepository', () => {
   })
 
   it('insert twice without removing rejects with unique violation (23505)', async () => {
-    await teamMemberRepository.insert(teamId, 42)
+    await teamMemberRepository.insert({ teamId, characterId: 42 })
 
-    await expect(teamMemberRepository.insert(teamId, 42)).rejects.toMatchObject({ cause: { code: '23505' } })
+    await expect(teamMemberRepository.insert({ teamId, characterId: 42 })).rejects.toMatchObject({
+      cause: { code: '23505' },
+    })
   })
 
   it('findByTeamAndCharacterId returns the row or undefined', async () => {
-    await teamMemberRepository.insert(teamId, 42)
+    await teamMemberRepository.insert({ teamId, characterId: 42 })
 
-    expect(await teamMemberRepository.findByTeamAndCharacterId(teamId, 42)).toBeDefined()
-    expect(await teamMemberRepository.findByTeamAndCharacterId(teamId, 999)).toBeUndefined()
+    expect(await teamMemberRepository.findByTeamAndCharacterId({ teamId, characterId: 42 })).toBeDefined()
+    expect(await teamMemberRepository.findByTeamAndCharacterId({ teamId, characterId: 999 })).toBeUndefined()
   })
 
   it('deleteByTeamAndCharacterId returns true once then false', async () => {
-    await teamMemberRepository.insert(teamId, 42)
+    await teamMemberRepository.insert({ teamId, characterId: 42 })
 
-    expect(await teamMemberRepository.deleteByTeamAndCharacterId(teamId, 42)).toBe(true)
-    expect(await teamMemberRepository.deleteByTeamAndCharacterId(teamId, 42)).toBe(false)
+    expect(await teamMemberRepository.deleteByTeamAndCharacterId({ teamId, characterId: 42 })).toBe(true)
+    expect(await teamMemberRepository.deleteByTeamAndCharacterId({ teamId, characterId: 42 })).toBe(false)
   })
 
   it('deleted rows are hidden from reads but remain in the table', async () => {
-    const inserted = await teamMemberRepository.insert(teamId, 42)
-    await teamMemberRepository.deleteByTeamAndCharacterId(teamId, 42)
+    const inserted = await teamMemberRepository.insert({ teamId, characterId: 42 })
+    await teamMemberRepository.deleteByTeamAndCharacterId({ teamId, characterId: 42 })
 
-    expect(await teamMemberRepository.findByTeamAndCharacterId(teamId, 42)).toBeUndefined()
-    expect(await teamMemberRepository.findAllByTeam(teamId)).toEqual([])
+    expect(await teamMemberRepository.findByTeamAndCharacterId({ teamId, characterId: 42 })).toBeUndefined()
+    expect(await teamMemberRepository.findAllByTeam({ teamId })).toEqual([])
 
     const [persisted] = await db.select().from(teamMembers).where(eq(teamMembers.id, inserted.id))
 
@@ -68,9 +70,9 @@ describe('teamMemberRepository', () => {
   })
 
   it('re-adding after delete creates a new row', async () => {
-    const first = await teamMemberRepository.insert(teamId, 42)
-    await teamMemberRepository.deleteByTeamAndCharacterId(teamId, 42)
-    const second = await teamMemberRepository.insert(teamId, 42)
+    const first = await teamMemberRepository.insert({ teamId, characterId: 42 })
+    await teamMemberRepository.deleteByTeamAndCharacterId({ teamId, characterId: 42 })
+    const second = await teamMemberRepository.insert({ teamId, characterId: 42 })
 
     expect(second.id).not.toBe(first.id)
   })
@@ -83,9 +85,9 @@ describe('teamMemberRepository', () => {
       { teamId, characterId: 3, addedAt: new Date(base + 2_000) },
     ])
 
-    await teamMemberRepository.deleteByTeamAndCharacterId(teamId, 2)
+    await teamMemberRepository.deleteByTeamAndCharacterId({ teamId, characterId: 2 })
 
-    const rows = await teamMemberRepository.findAllByTeam(teamId)
+    const rows = await teamMemberRepository.findAllByTeam({ teamId })
     expect(rows.map((r) => r.characterId)).toMatchInlineSnapshot(`
       [
         1,
@@ -95,10 +97,10 @@ describe('teamMemberRepository', () => {
   })
 
   it('countByTeam reflects active rows only', async () => {
-    await teamMemberRepository.insert(teamId, 10)
-    await teamMemberRepository.insert(teamId, 11)
-    await teamMemberRepository.deleteByTeamAndCharacterId(teamId, 10)
+    await teamMemberRepository.insert({ teamId, characterId: 10 })
+    await teamMemberRepository.insert({ teamId, characterId: 11 })
+    await teamMemberRepository.deleteByTeamAndCharacterId({ teamId, characterId: 10 })
 
-    expect(await teamMemberRepository.countByTeam(teamId)).toBe(1)
+    expect(await teamMemberRepository.countByTeam({ teamId })).toBe(1)
   })
 })

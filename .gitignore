@@ -17,6 +17,8 @@ build
 dist
 **/dist
 lib
+!apps/platform/src/lib
+!apps/platform/src/lib/**
 es
 artifacts
 coverage

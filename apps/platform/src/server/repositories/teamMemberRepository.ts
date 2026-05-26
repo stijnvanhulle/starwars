@@ -2,10 +2,13 @@ import { and, asc, count, eq, isNull, sql } from 'drizzle-orm'
 import { db } from '@/db/client'
 import { teamMembers, type TeamMember } from '@/db/schema'
 
-const activeFilter = (teamId: string) => and(eq(teamMembers.teamId, teamId), isNull(teamMembers.deletedAt))
+type ByTeam = { teamId: string }
+type ByTeamAndCharacterId = { teamId: string; characterId: number }
+
+const activeFilter = ({ teamId }: ByTeam) => and(eq(teamMembers.teamId, teamId), isNull(teamMembers.deletedAt))
 
 export const teamMemberRepository = {
-  async insert(teamId: string, characterId: number): Promise<TeamMember> {
+  async insert({ teamId, characterId }: ByTeamAndCharacterId): Promise<TeamMember> {
     const [row] = await db.insert(teamMembers).values({ teamId, characterId }).returning()
 
     if (!row) {
@@ -14,28 +17,28 @@ export const teamMemberRepository = {
     return row
   },
 
-  async findAllByTeam(teamId: string): Promise<Array<TeamMember>> {
-    return db.select().from(teamMembers).where(activeFilter(teamId)).orderBy(asc(teamMembers.addedAt))
+  async findAllByTeam({ teamId }: ByTeam): Promise<Array<TeamMember>> {
+    return db.select().from(teamMembers).where(activeFilter({ teamId })).orderBy(asc(teamMembers.addedAt))
   },
 
-  async findByTeamAndCharacterId(teamId: string, characterId: number): Promise<TeamMember | undefined> {
+  async findByTeamAndCharacterId({ teamId, characterId }: ByTeamAndCharacterId): Promise<TeamMember | undefined> {
     return db.query.teamMembers.findFirst({
-      where: and(activeFilter(teamId), eq(teamMembers.characterId, characterId)),
+      where: and(activeFilter({ teamId }), eq(teamMembers.characterId, characterId)),
     })
   },
 
-  async deleteByTeamAndCharacterId(teamId: string, characterId: number): Promise<boolean> {
+  async deleteByTeamAndCharacterId({ teamId, characterId }: ByTeamAndCharacterId): Promise<boolean> {
     const result = await db
       .update(teamMembers)
       .set({ deletedAt: sql`now()` })
-      .where(and(activeFilter(teamId), eq(teamMembers.characterId, characterId)))
+      .where(and(activeFilter({ teamId }), eq(teamMembers.characterId, characterId)))
       .returning()
 
     return result.length > 0
   },
 
-  async countByTeam(teamId: string): Promise<number> {
-    const [row] = await db.select({ value: count() }).from(teamMembers).where(activeFilter(teamId))
+  async countByTeam({ teamId }: ByTeam): Promise<number> {
+    const [row] = await db.select({ value: count() }).from(teamMembers).where(activeFilter({ teamId }))
 
     return row?.value ?? 0
   },

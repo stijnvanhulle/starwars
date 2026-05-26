@@ -7,6 +7,7 @@ allowBuilds:
   core-js: true
   es5-ext: true
   esbuild: true
+  msw: true
   sharp: true
 catalog:
   '@size-limit/file': ^12.1.0
