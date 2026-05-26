@@ -1,4 +1,6 @@
+import type { SerializedError } from '@reduxjs/toolkit'
 import type { ErrorCodeEnumKey } from '@/gen/api'
+import type { ClientError } from '@/store/api'
 
 const CODE_COPY: Record<ErrorCodeEnumKey, string> = {
   NOT_FOUND: 'That character does not exist.',
@@ -13,7 +15,7 @@ const CODE_COPY: Record<ErrorCodeEnumKey, string> = {
  * `message`, falls back to a code-specific copy line, then to the generic
  * fallback. Returns null when there is no error to show.
  */
-export function describeApiError(error: { message?: string; code?: string } | undefined | null, fallback = 'Something went wrong.'): string | null {
+export function describeApiError(error: ClientError | SerializedError | undefined | null, fallback = 'Something went wrong.'): string | null {
   if (error === undefined || error === null) return null
   if (typeof error.message === 'string' && error.message.length > 0) return error.message
   if (typeof error.code === 'string' && error.code in CODE_COPY) {

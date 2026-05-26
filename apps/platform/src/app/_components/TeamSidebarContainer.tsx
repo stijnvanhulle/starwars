@@ -3,7 +3,7 @@
 import Button from '@mui/material/Button'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { TeamSidebarSkeleton, TeamMemberRow, TeamSidebar } from '@stijnvanhulle/components'
+import { RosterSkeleton, TeamMemberRow, TeamSidebar } from '@stijnvanhulle/components'
 import { useGetTeamQuery, useListCharactersQuery, useRemoveTeamMemberMutation } from '@/store/api'
 
 export function TeamSidebarContainer() {
@@ -66,7 +66,7 @@ export function TeamSidebarContainer() {
   return (
     <TeamSidebar count={rows.length} cta={cta}>
       {team.isLoading ? (
-        <TeamSidebarSkeleton />
+        <RosterSkeleton />
       ) : rows.length === 0 ? null : (
         rows.map((row) => <TeamMemberRow key={row.key} name={row.name} image={row.image} variant="compact" onRemove={() => removeMember(row.characterId)} />)
       )}

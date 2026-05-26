@@ -16,6 +16,15 @@ describe('isDarkSide', () => {
     expect(isDarkSide(createStarwarsApiCharacter({ name: 'X', affiliations: ['Sith Order'] }))).toBe(true)
   })
 
+  it('tolerates upstream returning affiliations as a bare string', () => {
+    const base = createStarwarsApiCharacter({ name: 'X' })
+    const withSith = { ...base, affiliations: 'Sith Order' as unknown as Array<string> }
+    expect(isDarkSide(withSith)).toBe(true)
+
+    const withBenign = { ...base, affiliations: 'Jedi Order' as unknown as Array<string> }
+    expect(isDarkSide(withBenign)).toBe(false)
+  })
+
   it('short-circuits rule 2 on empty affiliations', () => {
     expect(isDarkSide(createStarwarsApiCharacter({ name: 'X', affiliations: [] }))).toBe(false)
   })

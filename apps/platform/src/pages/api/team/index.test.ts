@@ -73,13 +73,13 @@ describe('POST /api/team', () => {
     expect(await res.json()).toMatchObject({ code: 'NOT_FOUND' })
   })
 
-  it('422 EVIL_FORBIDDEN when the real isDarkSide rules match', async () => {
+  it('422 EVIL_FORBIDDEN when the real isDarkSide masters rule matches', async () => {
     server.use(
       http.get(`${STARWARS_API}/id/4.json`, () =>
         HttpResponse.json(
           createStarwarsApiCharacter({
             id: 4,
-            name: 'Darth Vader',
+            name: 'Count Dooku',
             masters: ['Darth Sidious (Sith Master)'],
           }),
         ),
