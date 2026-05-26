@@ -20,13 +20,7 @@ export function CharacterListSkeleton({ count = 8 }: CharacterListSkeletonProps)
       {Array.from({ length: count }, (_, i) => (
         <Paper key={i} variant="outlined" sx={{ borderRadius: 4, overflow: 'hidden' }}>
           <Box sx={{ aspectRatio: '1 / 1', width: '100%' }}>
-            <Skeleton
-              variant="rectangular"
-              animation="wave"
-              width="100%"
-              height="100%"
-              sx={{ transform: 'none' }}
-            />
+            <Skeleton variant="rectangular" animation="wave" width="100%" height="100%" sx={{ transform: 'none' }} />
           </Box>
           <Box sx={{ p: 4, borderTop: 1, borderColor: 'divider' }}>
             <Skeleton variant="text" width="70%" sx={{ fontSize: 16 }} />

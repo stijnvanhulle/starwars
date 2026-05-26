@@ -6,11 +6,7 @@ import Stack from '@mui/material/Stack'
 export function CharacterDetailSkeleton() {
   return (
     <Box aria-busy aria-live="polite">
-      <Stack
-        direction="row"
-        spacing={2}
-        sx={{ alignItems: 'center', justifyContent: 'space-between', mb: 6 }}
-      >
+      <Stack direction="row" spacing={2} sx={{ alignItems: 'center', justifyContent: 'space-between', mb: 6 }}>
         <Stack direction="row" spacing={2}>
           <Skeleton variant="rounded" width={140} height={36} sx={{ borderRadius: 9999 }} />
           <Skeleton variant="rounded" width={140} height={36} sx={{ borderRadius: 9999 }} />
@@ -29,13 +25,7 @@ export function CharacterDetailSkeleton() {
         }}
       >
         <Box sx={{ aspectRatio: '4 / 5', width: '100%' }}>
-          <Skeleton
-            variant="rounded"
-            animation="wave"
-            width="100%"
-            height="100%"
-            sx={{ borderRadius: 3, transform: 'none' }}
-          />
+          <Skeleton variant="rounded" animation="wave" width="100%" height="100%" sx={{ borderRadius: 3, transform: 'none' }} />
         </Box>
         <Box>
           <Skeleton variant="text" width="60%" sx={{ fontSize: 40, mb: 5 }} />
