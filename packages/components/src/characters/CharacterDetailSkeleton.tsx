@@ -24,7 +24,9 @@ export function CharacterDetailSkeleton() {
           borderRadius: 4,
         }}
       >
-        <Skeleton variant="rounded" animation="wave" sx={{ aspectRatio: '4 / 5', width: '100%', borderRadius: 3, transform: 'none' }} />
+        <Box sx={{ aspectRatio: '4 / 5', width: '100%' }}>
+          <Skeleton variant="rounded" animation="wave" width="100%" height="100%" sx={{ borderRadius: 3, transform: 'none' }} />
+        </Box>
         <Box>
           <Skeleton variant="text" width="60%" sx={{ fontSize: 40, mb: 5 }} />
           <Stack direction="row" spacing={2} sx={{ mb: 6 }}>
