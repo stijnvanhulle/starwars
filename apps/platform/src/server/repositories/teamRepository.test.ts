@@ -1,0 +1,38 @@
+import { eq } from 'drizzle-orm'
+import { describe, expect, it } from 'vitest'
+import { db } from '@/db/client'
+import { teams, type Team } from '@/db/schema'
+import { teamRepository } from './teamRepository'
+
+describe('teamRepository', () => {
+  it('findBySlug returns the seeded default team', async () => {
+    const team = await teamRepository.findBySlug('default')
+
+    expect(team).toBeDefined()
+    expect(team?.slug).toBe('default')
+    expect(team?.name).toBe('Default team')
+  })
+
+  it('findBySlug returns undefined when the slug is unknown', async () => {
+    const team = await teamRepository.findBySlug('missing-team')
+    expect(team).toBeUndefined()
+  })
+
+  it('findDefault returns the seeded default team', async () => {
+    const team = await teamRepository.findDefault()
+    expect(team.slug).toBe('default')
+  })
+
+  it('findDefault throws when the seed row is missing', async () => {
+    let snapshot: Team | undefined
+    try {
+      const [row] = await db.delete(teams).where(eq(teams.slug, 'default')).returning()
+      snapshot = row
+      await expect(teamRepository.findDefault()).rejects.toThrow(/Default team is missing/)
+    } finally {
+      if (snapshot) {
+        await db.insert(teams).values(snapshot)
+      }
+    }
+  })
+})

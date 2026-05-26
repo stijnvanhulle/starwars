@@ -67,6 +67,18 @@ jobs:
       contents: read
     if: github.actor != 'github-actions[bot]'
     needs: build
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: platform
+          POSTGRES_PASSWORD: platform
+          POSTGRES_DB: platform
+        ports:
+          - 5432:5432
+        options: --health-cmd "pg_isready -U platform" --health-interval 5s --health-retries 10
+    env:
+      DATABASE_URL: postgres://platform:platform@localhost:5432/platform
     steps:
       - name: Check out code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -81,6 +93,9 @@ jobs:
 
       - name: Build
         run: pnpm run build
+
+      - name: Migrate database
+        run: pnpm --filter @stijnvanhulle/platform run db:migrate
 
       - name: Test
         run: pnpm test --coverage

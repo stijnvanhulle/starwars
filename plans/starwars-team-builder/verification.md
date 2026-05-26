@@ -183,3 +183,112 @@ Covers **DC-10**, **DC-11**.
 1. Inspect [.github/workflows/pr.yml](../../.github/workflows/pr.yml) and [.github/workflows/release.yml](../../.github/workflows/release.yml).
 
 Pass when: `pr.yml` runs `build`, `typecheck`, `test`, `lint`, and spellcheck on PR (jobs cover `apps/platform` and `packages/components` since the root scripts no longer use `--filter`). `release.yml` uses `changesets/action@v1` on push to `main`, and its `paths` filter covers `apps/**` and `packages/**`.
+
+---
+
+## Section C. Slice 002-database closeout
+
+Slice 002 lands Postgres, Drizzle schema, repositories, and DB-backed Vitest. The team-cap and dark-side rules still belong to slice 004. Walks the "Done criteria" from [002-database.md](002-database.md).
+
+Prerequisites for this section:
+
+```bash
+docker compose up -d postgres
+cp apps/platform/.env.example apps/platform/.env
+pnpm --filter @stijnvanhulle/platform run db:migrate
+```
+
+### Scenario C.1: Docker Compose brings up Postgres 17 healthy
+
+Covers slice 002 done-criterion **DC-1**.
+
+1. `docker compose up -d postgres`.
+2. `docker compose ps postgres`.
+
+Pass when: status is `Up ... (healthy)` within 10 seconds. The named volume `pgdata` exists.
+
+### Scenario C.2: schema matches the data model
+
+Covers **DC-2**.
+
+1. `docker exec starwars-postgres psql -U platform -d platform -c "\d teams" -c "\d team_members"`.
+
+Pass when: `teams` has `id, slug, name, created_at` with `teams_slug_unique`. `team_members` has `id, team_id, character_id, added_at, deleted_at`, the FK to `teams.id` with `ON DELETE CASCADE`, the partial unique index `team_members_team_id_character_id_active_unique` predicated on `WHERE deleted_at IS NULL`, and the `team_members_team_id_idx` index.
+
+### Scenario C.3: initial migration is checked in
+
+Covers **DC-3**.
+
+1. `ls apps/platform/src/db/migrations/`.
+
+Pass when: `0000_*.sql`, `0001_default_team.sql`, and `meta/_journal.json` are present. `meta/_journal.json` lists both entries.
+
+### Scenario C.4: seed migration inserts the default team and is re-runnable
+
+Covers **DC-4**, **DC-5**.
+
+1. `pnpm --filter @stijnvanhulle/platform run db:migrate` (twice).
+2. `docker exec starwars-postgres psql -U platform -d platform -tA -c "SELECT count(*) FROM teams WHERE slug='default';"`.
+
+Pass when: both runs exit 0 and the count is exactly `1`.
+
+### Scenario C.5: TeamRepository exposes findBySlug, findDefault
+
+Covers **DC-6**.
+
+1. Inspect [apps/platform/src/server/repositories/teamRepository.ts](../../apps/platform/src/server/repositories/teamRepository.ts).
+
+Pass when: it exports `teamRepository` with `findBySlug(slug)` and `findDefault()`.
+
+### Scenario C.6: TeamMemberRepository is teamId-scoped and soft-delete aware
+
+Covers **DC-7**.
+
+1. Inspect [apps/platform/src/server/repositories/teamMemberRepository.ts](../../apps/platform/src/server/repositories/teamMemberRepository.ts).
+
+Pass when: it exports `insert`, `findAllByTeam`, `findByTeamAndCharacterId`, `softDeleteByTeamAndCharacterId`, `countByTeam`, every read filters `deletedAt IS NULL`, and no method issues a SQL `DELETE` against `team_members`.
+
+### Scenario C.7: drizzle-orm imports are scoped
+
+Covers **DC-8**.
+
+1. `grep -rnE "from ['\"]drizzle-orm" apps/platform/src | grep -vE '/(db|server/repositories)/'`.
+
+Pass when: the grep returns no hits. `drizzle-orm` only appears under `apps/platform/src/db/**` and `apps/platform/src/server/repositories/**`.
+
+### Scenario C.8: repository tests cover the contract from step 11
+
+Covers **DC-9**.
+
+1. `docker compose up -d postgres` (if not already).
+2. `pnpm test`.
+
+Pass when: 13 tests pass across `teamRepository.test.ts` (4 tests) and `teamMemberRepository.test.ts` (9 tests), covering insert, dedupe-via-23505, soft delete, re-add after soft delete, ordering, and `countByTeam`.
+
+### Scenario C.9: typecheck, lint, test, build still green
+
+Covers **DC-10**.
+
+1. `pnpm typecheck`
+2. `pnpm lint`
+3. `pnpm test`
+4. `pnpm build`
+
+Pass when: every command exits 0.
+
+### Scenario C.10: no service rules leak into this slice
+
+Covers **DC-11**.
+
+1. `grep -rnE "(TEAM_FULL|EVIL_FORBIDDEN|isDarkSide|TeamService)" apps/platform/src`.
+
+Pass when: the grep returns no hits. The cap and the dark-side guard land in slice 004.
+
+### Scenario C.11: loud failure when Postgres is down
+
+Covers slice 002 verification §7.
+
+1. `docker compose down`.
+2. `pnpm --filter @stijnvanhulle/platform run db:migrate`.
+
+Pass when: the script exits non-zero with a clear `ECONNREFUSED` error. Bring the container back with `docker compose up -d postgres` before continuing.
