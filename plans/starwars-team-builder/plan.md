@@ -19,7 +19,7 @@ Planning happens in markdown under `plans/starwars-team-builder/`: `spec.md`, `r
 | Language/Version | `TypeScript` `^6.0.3`, Node 22, ESM-only                                                                                   |
 | Frontend         | `Next.js` ^`16.2.6` (App Router), `React` 19, `MUI` (^`9.0.1`)                                                             |
 | State            | `@reduxjs/toolkit` `^2.12.0`, `react-redux` `^9.3.0`, `RTK Query`                                                          |
-| Codegen          | `Kubb` `5.0.0-beta.23` (`adapter-oas`, `plugin-ts`, `plugin-client`, `plugin-zod`)                                         |
+| Codegen          | `Kubb` `5.0.0-beta.31` (`adapter-oas`, `plugin-ts`, `plugin-client`, `plugin-zod`). Pinned exactly per the prompt (no `^`); all `@kubb/*` plugin packages share the same `5.0.0-beta.31` pin. |
 | Storage          | `Postgres 17` via `drizzle-orm` `^0.45.2` + `drizzle-kit` `^0.31.10`, `pg` `^8.21.0` driver (`@types/pg` `^8.20.0`)        |
 | Testing          | `Vitest` `^4.1.6` (unit + integration), `@playwright/test` `^1.60.0` (e2e), `Testing Library` (components)                 |
 | Tooling          | `pnpm` `11.1.3`, `turbo` `^2.9.14`, `tsdown` `^0.22.0`, `oxlint` `^1.66.0`, `oxfmt` `^0.47.0`, `@changesets/cli` `^2.31.0` |

@@ -39,7 +39,27 @@ None. This is the first execution slice.
    - `test:e2e`: `{ "dependsOn": ["build"], "cache": false, "outputs": ["playwright-report/**", "test-results/**"] }`. Slice 007's CI workflow runs `pnpm test:e2e` from the root after `pnpm build`; `dependsOn: ["build"]` keeps that contract.
 10. **Wire Vitest in `apps/platform`.** Install `vitest` (catalog). Create `apps/platform/vitest.config.ts` with `test.include: ['src/**/*.test.{ts,tsx}']` and `resolve.tsconfigPaths: true`. Add the script `"test": "vitest run --config ./vitest.config.ts --passWithNoTests"` to `apps/platform/package.json` (the `--passWithNoTests` flag keeps the root `pnpm test` quiet while there are no specs yet; it drops out in Slice 002 once repository tests land). The root `pnpm test` (updated in step 9) shells out to this script via turbo. Slice 002 layers on the DB-reset `setupFiles` and the `poolOptions.threads.singleThread = true` option once Postgres-backed tests land.
 11. **Wire Playwright in `apps/platform`.** Install `@playwright/test@^1.60.0`. Add scripts to `apps/platform/package.json`: `"playwright:install": "playwright install --with-deps chromium"`, `"test:e2e": "playwright test"`, `"test:e2e:headed": "playwright test --headed"`, `"test:e2e:report": "playwright show-report"`. Run `turbo run playwright:install` once locally (CI re-runs it in its setup step); only chromium is pinned, firefox and webkit are not needed. Create `apps/platform/playwright.config.ts` with `testDir: './e2e'`, `fullyParallel: false` (the team table is global state), `webServer: { command: 'pnpm start', port: 3000, reuseExistingServer: !process.env.CI }`, `use: { baseURL: 'http://localhost:3000', trace: 'retain-on-failure', screenshot: 'only-on-failure' }`, `projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }]`. Create the empty `apps/platform/e2e/` directory; Slice 007 fills it with the `starwars-api` fixture wiring and the four spec files.
-12. **Verify the green tree.** Run `pnpm install`, then in parallel: `pnpm typecheck`, `pnpm lint`, `pnpm test`. Then `turbo run test:e2e -- --list`. Every command must exit 0 **and produce zero warnings**. The usual offenders to fix at this stage: missing peer-dependency warnings from `pnpm install` (resolve via explicit versions in `apps/platform/package.json`), Next.js / MUI deprecation notices in the dev server boot, Vitest's "no test files found" warning (mitigated by `--passWithNoTests`), unresolved imports left over from the deleted `packages/core` / `packages/demo` aliases.
+12. **Replace the existing CI workflow** at `.github/workflows/ci.yml` so a single job runs the full pyramid against a Postgres service container. Some of the referenced commands (`db:migrate`, `gen`, e2e specs) land in later slices; the workflow is wired now so CI grows with the codebase instead of needing a separate plumbing pass. Outline:
+    ```yaml
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env: { POSTGRES_USER: platform, POSTGRES_PASSWORD: platform, POSTGRES_DB: platform }
+        ports: [5432:5432]
+        options: --health-cmd "pg_isready -U platform" --health-interval 5s --health-retries 10
+    ```
+    Steps:
+    1. `actions/checkout@v4`.
+    2. The existing `.github/setup` composite action (Node 22, pnpm, install).
+    3. `turbo run db:migrate` with `DATABASE_URL=postgres://platform:platform@localhost:5432/platform`. (No-op in this slice; the task is defined in Slice 002. Use `turbo run db:migrate --continue` so the missing task is non-fatal until then, or gate the step behind a `hashFiles` check on the migrations folder.)
+    4. `turbo run gen` (so generated code exists even though it's gitignored; the task lands in Slice 005, same `--continue` caveat).
+    5. `pnpm typecheck`, `pnpm lint`, `pnpm test` in parallel where Turborepo allows.
+    6. `turbo run playwright:install`.
+    7. `pnpm build` (root, builds platform + components via turbo filter).
+    8. `pnpm test:e2e` (root, runs `turbo run test:e2e`; reports "0 tests" until Slice 007 lands the specs).
+    9. Upload `apps/platform/playwright-report/` and `apps/platform/test-results/` on failure (`actions/upload-artifact@v4`, `if: failure()`).
+13. **Add a release workflow** at `.github/workflows/release.yml` using the standard Changesets action: on push to `main`, run `changesets/action@v1` to either open a "Version Packages" PR or publish if one was merged. The product is private (apps don't publish), but the Changesets entry still drives the `CHANGELOG.md` and version bump for `apps/platform` and `packages/components`.
+14. **Verify the green tree.** Run `pnpm install`, then in parallel: `pnpm typecheck`, `pnpm lint`, `pnpm test`. Then `turbo run test:e2e -- --list`. Every command must exit 0 **and produce zero warnings**. The usual offenders to fix at this stage: missing peer-dependency warnings from `pnpm install` (resolve via explicit versions in `apps/platform/package.json`), Next.js / MUI deprecation notices in the dev server boot, Vitest's "no test files found" warning (mitigated by `--passWithNoTests`), unresolved imports left over from the deleted `packages/core` / `packages/demo` aliases.
 
 ## Files touched
 
@@ -65,6 +85,8 @@ None. This is the first execution slice.
 - `apps/platform/e2e/`: created (empty; Slice 007 populates it)
 - `.gitignore`: modified (only if existing wildcards do not already cover `apps/*/.next/`, `apps/*/.turbo/`, `apps/*/node_modules/`)
 - `cspell.json`: modified (only if it referenced the deleted packages)
+- `.github/workflows/ci.yml`: modified or created (Postgres service container, full test pyramid scaffold, artifact upload on failure)
+- `.github/workflows/release.yml`: created (Changesets action on push to `main`)
 
 ## Verification
 
@@ -87,3 +109,5 @@ None. This is the first execution slice.
 - [ ] `apps/platform/vitest.config.ts` and `apps/platform/playwright.config.ts` both parse cleanly; `pnpm test` and `pnpm test:e2e -- --list` succeed
 - [ ] `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm test:e2e -- --list`, and `pnpm dev` all run with zero warnings and zero errors
 - [ ] No code in this slice imports `Drizzle`, `Redux`, `Kubb`, or anything outside Next + MUI (those belong to later slices)
+- [ ] `.github/workflows/ci.yml` runs on push/PR against a `postgres:17-alpine` service container, exercises `typecheck`/`lint`/`test`/`build`/`test:e2e`, and uploads the Playwright report on failure
+- [ ] `.github/workflows/release.yml` exists and uses `changesets/action@v1` on push to `main`

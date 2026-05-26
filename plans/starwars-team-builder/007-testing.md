@@ -38,34 +38,14 @@ No new product features; if an e2e spec fails, the fix lives in Slice 006.
    - Open Vader's detail page. Assert the `Add to team` button is disabled. Hover it. Assert the tooltip text is visible.
    - Use `page.request.post('/api/team', { data: { characterId: vaderId } })` to force the server-side check. Assert the response is `422` and the body's `code` is `EVIL_FORBIDDEN`.
    - Repeat for the Sith-affiliated and master-of-Vader fixtures (all three rules).
-7. **Replace the existing CI workflow** at `.github/workflows/ci.yml` (or add one if absent) so a single job runs the full pyramid against a Postgres service container. Outline:
-   ```yaml
-   services:
-     postgres:
-       image: postgres:17-alpine
-       env: { POSTGRES_USER: platform, POSTGRES_PASSWORD: platform, POSTGRES_DB: platform }
-       ports: [5432:5432]
-       options: --health-cmd "pg_isready -U platform" --health-interval 5s --health-retries 10
-   ```
-   Steps:
-   1. `actions/checkout@v4`.
-   2. The existing `.github/setup` composite action (Node 22, pnpm, install).
-   3. `turbo run db:migrate` with `DATABASE_URL=postgres://platform:platform@localhost:5432/platform`.
-   4. `turbo run gen` (so generated code exists even though it's gitignored).
-   5. `pnpm typecheck`, `pnpm lint`, `pnpm test` in parallel where Turborepo allows.
-   6. `turbo run playwright:install`.
-   7. `pnpm build` (root, builds platform + components via turbo filter).
-   8. `pnpm test:e2e` (root, runs `turbo run test:e2e`).
-   9. Upload `apps/platform/playwright-report/` and `apps/platform/test-results/` on failure (`actions/upload-artifact@v4`, `if: failure()`).
-8. **Add a release workflow** at `.github/workflows/release.yml` using the standard Changesets action: on push to `main`, run `changesets/action@v1` to either open a "Version Packages" PR or publish if one was merged. The product is private (apps don't publish), but the Changesets entry still drives the `CHANGELOG.md` and version bump for `apps/platform` and `packages/components`.
-9. **Author the initial Changesets entry**. `pnpm changeset add`. Mark `apps/platform` and `packages/components` as `minor` (this is the first releasable surface). Summary: "Initial release of the Whale Star Wars Team Builder." Commit the resulting `.changeset/*.md` file.
-10. **Refresh `README.md`** per the prompt:
+7. **Author the initial Changesets entry**. `pnpm changeset add`. Mark `apps/platform` and `packages/components` as `minor` (this is the first releasable surface). Summary: "Initial release of the Whale Star Wars Team Builder." Commit the resulting `.changeset/*.md` file. The CI and release workflows themselves were scaffolded in Slice 001 (`.github/workflows/ci.yml`, `.github/workflows/release.yml`); this slice is the first time they exercise a full test pyramid (unit + integration + e2e) end-to-end, and the first time the release workflow has a changeset to act on.
+8. **Refresh `README.md`** per the prompt:
     1. Tech stack as a bullet list pulled from `plan.md`'s Technical Context table.
     2. Use cases in three sentences from `spec.md`.
     3. Folder structure copied from `plan.md`'s Project Structure tree.
     4. Getting started, linking to `plans/starwars-team-builder/verification.md` for the user flow walk-through and `plans/starwars-team-builder/001-setup.md` for the first execution slice.
     5. Status, e.g. "All seven slices complete; see `plans/starwars-team-builder/plan.md` Progress Tracking".
-11. **Close out the open items** in `plans/starwars-team-builder/research.md`. The Phase 0/1 items were resolved earlier. Confirm those closures are still recorded:
+9. **Close out the open items** in `plans/starwars-team-builder/research.md`. The Phase 0/1 items were resolved earlier. Confirm those closures are still recorded:
     - Optional-field fallbacks (Slice 006 step 1): placeholder image, "Unknown" stats, hidden empty lists.
     - `isDarkSide` with missing fields (Slice 006 step 1): `?? false` short-circuit on the array probes.
     - Proxy cache scope (Slice 006 step 2): request-scoped `Map` memo inside `createCharacterFetcher`.
@@ -82,9 +62,7 @@ No new product features; if an e2e spec fails, the fix lives in Slice 006.
 - `apps/platform/e2e/cap.spec.ts`: created
 - `apps/platform/e2e/darkSide.spec.ts`: created
 - `.gitignore`: modified (ignore `apps/platform/playwright-report/`, `apps/platform/test-results/`)
-- `.github/workflows/ci.yml`: modified (Postgres service, full test pyramid, artifact upload on failure)
-- `.github/workflows/release.yml`: created (Changesets action)
-- `.changeset/*.md`: created (initial release entry)
+- `.changeset/*.md`: created (initial release entry; the workflow that consumes it was scaffolded in Slice 001)
 - `README.md`: modified (tech stack, use cases, folder structure, status)
 - `plans/starwars-team-builder/research.md`: modified (final open-item close-out)
 - `plans/starwars-team-builder/plan.md`: modified (flip the relevant checkboxes to done)
@@ -105,9 +83,8 @@ No new product features; if an e2e spec fails, the fix lives in Slice 006.
 - [ ] Four Playwright specs cover AC-1..AC-9 and pass locally and in CI
 - [ ] The `starwars-api` is faked via the `E2E_FIXTURES=1` server-side switch; no real network calls leave CI and the browser still hits only `/api/*`
 - [ ] `apps/platform/playwright.config.ts` runs against the built app (`pnpm start`), not the dev server, in CI
-- [ ] CI runs unit, integration, and e2e against a `postgres:17-alpine` service container on every push
-- [ ] CI uploads the Playwright report on failure
-- [ ] Release workflow uses `changesets/action@v1`; one initial changeset is checked in
+- [ ] The CI workflow scaffolded in Slice 001 now exercises unit, integration, and e2e against the `postgres:17-alpine` service on every push, and uploads the Playwright report on failure
+- [ ] One initial changeset is checked in; the Slice 001 release workflow picks it up on the next push to `main`
 - [ ] `README.md` covers tech stack, use cases, folder structure, and current status per the prompt
 - [ ] `plans/starwars-team-builder/research.md` has no unresolved open items at slice close
 - [ ] `plans/starwars-team-builder/plan.md` Progress Tracking shows all slices and the three Close-out items as done
