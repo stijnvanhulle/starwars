@@ -11,7 +11,7 @@ Every endpoint the browser calls is documented in `api.yaml`, so RTK Query endpo
 
 ## Goal (demoable outcome)
 
-`pnpm --filter platform gen` runs `Kubb` and produces `apps/platform/src/gen/api/` (types + client + Zod for `listCharacters`, `getCharacter`, and every team operation) and `apps/platform/src/gen/starwars/` (types + Zod, server-only). `apps/platform/src/store/` exports a Redux store wiring a single `RTK Query` slice (`api`) whose endpoints are all backed by the generated client. `<Providers />` wraps the app in `layout.tsx`. A throwaway client component reads `useListCharactersQuery()` and renders the count of characters returned by `/api/characters`, proof the wiring works end to end. The browser's network panel shows requests only to `/api/*`. No screens land yet; Slice 006 builds those.
+`turbo run gen` runs `Kubb` and produces `apps/platform/src/gen/api/` (types + client + Zod for `listCharacters`, `getCharacter`, and every team operation) and `apps/platform/src/gen/starwars/` (types + Zod, server-only). `apps/platform/src/store/` exports a Redux store wiring a single `RTK Query` slice (`api`) whose endpoints are all backed by the generated client. `<Providers />` wraps the app in `layout.tsx`. A throwaway client component reads `useListCharactersQuery()` and renders the count of characters returned by `/api/characters`, proof the wiring works end to end. The browser's network panel shows requests only to `/api/*`. No screens land yet; Slice 006 builds those.
 
 ## Prerequisites
 
@@ -69,12 +69,12 @@ Every endpoint the browser calls is documented in `api.yaml`, so RTK Query endpo
 
 ## Verification
 
-1. `pnpm --filter platform gen` exits 0. `apps/platform/src/gen/api/` contains `types.ts` (including `Character` and `TeamMember`), generated operation files for every documented endpoint (e.g. `listCharacters.ts`, `getCharacter.ts`, `getTeam.ts`), `*.zod.ts`, and `index.ts`. `apps/platform/src/gen/starwars/` contains `types.ts`, `*.zod.ts`, `index.ts`, and no `*.client.ts` files.
+1. `turbo run gen` exits 0. `apps/platform/src/gen/api/` contains `types.ts` (including `Character` and `TeamMember`), generated operation files for every documented endpoint (e.g. `listCharacters.ts`, `getCharacter.ts`, `getTeam.ts`), `*.zod.ts`, and `index.ts`. `apps/platform/src/gen/starwars/` contains `types.ts`, `*.zod.ts`, `index.ts`, and no `*.client.ts` files.
 2. Re-run `pnpm gen`. Output is identical on the second run.
-3. Delete `apps/platform/src/gen/` and run `pnpm --filter platform build`. The `prebuild` hook regenerates it; build succeeds.
+3. Delete `apps/platform/src/gen/` and run `turbo run build`. The `prebuild` hook regenerates it; build succeeds.
 4. `pnpm typecheck` is green. The team route handler now imports the generated Zod and types from `@/gen/api`; the proxy fetcher imports the `starwars-api` type from `@/gen/starwars`.
-5. `pnpm --filter platform test` is green; the Slice 004 unit and integration tests still pass (with the 400-body shape adjusted where needed).
-6. `pnpm --filter platform dev` boots. Visit `http://localhost:3000/`. The smoke component renders "N characters" (where N matches the `starwars-api` `/all.json` length, currently 87) after the loading state. Devtools network panel shows requests **only** to `/api/characters`, zero to `akabab.github.io`.
+5. `turbo run test` is green; the Slice 004 unit and integration tests still pass (with the 400-body shape adjusted where needed).
+6. `turbo run dev` boots. Visit `http://localhost:3000/`. The smoke component renders "N characters" (where N matches the `starwars-api` `/all.json` length, currently 87) after the loading state. Devtools network panel shows requests **only** to `/api/characters`, zero to `akabab.github.io`.
 7. `pnpm lint` reports any forbidden `@/gen/starwars` import outside `src/server/**` / `src/lib/darkSide.ts` (introduce a deliberate violation in a scratch branch to confirm).
 
 ## Done criteria

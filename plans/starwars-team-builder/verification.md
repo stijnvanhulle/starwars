@@ -6,15 +6,15 @@ End-to-end walkthrough used at closeout to confirm the app meets the acceptance 
 
 - Node 22, pnpm 11+
 - Docker (for the Postgres container)
-- Playwright browsers installed (`pnpm --filter platform exec playwright install`)
+- Playwright browsers installed (`turbo run playwright:install`)
 
 Boot the app once before walking the scenarios:
 
 ```bash
 pnpm install
 docker compose up -d postgres
-pnpm --filter platform db:migrate
-pnpm --filter platform gen
+turbo run db:migrate
+turbo run gen
 pnpm dev
 ```
 

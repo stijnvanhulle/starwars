@@ -54,8 +54,8 @@ Slice 001 is done (`MUI` theme provider wired, `AppRouterCacheProvider` in place
 
 ## Verification
 
-1. `pnpm install && pnpm --filter @stijnvanhulle/components build && pnpm dev`. App boots without errors; the placeholder page from Slice 001 still renders with the new theme tokens applied (devtools shows the new font / primary color).
-2. `pnpm --filter @stijnvanhulle/components test` is green.
+1. `pnpm install && turbo run build && pnpm dev`. App boots without errors; the placeholder page from Slice 001 still renders with the new theme tokens applied (devtools shows the new font / primary color).
+2. `turbo run test` is green.
 3. `pnpm typecheck && pnpm lint` are green.
 4. `plans/starwars-team-builder/design.md` is checked in and renders cleanly (every code fence closes; no `_TBD_` markers remain).
 
@@ -67,5 +67,5 @@ Slice 001 is done (`MUI` theme provider wired, `AppRouterCacheProvider` in place
 - [ ] `packages/components` exports `AppShell`, `TeamSidebar`, `CharacterCard`, `StatePanel`, `TeamMemberRow`, `ActionButton`
 - [ ] `<ActionButton disabledReason>` is disabled and the reason renders as a tooltip (the pattern Vader's Add button uses in 006)
 - [ ] Each component has a passing Vitest smoke test
-- [ ] `pnpm --filter @stijnvanhulle/components test`, `pnpm typecheck`, and `pnpm lint` are green
+- [ ] `turbo run test`, `pnpm typecheck`, and `pnpm lint` are green
 - [ ] No new app routes are added in this slice; first consumer is Slice 006

@@ -6,43 +6,38 @@ Add Playwright e2e specs and a CI pipeline that runs unit + integration + e2e ag
 
 ## Goal (demoable outcome)
 
-`pnpm --filter platform test:e2e` (Playwright) runs four specs against a freshly migrated Postgres and a built Next.js app: browse, add+remove, cap-of-5, dark-side. All pass. On GitHub Actions, a single workflow runs `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm test:e2e` against a Postgres service container, and a Changesets-versioning step lands. A `CHANGELOG.md` entry exists for the initial release.
+`turbo run test:e2e` (Playwright) runs four specs against a freshly migrated Postgres and a built Next.js app: browse, add+remove, cap-of-5, dark-side. All pass. On GitHub Actions, a single workflow runs `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm test:e2e` against a Postgres service container, and a Changesets-versioning step lands. A `CHANGELOG.md` entry exists for the initial release.
 
 ## Prerequisites
 
 - Slice 006 is done. Every verification scenario passes manually.
+- Slice 001 has installed `@playwright/test`, the chromium browser, and `apps/platform/playwright.config.ts` (testDir, webServer, baseURL, project). This slice only fills in the DB env on `webServer.env` and the spec files.
 - The `starwars-api` is rate-limited from CI. Since the browser only talks to `/api/*`, e2e specs mock the `starwars-api` at the **server-side** boundary (the `starwars-api.ts` fetcher) rather than intercepting browser network calls. This keeps the test surface aligned with how the app actually runs.
 
 ## Steps
 
-1. **Install Playwright** in `apps/platform`: `@playwright/test@^1.60.0`. Run `pnpm --filter platform exec playwright install --with-deps chromium` once locally (CI will rerun this in its setup step). Pin only the chromium browser; firefox and webkit are not needed for this app.
-2. **Add the Playwright config** at `apps/platform/playwright.config.ts`. Settings:
-   - `testDir: './e2e'`, `fullyParallel: false` (the team table is global state).
-   - `webServer: { command: 'pnpm start', port: 3000, reuseExistingServer: !process.env.CI, env: { DATABASE_URL: ... } }`.
-   - `use: { baseURL: 'http://localhost:3000', trace: 'retain-on-failure', screenshot: 'only-on-failure' }`.
-   - `projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }]`.
-3. **Add the test setup** at `apps/platform/e2e/setup.ts`. Two helpers:
+1. **Extend `apps/platform/playwright.config.ts`** (created in Slice 001) with the DB connection on `webServer.env`: `DATABASE_URL: process.env.DATABASE_URL ?? 'postgres://platform:platform@localhost:5432/platform'` plus the `E2E_FIXTURES=1` flag wired in step 2.
+2. **Add the test setup** at `apps/platform/e2e/setup.ts`. Two helpers:
    - `resetTeam()`: opens a `pg` client, runs `TRUNCATE team_members RESTART IDENTITY`, closes. Called from a `test.beforeEach` in every spec so each test starts from an empty team.
    - **`starwars-api` fixture mode** for the dev server itself. Add an `E2E_FIXTURES=1` env var read inside `src/server/starwars-api.ts`; when set, the module loads `apps/platform/e2e/fixtures/characters.ts` from disk and serves them in place of the real `starwars-api` fetch. The Playwright `webServer.env` passes `E2E_FIXTURES=1`. This keeps the test surface the same as production (browser → `/api/*` → `starwars-api.ts`), only the bottom of that chain is faked. Fixtures include at least: Luke (neutral), Leia (neutral), three more neutrals, Vader (rule 1 via name), a Sith-affiliated character (rule 2 via `affiliations`), and a character whose `masters` array contains a string with `"Darth"` (rule 3, e.g. `["Darth Sidious (Sith Master)"]`).
-4. **Write `apps/platform/e2e/browse.spec.ts`** for AC-1..AC-4:
+3. **Write `apps/platform/e2e/browse.spec.ts`** for AC-1..AC-4:
    - List loads at `/`, shows the seven fixture characters.
    - Click Luke. URL becomes `/characters/1` (or whatever id the fixture pins). Detail shows name, image, height, mass, affiliations.
    - Click `Next`. URL changes to the next id. Click `Prev` twice. URL is one before the start.
-5. **Write `apps/platform/e2e/team.spec.ts`** for AC-5..AC-7:
+4. **Write `apps/platform/e2e/team.spec.ts`** for AC-5..AC-7:
    - From Luke's detail page, click `Add to team`. Sidebar shows Luke.
    - Navigate to `/`. Sidebar still shows Luke.
    - Navigate to `/team`. Luke is listed with a remove control.
    - Click remove. Sidebar empties; detail page for Luke shows `Add to team` again.
-6. **Write `apps/platform/e2e/cap.spec.ts`** for AC-8:
+5. **Write `apps/platform/e2e/cap.spec.ts`** for AC-8:
    - Add five neutral characters via the API (helper: `addCharacter(id)` that POSTs to `/api/team`). Faster than clicking through five detail pages.
    - Open the detail page for a sixth neutral character. Click `Add to team`.
    - Assert the inline error contains "five" or "TEAM_FULL" (whichever copy Slice 006 chose), and `select count(*) from team_members` is still 5.
-7. **Write `apps/platform/e2e/darkSide.spec.ts`** for AC-9:
+6. **Write `apps/platform/e2e/darkSide.spec.ts`** for AC-9:
    - Open Vader's detail page. Assert the `Add to team` button is disabled. Hover it. Assert the tooltip text is visible.
    - Use `page.request.post('/api/team', { data: { characterId: vaderId } })` to force the server-side check. Assert the response is `422` and the body's `code` is `EVIL_FORBIDDEN`.
    - Repeat for the Sith-affiliated and master-of-Vader fixtures (all three rules).
-8. **Add the e2e script** to `apps/platform/package.json`: `"test:e2e": "playwright test"`, `"test:e2e:headed": "playwright test --headed"`, `"test:e2e:report": "playwright show-report"`.
-9. **Replace the existing CI workflow** at `.github/workflows/ci.yml` (or add one if absent) so a single job runs the full pyramid against a Postgres service container. Outline:
+7. **Replace the existing CI workflow** at `.github/workflows/ci.yml` (or add one if absent) so a single job runs the full pyramid against a Postgres service container. Outline:
    ```yaml
    services:
      postgres:
@@ -54,22 +49,22 @@ Add Playwright e2e specs and a CI pipeline that runs unit + integration + e2e ag
    Steps:
    1. `actions/checkout@v4`.
    2. The existing `.github/setup` composite action (Node 22, pnpm, install).
-   3. `pnpm --filter platform db:migrate` with `DATABASE_URL=postgres://platform:platform@localhost:5432/platform`.
-   4. `pnpm --filter platform gen` (so generated code exists even though it's gitignored).
+   3. `turbo run db:migrate` with `DATABASE_URL=postgres://platform:platform@localhost:5432/platform`.
+   4. `turbo run gen` (so generated code exists even though it's gitignored).
    5. `pnpm typecheck`, `pnpm lint`, `pnpm test` in parallel where Turborepo allows.
-   6. `pnpm --filter platform exec playwright install --with-deps chromium`.
-   7. `pnpm --filter platform build`.
-   8. `pnpm --filter platform test:e2e`.
+   6. `turbo run playwright:install`.
+   7. `pnpm build` (root, builds platform + components via turbo filter).
+   8. `pnpm test:e2e` (root, runs `turbo run test:e2e`).
    9. Upload `apps/platform/playwright-report/` and `apps/platform/test-results/` on failure (`actions/upload-artifact@v4`, `if: failure()`).
-10. **Add a release workflow** at `.github/workflows/release.yml` using the standard Changesets action: on push to `main`, run `changesets/action@v1` to either open a "Version Packages" PR or publish if one was merged. The product is private (apps don't publish), but the Changesets entry still drives the `CHANGELOG.md` and version bump for `apps/platform` and `packages/components`.
-11. **Author the initial Changesets entry**. `pnpm changeset add`. Mark `apps/platform` and `packages/components` as `minor` (this is the first releasable surface). Summary: "Initial release of the Whale Star Wars Team Builder." Commit the resulting `.changeset/*.md` file.
-12. **Refresh `README.md`** per the prompt:
+8. **Add a release workflow** at `.github/workflows/release.yml` using the standard Changesets action: on push to `main`, run `changesets/action@v1` to either open a "Version Packages" PR or publish if one was merged. The product is private (apps don't publish), but the Changesets entry still drives the `CHANGELOG.md` and version bump for `apps/platform` and `packages/components`.
+9. **Author the initial Changesets entry**. `pnpm changeset add`. Mark `apps/platform` and `packages/components` as `minor` (this is the first releasable surface). Summary: "Initial release of the Whale Star Wars Team Builder." Commit the resulting `.changeset/*.md` file.
+10. **Refresh `README.md`** per the prompt:
     - **Tech stack**: bullet list pulled from `plan.md`'s Technical Context table.
     - **Use cases**: three sentences from `spec.md`.
     - **Folder structure**: the `tree` from `plan.md`'s Project Structure section.
     - **Getting started**: link to `plans/starwars-team-builder/verification.md` for the user flow walk-through and to `plans/starwars-team-builder/001-setup.md` for the first execution slice.
     - **Status**: current state ("All seven slices complete; see `plans/starwars-team-builder/plan.md` Progress Tracking").
-13. **Close out the open items** in `plans/starwars-team-builder/research.md`. The Phase 0/1 items were resolved earlier — confirm those closures are still recorded:
+11. **Close out the open items** in `plans/starwars-team-builder/research.md`. The Phase 0/1 items were resolved earlier — confirm those closures are still recorded:
     - Optional-field fallbacks (Slice 006 step 1): placeholder image, "Unknown" stats, hidden empty lists.
     - `isDarkSide` with missing fields (Slice 006 step 1): `?? false` short-circuit on the array probes.
     - Proxy cache scope (Slice 006 step 2): request-scoped `Map` memo inside `createCharacterFetcher`.
@@ -78,14 +73,13 @@ Add Playwright e2e specs and a CI pipeline that runs unit + integration + e2e ag
 
 ## Files touched
 
-- `apps/platform/playwright.config.ts`: created
+- `apps/platform/playwright.config.ts`: modified (add `webServer.env` with DATABASE_URL and `E2E_FIXTURES=1`)
 - `apps/platform/e2e/setup.ts`: created
 - `apps/platform/e2e/fixtures/characters.ts`: created
 - `apps/platform/e2e/browse.spec.ts`: created
 - `apps/platform/e2e/team.spec.ts`: created
 - `apps/platform/e2e/cap.spec.ts`: created
 - `apps/platform/e2e/darkSide.spec.ts`: created
-- `apps/platform/package.json`: modified (`test:e2e*` scripts, `@playwright/test` dep)
 - `.gitignore`: modified (ignore `apps/platform/playwright-report/`, `apps/platform/test-results/`)
 - `.github/workflows/ci.yml`: modified (Postgres service, full test pyramid, artifact upload on failure)
 - `.github/workflows/release.yml`: created (Changesets action)
@@ -96,8 +90,8 @@ Add Playwright e2e specs and a CI pipeline that runs unit + integration + e2e ag
 
 ## Verification
 
-1. `docker compose up -d postgres && pnpm --filter platform db:migrate && pnpm --filter platform gen && pnpm --filter platform build`. Build succeeds.
-2. `pnpm --filter platform test:e2e`. All four specs pass against the local Postgres. Total runtime under two minutes on a developer laptop.
+1. `docker compose up -d postgres && turbo run db:migrate && turbo run gen && turbo run build`. Build succeeds.
+2. `pnpm test:e2e`. All four specs pass against the local Postgres. Total runtime under two minutes on a developer laptop.
 3. Force a regression: comment out the cap-of-5 check in `TeamService.add()`. Re-run `test:e2e`. `cap.spec.ts` fails with a clear assertion message about the team size. Revert.
 4. Force a regression: change `isDarkSide` to always return `false`. Re-run `test:e2e`. `darkSide.spec.ts` fails on the disabled-button assertion and on the 422 response. Revert.
 5. Push the branch. GitHub Actions runs the full pyramid; the workflow finishes green. On failure, the Playwright report is downloadable from the run's artifacts.

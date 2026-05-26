@@ -72,13 +72,13 @@ Assemble the three screens (`/`, `/characters/[id]`, `/team`) and the persistent
 
 ## Verification
 
-1. `docker compose up -d postgres && pnpm --filter platform db:migrate && pnpm --filter platform gen && pnpm dev`. App boots.
+1. `docker compose up -d postgres && turbo run db:migrate && turbo run gen && pnpm dev`. App boots.
 2. Walk each of the six scenarios in [`verification.md`](verification.md). All pass.
 3. Specifically for AC-9: Darth Vader's detail page shows a disabled `Add to team` button; hovering it reveals the tooltip; clicking does nothing. Force `POST /api/team` with Vader's id via devtools network panel; server returns `422 EVIL_FORBIDDEN`.
 4. Specifically for AC-8: add five non-evil characters, attempt a sixth; the inline error appears and the team stays at five rows in the DB (`psql -c "select count(*) from team_members;"` returns 5).
-5. `pnpm --filter platform test` is green; `darkSide.test.ts` covers the seven cases in step 10.
-6. `pnpm --filter platform test` is green; the `EVIL_FORBIDDEN` integration test passes against the real `isDarkSide`.
-7. `pnpm --filter platform test` (Testing Library component tests) is green; `<CharacterDetail>` test covers both Vader-disabled and neutral-enabled.
+5. `turbo run test` is green; `darkSide.test.ts` covers the seven cases in step 10.
+6. `turbo run test` is green; the `EVIL_FORBIDDEN` integration test passes against the real `isDarkSide`.
+7. `turbo run test` (Testing Library component tests) is green; `<CharacterDetail>` test covers both Vader-disabled and neutral-enabled.
 8. `pnpm typecheck && pnpm lint` are green across the workspace.
 9. Reload `/` after adding two characters. The sidebar still shows them (persistence).
 10. On the detail page, click `Next` from the last character: button is either disabled or wraps, matching what `design.md` chose.
