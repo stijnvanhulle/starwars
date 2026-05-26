@@ -2,7 +2,7 @@
 
 Authored in Planning Phase 3 (ASCII pass + Claude design hi-fi pass). Gates Slice 003. This file stays the source of truth for tokens, sketches, components, and states.
 
-**Hi-fi mockups** (`plans/design/`, open in any browser):
+**Hi-fi mockups** (`plan/starwars-team-builder/design/`, open in any browser):
 
 - [home.html](./design/home.html). character list grid with sidebar
 - [character-detail.html](./design/character-detail.html). Darth Vader page showing the disabled-with-tooltip Add button and dark-side warning
@@ -53,7 +53,7 @@ Top bar sits on the same `surface.app` background as the content (no separate wh
 
 ### Typography
 
-Whale uses **Sofia Pro Soft** for headings (paid Adobe font) and **Nunito Sans** for body. We mirror the body face exactly (Nunito Sans is free on Google Fonts); for headings we fall back to Nunito Sans 800 if Sofia Pro Soft is not licensed. The hi-fi sketches under `plans/design/` load Nunito Sans only.
+Whale uses **Sofia Pro Soft** for headings (paid Adobe font) and **Nunito Sans** for body. We mirror the body face exactly (Nunito Sans is free on Google Fonts); for headings we fall back to Nunito Sans 800 if Sofia Pro Soft is not licensed. The hi-fi sketches under `plan/starwars-team-builder/design/` load Nunito Sans only.
 
 | Token         | Value                                                                                  |
 | ------------- | -------------------------------------------------------------------------------------- |

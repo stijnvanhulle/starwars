@@ -1,6 +1,6 @@
 # NNN, _slice name_
 
-> Copy this file to `plans/NNN-<slug>.md` for each new slice. Delete this blockquote and the italic hints before committing.
+> Copy this file to `plan/starwars-team-builder/NNN-<slug>.md` for each new slice. Delete this blockquote and the italic hints before committing.
 
 ## Context
 
