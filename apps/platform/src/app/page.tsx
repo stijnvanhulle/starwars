@@ -1,35 +1,45 @@
 'use client'
 
-import Container from '@mui/material/Container'
+import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import { StatePanel } from '@stijnvanhulle/components'
-import { useListCharactersQuery } from '@/store/api'
+import { useRouter } from 'next/navigation'
+import { CharacterList, type CharacterListItem, pickChip } from '@stijnvanhulle/components'
+import { describeApiError } from '@/lib/apiError'
+import { useGetTeamQuery, useListCharactersQuery } from '@/store/api'
 
 export default function HomePage() {
+  const router = useRouter()
   const { data, isLoading, isError, error } = useListCharactersQuery()
+  const team = useGetTeamQuery()
+  const teamIds = new Set((team.data ?? []).map((m) => m.characterId))
 
-  if (isLoading) {
-    return (
-      <Container>
-        <StatePanel variant="loading" />
-      </Container>
-    )
-  }
-
-  if (isError) {
-    return (
-      <Container>
-        <StatePanel variant="error" description={(error as { message?: string } | undefined)?.message ?? 'Request failed.'} />
-      </Container>
-    )
-  }
+  const state = isLoading ? 'loading' : isError ? 'error' : 'success'
+  const items: ReadonlyArray<CharacterListItem> = (data ?? []).map((c) => ({
+    id: c.id,
+    name: c.name,
+    image: c.image,
+    chip: pickChip(c, teamIds.has(c.id)),
+  }))
 
   return (
-    <Container>
-      <Typography variant="h3" component="h1" gutterBottom>
-        Whale Star Wars Team Builder
-      </Typography>
-      <Typography variant="body1">{data?.length ?? 0} characters</Typography>
-    </Container>
+    <Box>
+      <Box sx={{ maxWidth: 720, mb: 8 }}>
+        <Typography
+          component="h1"
+          sx={{
+            fontSize: 40,
+            lineHeight: 1.1,
+            fontWeight: 800,
+            letterSpacing: '-0.02em',
+            color: '#121A52',
+            mb: 2,
+          }}
+        >
+          Star Wars characters
+        </Typography>
+        <Typography sx={{ fontSize: 16, lineHeight: 1.5, color: '#334155' }}>Pick five characters for your team. Evil characters can&apos;t join.</Typography>
+      </Box>
+      <CharacterList state={state} characters={items} errorMessage={describeApiError(error) ?? undefined} onSelect={(id) => router.push(`/characters/${id}`)} />
+    </Box>
   )
 }

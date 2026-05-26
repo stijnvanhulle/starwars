@@ -1,6 +1,5 @@
 import { http, HttpResponse } from 'msw'
-import { describe, expect, it, vi } from 'vitest'
-import * as darkSide from '@/lib/darkSide'
+import { describe, expect, it } from 'vitest'
 import { startApiServer } from '@/test/apiServer'
 import { createStarwarsApiCharacter } from '@/test/fixtures'
 import { server, STARWARS_API } from '@/test/msw'
@@ -74,10 +73,18 @@ describe('POST /api/team', () => {
     expect(await res.json()).toMatchObject({ code: 'NOT_FOUND' })
   })
 
-  it('422 EVIL_FORBIDDEN when isDarkSide returns true', async () => {
-    server.use(http.get(`${STARWARS_API}/id/4.json`, () => HttpResponse.json(createStarwarsApiCharacter({ id: 4, name: 'Darth Vader' }))))
-
-    using _dark = vi.spyOn(darkSide, 'isDarkSide').mockReturnValue(true)
+  it('422 EVIL_FORBIDDEN when the real isDarkSide rules match', async () => {
+    server.use(
+      http.get(`${STARWARS_API}/id/4.json`, () =>
+        HttpResponse.json(
+          createStarwarsApiCharacter({
+            id: 4,
+            name: 'Darth Vader',
+            masters: ['Darth Sidious (Sith Master)'],
+          }),
+        ),
+      ),
+    )
     await using api = await startApiServer(handler)
 
     const res = await postCharacter(api.baseUrl, 4)

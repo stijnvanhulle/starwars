@@ -36,8 +36,8 @@ const semantic = {
   info: '#0284C7',
 }
 
-const fontBody = '"Nunito Sans", system-ui, sans-serif'
-const fontHead = '"Sofia Pro Soft", "Nunito Sans", system-ui, sans-serif'
+const fontBody = 'var(--font-nunito), "Nunito Sans", system-ui, sans-serif'
+const fontHead = 'var(--font-nunito), "Sofia Pro Soft", "Nunito Sans", system-ui, sans-serif'
 
 /**
  * MUI theme built from the Whale-inspired tokens in plans/starwars-team-builder/design.md.
@@ -56,7 +56,7 @@ export const lightTheme = createTheme({
     info: { main: semantic.info },
     success: { main: semantic.success },
   },
-  shape: { borderRadius: 12 },
+  shape: { borderRadius: 4 },
   spacing: 4,
   typography: {
     fontFamily: fontBody,

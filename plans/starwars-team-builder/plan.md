@@ -207,7 +207,7 @@ Gate for Slice 003: `plans/starwars-team-builder/design.md` has tokens, layout s
 - [x] **003-design**: todo
 - [x] **004-api**: todo
 - [x] **005-client-kubb**: done
-- [ ] **006-features**: todo
+- [x] **006-features**: done
 - [ ] **007-testing**: todo
 
 ### Final checks

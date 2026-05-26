@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { ERRORS } from '@/server/constants'
 import { characterIdSchema } from '@/server/schemas'
-import { fetchCharacter } from '@/server/starwars-api'
+import { createCharacterFetcher } from '@/server/starwars-api'
 import { createError, mapError, toCharacter } from '@/server/utils'
 
 /**
@@ -27,7 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         data: { characterId: req.query.id },
       })
     }
-    const character = await fetchCharacter(parsed.data)
+    const character = await createCharacterFetcher().byId(parsed.data)
 
     if (character === null) {
       throw createError({

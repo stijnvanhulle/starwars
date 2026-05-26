@@ -5,7 +5,7 @@ import { teamMemberRepository } from '@/server/repositories/teamMemberRepository
 import { teamRepository } from '@/server/repositories/teamRepository'
 import { addTeamMemberRequestSchema } from '@/gen/api'
 import { addTeamMember, listTeamMembers } from '@/server/services/teamService'
-import { fetchCharacter } from '@/server/starwars-api'
+import { createCharacterFetcher } from '@/server/starwars-api'
 
 /**
  * `GET /api/team`
@@ -35,9 +35,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
     try {
       const team = await teamRepository.findDefault()
+      const fetcher = createCharacterFetcher()
       const member = await addTeamMember({
         memberRepo: teamMemberRepository,
-        fetchCharacter,
+        fetchCharacter: fetcher.byId,
         isDarkSide,
         teamId: team.id,
         characterId: parsed.data.characterId,

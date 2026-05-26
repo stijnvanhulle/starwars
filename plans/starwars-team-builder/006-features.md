@@ -86,15 +86,15 @@ No new infrastructure, if something here needs a new dep or generated file, it b
 
 ## Done criteria
 
-- [ ] `src/lib/darkSide.ts` implements the three rules with the documented short-circuit and is pure + synchronous
-- [ ] `TeamService.add()` calls the real `isDarkSide(character)` on the `starwars-api`-shaped payload returned by the request-scoped fetcher; `character.masters` is already `string[]`, so no separate resolution step is needed
-- [ ] Request-scoped `createCharacterFetcher()` dedupes repeat fetches within one request
-- [ ] `/` renders the character list with loading and error states
-- [ ] `/characters/[id]` shows name, image, height, mass, affiliations, and prev/next navigation
-- [ ] `<ActionButton>` on the detail page is disabled with a tooltip for evil characters
-- [ ] `/team` lists members with remove controls and an empty state
-- [ ] `<TeamSidebarContainer>` is visible on every page and reflects the current team in real time
-- [ ] API errors (`409`, `422 TEAM_FULL`, `422 EVIL_FORBIDDEN`, `404 NOT_FOUND`) render inline using the generated `Error` shape
-- [ ] Every scenario in `verification.md` passes against a clean checkout
-- [ ] `pnpm test`, `pnpm typecheck`, `pnpm lint` are all green
-- [ ] No new external dependency or generated file is introduced in this slice
+- [x] `src/lib/darkSide.ts` implements the three rules with the documented short-circuit and is pure + synchronous
+- [x] `TeamService.add()` calls the real `isDarkSide(character)` on the `starwars-api`-shaped payload returned by the request-scoped fetcher; `character.masters` is already `string[]`, so no separate resolution step is needed
+- [x] Request-scoped `createCharacterFetcher()` dedupes repeat fetches within one request
+- [x] `/` renders the character list with loading and error states
+- [x] `/characters/[id]` shows name, image, height, mass, affiliations, and prev/next navigation
+- [x] `<ActionButton>` on the detail page is disabled with a tooltip for evil characters
+- [x] `/team` lists members with remove controls and an empty state
+- [x] `<TeamSidebarContainer>` is visible on every page and reflects the current team in real time
+- [x] API errors (`409`, `422 TEAM_FULL`, `422 EVIL_FORBIDDEN`, `404 NOT_FOUND`) render inline using the generated `Error` shape
+- [x] Every scenario in `verification.md` passes against a clean checkout
+- [x] `pnpm test`, `pnpm typecheck`, `pnpm lint` are all green
+- [x] No new external dependency or generated file is introduced in this slice
