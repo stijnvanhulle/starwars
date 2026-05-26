@@ -87,14 +87,14 @@ None. This is the first execution slice.
 
 ## Done criteria
 
-- [ ] `pnpm-workspace.yaml` and root `package.json` include `apps/*`
-- [ ] `packages/core` and `packages/demo` deleted; no dangling references in configs or scripts
-- [ ] `apps/platform` boots via `pnpm dev` and renders an `MUI`-themed page at `/`
-- [ ] `AppRouterCacheProvider` + `ThemeProvider` + `CssBaseline` wrap the app in `layout.tsx`
-- [ ] `next.config.ts` allows `starwars-api` image URLs
-- [ ] `packages/components` exists with a placeholder export and is linked from `apps/platform`
-- [ ] `apps/platform/vitest.config.ts` and `apps/platform/playwright.config.ts` both parse cleanly; `pnpm test` and `pnpm test:e2e -- --list` succeed
-- [ ] `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm test:e2e -- --list`, and `pnpm dev` all run with zero warnings and zero errors
-- [ ] No code in this slice imports `Drizzle`, `Redux`, `Kubb`, or anything outside Next + MUI (those belong to later slices)
-- [ ] `.github/workflows/pr.yml` (existing) exercises `build`/`typecheck`/`test`/`lint`/spellcheck on every PR, with the new `apps/platform` and `packages/components` workspaces covered. Postgres, `gen`, and Playwright are layered on by Slices 002, 005, and 007 respectively
-- [ ] `.github/workflows/release.yml` exists and uses `changesets/action@v1` on push to `main`
+- [x] `pnpm-workspace.yaml` and root `package.json` include `apps/*`
+- [x] `packages/core` and `packages/demo` deleted; no dangling references in configs or scripts
+- [x] `apps/platform` boots via `pnpm dev` and renders an `MUI`-themed page at `/`
+- [x] `AppRouterCacheProvider` + `ThemeProvider` + `CssBaseline` wrap the app in `layout.tsx`
+- [x] `next.config.ts` allows `starwars-api` image URLs
+- [x] `packages/components` exists with a placeholder export and is linked from `apps/platform`
+- [x] `apps/platform/vitest.config.ts` and `apps/platform/playwright.config.ts` both parse cleanly; `pnpm test` and `pnpm test:e2e -- --list` succeed
+- [x] `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm test:e2e -- --list`, and `pnpm dev` all run with zero warnings and zero errors
+- [x] No code in this slice imports `Drizzle`, `Redux`, `Kubb`, or anything outside Next + MUI (those belong to later slices)
+- [x] `.github/workflows/pr.yml` (existing) exercises `build`/`typecheck`/`test`/`lint`/spellcheck on every PR, with the new `apps/platform` and `packages/components` workspaces covered. Postgres, `gen`, and Playwright are layered on by Slices 002, 005, and 007 respectively
+- [x] `.github/workflows/release.yml` exists and uses `changesets/action@v1` on push to `main`

@@ -86,14 +86,14 @@ Slice 001 is done. `data-model.md` is the source of truth for the table shape.
 
 ## Done criteria
 
-- [ ] `docker-compose.yml` brings up Postgres 17 with a healthcheck and a named volume
-- [ ] `apps/platform/src/db/schema.ts` defines `teams` and `team_members` exactly as `data-model.md` specifies, including the nullable `deletedAt` column, the partial unique index on active rows, and the `teamId` FK with `ON DELETE CASCADE`
-- [ ] `apps/platform/src/db/migrations/0000_*.sql` is generated and checked in
-- [ ] `apps/platform/src/db/migrations/0001_default_team.sql` inserts the default team and is safe to re-run
-- [ ] `turbo run db:migrate` is safe to re-run (running twice leaves exactly one `slug = 'default'` row) and reports success
-- [ ] `TeamRepository` exposes `findBySlug`, `findDefault`
-- [ ] `TeamMemberRepository` exposes `insert`, `findAllByTeam`, `findByTeamAndCharacterId`, `deleteByTeamAndCharacterId`, `countByTeam`, all scoped by `teamId` and filtering out soft-deleted rows on every read. No method issues a SQL `DELETE` against `team_members`.
-- [ ] `drizzle-orm` is imported only from files under `apps/platform/src/db/**`, `apps/platform/src/server/repositories/**`, and `apps/platform/src/test/**`
-- [ ] Integration tests cover the cases in step 11 (both repositories) and pass against the real container
-- [ ] `pnpm typecheck`, `pnpm lint`, `pnpm test` are green
-- [ ] No service rules (cap of 5, dark-side guard) leak into this slice. Those land in Slice 004
+- [x] `docker-compose.yml` brings up Postgres 17 with a healthcheck and a named volume
+- [x] `apps/platform/src/db/schema.ts` defines `teams` and `team_members` exactly as `data-model.md` specifies, including the nullable `deletedAt` column, the partial unique index on active rows, and the `teamId` FK with `ON DELETE CASCADE`
+- [x] `apps/platform/src/db/migrations/0000_*.sql` is generated and checked in
+- [x] `apps/platform/src/db/migrations/0001_default_team.sql` inserts the default team and is safe to re-run
+- [x] `turbo run db:migrate` is safe to re-run (running twice leaves exactly one `slug = 'default'` row) and reports success
+- [x] `TeamRepository` exposes `findBySlug`, `findDefault`
+- [x] `TeamMemberRepository` exposes `insert`, `findAllByTeam`, `findByTeamAndCharacterId`, `deleteByTeamAndCharacterId`, `countByTeam`, all scoped by `teamId` and filtering out soft-deleted rows on every read. No method issues a SQL `DELETE` against `team_members`.
+- [x] `drizzle-orm` is imported only from files under `apps/platform/src/db/**`, `apps/platform/src/server/repositories/**`, and `apps/platform/src/test/**`
+- [x] Integration tests cover the cases in step 11 (both repositories) and pass against the real container
+- [x] `pnpm typecheck`, `pnpm lint`, `pnpm test` are green
+- [x] No service rules (cap of 5, dark-side guard) leak into this slice. Those land in Slice 004
