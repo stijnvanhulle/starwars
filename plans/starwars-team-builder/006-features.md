@@ -124,7 +124,7 @@ No new dependency lands here. If something needs a new package or generated file
 - [x] Nunito Sans is loaded via `next/font` and wired into the MUI theme
 - [x] `theme.shape.borderRadius` is set to 4 so `sx borderRadius` numbers map onto the design's 4 / 12 / 16 scale
 - [x] Loading paths use `<CharacterListSkeleton>`, `<CharacterDetailSkeleton>`, `<TeamListSkeleton>`, `<RosterSkeleton>` instead of the generic loading panel
-- [ ] `CharacterCard` and `ProgressPill` are styled by colocated `*.module.css` files; the rest of `packages/components` stays on `sx`
+- [x] `CharacterCard` and `ProgressPill` are styled by colocated `*.module.css` files; the rest of `packages/components` stays on `sx`
 - [x] Every scenario in `verification.md` passes against a clean checkout
 - [x] `pnpm test`, `pnpm typecheck`, `pnpm lint` are all green
 - [x] No new external dependency beyond `@mui/icons-material` (used only by the icon-only side nav) is introduced in this slice

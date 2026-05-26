@@ -31,4 +31,13 @@ describe('isDarkSide', () => {
   it('short-circuits rule 3 on empty masters', () => {
     expect(isDarkSide(createStarwarsApiCharacter({ name: 'X', masters: [] }))).toBe(false)
   })
+
+  it('tolerates upstream returning masters as a bare string (Leia, Palpatine, Maul, ...)', () => {
+    const base = createStarwarsApiCharacter({ name: 'X' })
+    const withDarthMaster = { ...base, masters: 'Darth Plagueis' as unknown as Array<string> }
+    expect(isDarkSide(withDarthMaster)).toBe(true)
+
+    const withBenignMaster = { ...base, masters: 'Luke Skywalker' as unknown as Array<string> }
+    expect(isDarkSide(withBenignMaster)).toBe(false)
+  })
 })

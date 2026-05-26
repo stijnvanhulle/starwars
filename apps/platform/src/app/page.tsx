@@ -3,7 +3,8 @@
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { useRouter } from 'next/navigation'
-import { CharacterList, type CharacterListItem, pickChip } from '@stijnvanhulle/components'
+import { CharacterListSkeleton, StatePanel, pickChip } from '@stijnvanhulle/components'
+import { CharacterCard } from '@/components/CharacterCard/CharacterCard'
 import { describeApiError } from '@/lib/apiError'
 import { useGetTeamQuery, useListCharactersQuery } from '@/store/api'
 
@@ -12,14 +13,6 @@ export default function HomePage() {
   const { data, isLoading, isError, error } = useListCharactersQuery()
   const team = useGetTeamQuery()
   const teamIds = new Set((team.data ?? []).map((m) => m.characterId))
-
-  const state = isLoading ? 'loading' : isError ? 'error' : 'success'
-  const items: ReadonlyArray<CharacterListItem> = (data ?? []).map((c) => ({
-    id: c.id,
-    name: c.name,
-    image: c.image,
-    chip: pickChip(c, teamIds.has(c.id)),
-  }))
 
   return (
     <Box>
@@ -39,7 +32,26 @@ export default function HomePage() {
         </Typography>
         <Typography sx={{ fontSize: 16, lineHeight: 1.5, color: '#334155' }}>Pick five characters for your team. Evil characters can&apos;t join.</Typography>
       </Box>
-      <CharacterList state={state} characters={items} errorMessage={describeApiError(error) ?? undefined} onSelect={(id) => router.push(`/characters/${id}`)} />
+
+      {isLoading && <CharacterListSkeleton />}
+
+      {isError && <StatePanel variant="error" description={describeApiError(error) ?? undefined} />}
+
+      {!isLoading && !isError && (data === undefined || data.length === 0) && <StatePanel variant="empty" />}
+
+      {data && data.length > 0 && (
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+            gap: 6,
+          }}
+        >
+          {data.map((c) => (
+            <CharacterCard key={c.id} name={c.name} image={c.image} chip={pickChip(c, teamIds.has(c.id))} onClick={() => router.push(`/characters/${c.id}`)} />
+          ))}
+        </Box>
+      )}
     </Box>
   )
 }

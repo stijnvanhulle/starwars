@@ -3,7 +3,8 @@
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
-import { ProgressPill, StatePanel, TeamListSkeleton, TeamMemberRow } from '@stijnvanhulle/components'
+import { StatePanel, TeamListSkeleton, TeamMemberRow } from '@stijnvanhulle/components'
+import { ProgressPill } from '@/components/ProgressPill/ProgressPill'
 import { describeApiError } from '@/lib/apiError'
 import { useGetTeamQuery, useListCharactersQuery, useRemoveTeamMemberMutation } from '@/store/api'
 

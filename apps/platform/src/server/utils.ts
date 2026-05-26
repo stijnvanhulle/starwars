@@ -82,13 +82,22 @@ export function mapError({ error, upstreamAsNotFound = false }: MapErrorParams):
 }
 
 const CHARACTER_KEYS = ['id', 'name', 'image', 'height', 'mass', 'affiliations', 'masters'] as const
+const ARRAY_KEYS = new Set(['affiliations', 'masters'])
 
 /**
  * Narrows a starwars-api payload to the `Character` shape from `api.openapi.yaml`.
- * Drops fields the contract does not list (e.g. `formerAffiliations`) and passes
- * `masters` through unchanged. Absent optional fields stay absent on the output
- * (not set to `undefined`).
+ * Drops fields the contract does not list (e.g. `formerAffiliations`). Coerces
+ * `affiliations` and `masters` to arrays because upstream occasionally returns
+ * a bare string (e.g. Leia's `masters: "Luke Skywalker"`). Absent optional
+ * fields stay absent on the output (not set to `undefined`).
  */
 export function toCharacter(src: StarwarsApiCharacter): Character {
-  return Object.fromEntries(CHARACTER_KEYS.flatMap((key) => (src[key] === undefined ? [] : [[key, src[key]]]))) as unknown as Character
+  return Object.fromEntries(
+    CHARACTER_KEYS.flatMap((key) => {
+      const value = src[key]
+      if (value === undefined) return []
+      if (ARRAY_KEYS.has(key) && typeof value === 'string') return [[key, [value]]]
+      return [[key, value]]
+    }),
+  ) as unknown as Character
 }
