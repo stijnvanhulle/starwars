@@ -28,6 +28,14 @@ function Breadcrumb() {
       ]
     }
 
+    if (pathname.startsWith('/bookmarks')) {
+      return [
+        <Box key="b" component="span" sx={{ color: '#121A52' }}>
+          Bookmarks
+        </Box>,
+      ]
+    }
+
     if (pathname.startsWith('/characters/')) {
       const id = Number.parseInt(pathname.split('/')[2] ?? '', 10)
 
@@ -68,7 +76,7 @@ function TeamPill() {
       clickable
       label={
         <Stack component="span" direction="row" spacing={2} sx={{ alignItems: 'center' }}>
-          Your team
+          <Box component="span">Your team</Box>
           <Box component="span" sx={{ fontVariantNumeric: 'tabular-nums', opacity: onTeamPage ? 0.9 : 1 }}>
             {count} / {TEAM_CAP}
           </Box>

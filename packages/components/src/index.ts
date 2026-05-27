@@ -12,6 +12,7 @@ export { CharacterDetail, type CharacterDetailItem, type CharacterDetailProps } 
 export { CharacterDetailSkeleton } from './characters/CharacterDetailSkeleton'
 export { pickChip } from './characters/pickChip'
 export { ActionButton, type ActionButtonProps } from './common/ActionButton'
+export { Pagination, type PaginationProps } from './common/Pagination'
 export { PrimaryButton, type PrimaryButtonProps } from './common/PrimaryButton'
 export { StatCard, type StatCardProps } from './common/StatCard'
 export { ProgressPill, type ProgressPillProps } from './common/ProgressPill'

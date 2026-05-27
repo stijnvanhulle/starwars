@@ -1,11 +1,14 @@
 'use client'
 
+import Badge from '@mui/material/Badge'
 import ListItemButton from '@mui/material/ListItemButton'
 import Stack from '@mui/material/Stack'
 import Tooltip from '@mui/material/Tooltip'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import type { ReactNode } from 'react'
+import { selectBookmarks } from '@/store/bookmarks'
+import { useAppSelector } from '@/store/hooks'
 
 const NAV: Array<{ href: string; label: string; icon: ReactNode; match: (p: string) => boolean }> = [
   {
@@ -34,10 +37,21 @@ const NAV: Array<{ href: string; label: string; icon: ReactNode; match: (p: stri
       </svg>
     ),
   },
+  {
+    href: '/bookmarks',
+    label: 'Bookmarks',
+    match: (p) => p.startsWith('/bookmarks'),
+    icon: (
+      <svg viewBox="0 0 24 24" width={22} height={22} fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 21s-7-4.35-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.65-9.5 9-9.5 9z" />
+      </svg>
+    ),
+  },
 ]
 
 export function SideNav() {
   const pathname = usePathname() ?? '/'
+  const bookmarkCount = useAppSelector(selectBookmarks).length
   return (
     <Stack spacing={1} sx={{ alignItems: 'center', py: 4, position: 'sticky', top: 0, height: '100vh' }}>
       <Stack
@@ -72,6 +86,14 @@ export function SideNav() {
       </Stack>
       {NAV.map((item) => {
         const active = item.match(pathname)
+        const showBadge = item.href === '/bookmarks' && bookmarkCount > 0
+        const iconContent = showBadge ? (
+          <Badge badgeContent={bookmarkCount} color="primary" overlap="circular">
+            {item.icon}
+          </Badge>
+        ) : (
+          item.icon
+        )
         return (
           <Tooltip key={item.href} title={item.label} placement="right">
             <ListItemButton
@@ -92,7 +114,7 @@ export function SideNav() {
                 '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.08)', color: '#FFFFFF' },
               }}
             >
-              {item.icon}
+              {iconContent}
             </ListItemButton>
           </Tooltip>
         )
