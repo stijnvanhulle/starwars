@@ -15,7 +15,7 @@
     "lint": "oxlint -c ../../oxlint.config.ts --disable-nested-config ./src",
     "pretypecheck": "next typegen",
     "typecheck": "tsc -p ./tsconfig.json --noEmit",
-    "test": "vitest run --config ./vitest.config.ts",
+    "test": "vitest run",
     "db:migrate": "tsx src/db/migrate.ts",
     "db:generate": "drizzle-kit generate",
     "db:studio": "drizzle-kit studio",
