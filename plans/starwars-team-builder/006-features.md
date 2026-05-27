@@ -6,7 +6,7 @@ Assemble the three screens (`/`, `/characters/[id]`, `/team`) and the persistent
 
 ### Styling architecture
 
-`@stijnvanhulle/components` is the single source of truth for visual primitives and the design tokens. It pulls its own weight via three layered surfaces:
+`@whale/components` is the single source of truth for visual primitives and the design tokens. It pulls its own weight via three layered surfaces:
 
 - **MUI primitives in JSX.** Every component composes `Card`, `Stack`, `Box`, `Typography`, `Chip`, `Skeleton`, `Tooltip`, `Avatar`, `IconButton`, `Paper`, `Button`, `ButtonBase`, `CircularProgress`. No hand-rolled HTML buttons or divs for things MUI already covers.
 - **MUI CSS theme variables under a `whale` prefix.** [packages/components/src/theme/theme.ts](../../packages/components/src/theme/theme.ts) calls `createTheme({ cssVariables: { cssVarPrefix: 'whale' }, palette: {...} })`. MUI emits palette/typography/spacing as `--whale-palette-primary-main`, `--whale-palette-error-light`, `--whale-palette-text-primary`, etc. The platform's `providers.tsx` imports `lightTheme` from the lib and feeds it to `<ThemeProvider>`. The MUI doc this follows: https://mui.com/material-ui/customization/css-theme-variables/configuration/#customizing-variable-prefix.
@@ -14,10 +14,10 @@ Assemble the three screens (`/`, `/characters/[id]`, `/team`) and the persistent
 
 ### Packaging
 
-`@stijnvanhulle/components` ships built artifacts via `tsdown` + `@tsdown/css`:
+`@whale/components` ships built artifacts via `tsdown` + `@tsdown/css`:
 
 - `dist/index.js` (ESM) + `dist/index.d.ts`
-- `dist/style.css` — every `*.module.css` (and the few inline CSS-module bits) bundled into a single stylesheet, side-effect-imported once by the platform's `app/layout.tsx` via `import '@stijnvanhulle/components/style.css'`
+- `dist/style.css` — every `*.module.css` (and the few inline CSS-module bits) bundled into a single stylesheet, side-effect-imported once by the platform's `app/layout.tsx` via `import '@whale/components/style.css'`
 - `@mui/material`, `@emotion/react`, `@emotion/styled`, `react`, `react-dom` are peer deps; the lib never bundles them
 
 No new dependency lands in this slice beyond `@mui/icons-material` for the left-nav glyphs.
@@ -45,7 +45,7 @@ No new dependency lands in this slice beyond `@mui/icons-material` for the left-
 3. **Normalize the frontend `Character` shape** in `apps/platform/src/server/utils.ts`. `toCharacter()` coerces stringy `affiliations` / `masters` to arrays before shipping to the browser, so the contract type `Character.masters: string[]` is honored even when upstream lies.
 4. **Preserve `{ code, message }` through the fetch seam.** Extend `apps/platform/src/gen/fetchClient.ts` with a tagged `ApiRequestError` (factory + `isApiRequestError` predicate, no ES class) that carries `status`, `statusText`, and the parsed JSON body. The kubb generated clients throw it on any non-2xx response. `wrap` in `src/store/api.ts` reads `error.body` so `error.code` / `error.message` reach the UI.
 
-### Library: presentational components in `@stijnvanhulle/components`
+### Library: presentational components in `@whale/components`
 
 5. **Theme.** Move `lightTheme` from the app to `packages/components/src/theme/theme.ts`. Enable MUI CSS variables with `cssVariables: { cssVarPrefix: 'whale' }`. `shape.borderRadius` is `4` so `sx borderRadius: 3` = 12px (md) and `borderRadius: 4` = 16px (lg) match the design token scale. The theme references `--font-nunito`, supplied by the platform's `next/font/google` setup in `app/layout.tsx`. Re-exported from the lib barrel.
 6. **Common primitives** (all `sx`-styled, no CSS modules):
@@ -78,7 +78,7 @@ No new dependency lands in this slice beyond `@mui/icons-material` for the left-
 14. **Home** at `apps/platform/src/app/page.tsx` (`'use client'`). `useListCharactersQuery` + `useGetTeamQuery`, maps results to `CharacterListItem[]` via `pickChip`, pushes to `/characters/[id]` via `useRouter`. Header is `Star Wars characters` (h1, 40px) + the lead copy.
 15. **Detail** at `apps/platform/src/app/characters/[id]/page.tsx` (server) + `CharacterDetailContainer.tsx` (`'use client'`). The container computes `prev`/`next` from the cached full list (wraps at both ends), evaluates a client-side `isDarkSide` mirror, and supplies all props to `<CharacterDetail>`. Skeleton-loaded.
 16. **Team** at `apps/platform/src/app/team/page.tsx` (`'use client'`). Header row is the h1 left + `<ProgressPill current={count} total={5} />` right. Rows are `<TeamMemberRow variant="full">`. Loading → `<TeamListSkeleton>`, empty → `<StatePanel variant="empty">`, errors → `describeApiError`.
-17. **Nunito Sans via `next/font`** in `apps/platform/src/app/layout.tsx` (`Nunito_Sans` weights `400/600/700/800`, exposed as `--font-nunito`). The MUI theme reads `var(--font-nunito)`. The layout also side-effect imports `@stijnvanhulle/components/style.css`, so the lib's bundled stylesheet ships with the page.
+17. **Nunito Sans via `next/font`** in `apps/platform/src/app/layout.tsx` (`Nunito_Sans` weights `400/600/700/800`, exposed as `--font-nunito`). The MUI theme reads `var(--font-nunito)`. The layout also side-effect imports `@whale/components/style.css`, so the lib's bundled stylesheet ships with the page.
 18. **`describeApiError`** at `apps/platform/src/lib/apiError.ts`. Accepts our tagged `ClientError` (`{ status, code, message }`) or RTK Query's `SerializedError`. Picks a user-facing message with a code-aware fallback for `TEAM_FULL`, `EVIL_FORBIDDEN`, `ALREADY_MEMBER`, `NOT_FOUND`.
 19. **oxlint restriction** on `@/gen/starwars` imports: only `**/src/server/**`, `**/src/lib/**`, `**/src/pages/api/**` may import the server-only generated bundle.
 
@@ -102,7 +102,7 @@ No new dependency lands in this slice beyond `@mui/icons-material` for the left-
 - `apps/platform/src/gen/fetchClient.ts`: tagged `ApiRequestError`; non-2xx preserves the parsed body
 - `apps/platform/src/store/api.ts`: `wrap` reads `ApiRequestError.body`
 
-### Library (`@stijnvanhulle/components`)
+### Library (`@whale/components`)
 - `packages/components/src/theme/theme.ts`: moved from the app; `cssVariables: { cssVarPrefix: 'whale' }`; shape.borderRadius = 4
 - `packages/components/src/shell/AppShell.{tsx,module.css}`: 80/1fr/280 grid with optional right pane
 - `packages/components/src/shell/TopBar.tsx`: sx-only Box row
@@ -121,7 +121,7 @@ No new dependency lands in this slice beyond `@mui/icons-material` for the left-
 - `packages/components/tsdown.config.ts` + `package.json`: `@tsdown/css` to bundle `*.module.css` into `dist/style.css`; new exports entry `./style.css`
 
 ### Platform
-- `apps/platform/src/app/layout.tsx`: loads `Nunito_Sans` + imports `@stijnvanhulle/components/style.css`
+- `apps/platform/src/app/layout.tsx`: loads `Nunito_Sans` + imports `@whale/components/style.css`
 - `apps/platform/src/app/providers.tsx`: `<ThemeProvider theme={lightTheme}>` from the lib + `<AppShell>` with the three slots
 - `apps/platform/src/app/page.tsx`: home page renders `<CharacterList />`, picks chips via `pickChip`, pushes to detail
 - `apps/platform/src/app/characters/[id]/page.tsx`, `CharacterDetailContainer.tsx`: server route + client container
@@ -135,7 +135,7 @@ No new dependency lands in this slice beyond `@mui/icons-material` for the left-
 
 ## Verification
 
-1. `docker compose up -d postgres && pnpm db:migrate && pnpm gen && pnpm --filter @stijnvanhulle/components build && pnpm dev`. App boots.
+1. `docker compose up -d postgres && pnpm db:migrate && pnpm gen && pnpm --filter @whale/components build && pnpm dev`. App boots.
 2. Walk each of the six scenarios in [`verification.md`](verification.md). All pass.
 3. AC-9: Darth Vader's detail page shows a disabled `Add to team` button; hovering it reveals the MUI tooltip; clicking does nothing. Force `POST /api/team` with Vader's id; server returns `422 EVIL_FORBIDDEN`.
 4. AC-8: add five non-evil characters, attempt a sixth. The inline error appears and the team stays at five rows in the DB.
@@ -161,7 +161,7 @@ No new dependency lands in this slice beyond `@mui/icons-material` for the left-
 - [x] `/team` lists members with remove controls, a progress pill, and an empty state
 - [x] The right-rail `<TeamSidebar>` is visible on every page and reflects the current team in real time
 - [x] API errors (`409`, `422 TEAM_FULL`, `422 EVIL_FORBIDDEN`, `404 NOT_FOUND`) render inline using the generated `Error` shape (preserved through `ApiRequestError.body`)
-- [x] `@stijnvanhulle/components` exports every UI primitive plus `lightTheme`, `tokens`, and `pickChip`
+- [x] `@whale/components` exports every UI primitive plus `lightTheme`, `tokens`, and `pickChip`
 - [x] MUI CSS variables are emitted under the `--whale-*` prefix and consumed by both `sx` (via theme palette keys) and the remaining CSS modules (via `var(--whale-palette-*)`)
 - [x] Only three CSS modules remain (`AppShell`, `CharacterCard`, `CharacterDetail`); everything else is MUI primitives + `sx`; `dist/style.css` is under 7 kB
 - [x] The lib ships built `dist/index.js` + `dist/index.d.ts` + `dist/style.css`; `@mui/material`, `@emotion/*`, `react`, `react-dom` are peer deps

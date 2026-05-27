@@ -6,7 +6,7 @@ import Chip from '@mui/material/Chip'
 import Stack from '@mui/material/Stack'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { TopBar } from '@stijnvanhulle/components'
+import { TopBar } from '@whale/components'
 import { characterIdSchema } from '@/server/schemas'
 import { useGetCharacterQuery, useGetTeamQuery } from '@/store/api'
 

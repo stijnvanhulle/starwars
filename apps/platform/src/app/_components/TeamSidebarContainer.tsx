@@ -3,7 +3,7 @@
 import Button from '@mui/material/Button'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { TeamSidebarSkeleton, TeamMemberRow, TeamSidebar } from '@stijnvanhulle/components'
+import { TeamSidebarSkeleton, TeamMemberRow, TeamSidebar } from '@whale/components'
 import { useGetTeamQuery, useListCharactersQuery, useRemoveTeamMemberMutation } from '@/store/api'
 
 export function TeamSidebarContainer() {

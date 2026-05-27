@@ -1,5 +1,5 @@
 {
-  "name": "@stijnvanhulle/platform",
+  "name": "@whale/platform",
   "version": "0.0.0",
   "private": true,
   "description": "Starwars team builder platform",
@@ -36,8 +36,8 @@
     "@mui/material": "9.0.1",
     "@mui/material-nextjs": "9.0.1",
     "@reduxjs/toolkit": "^2.12.0",
-    "@stijnvanhulle/components": "workspace:*",
     "@tanstack/react-hotkeys": "^0.10.0",
+    "@whale/components": "workspace:*",
     "drizzle-orm": "^0.45.2",
     "kubb": "5.0.0-beta.27",
     "next": "16.2.6",

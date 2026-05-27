@@ -98,5 +98,5 @@ jobs:
           result-encoding: string
           script: |
             const publishedPackages = JSON.parse(process.env.PUBLISHED_PACKAGES || '[]');
-            const componentsPackage = publishedPackages.find(pkg => pkg.name === '@stijnvanhulle/components');
+            const componentsPackage = publishedPackages.find(pkg => pkg.name === '@whale/components');
             return componentsPackage?.version || '';

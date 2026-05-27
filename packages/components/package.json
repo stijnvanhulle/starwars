@@ -1,5 +1,5 @@
 {
-  "name": "@stijnvanhulle/components",
+  "name": "@whale/components",
   "version": "0.0.0",
   "description": "Shared UI components",
   "license": "MIT",
@@ -30,6 +30,7 @@
   },
   "scripts": {
     "build": "tsdown",
+    "dev": "tsdown --watch",
     "clean": "rm -rf ./dist",
     "test": "vitest run --passWithNoTests",
     "typecheck": "tsc -p ./tsconfig.json --noEmit"

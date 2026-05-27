@@ -1,7 +1,7 @@
-'@stijnvanhulle/components':
+'@whale/components':
   - any: ['packages/components/**', '!packages/components/package.json']
 
-'@stijnvanhulle/platform':
+'@whale/platform':
   - any: ['apps/platform/**', '!apps/platform/package.json']
 
 '@internals/utils':

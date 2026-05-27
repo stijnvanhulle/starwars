@@ -66,9 +66,49 @@ plans/starwars-team-builder/       # spec, plan, research, slice files, verifica
 
 ### Getting started
 
-1. `pnpm install`.
-2. `docker compose up -d postgres` and `pnpm --filter @stijnvanhulle/platform run db:migrate`.
-3. `pnpm dev` and open `http://localhost:3000`.
+You will need Node.js 22 or newer, pnpm 11 or newer, and Docker (for Postgres). The test suite uses pglite in-process.
+
+1. Install dependencies.
+
+   ```bash
+   pnpm install
+   ```
+
+2. Start Postgres in the background.
+
+   ```bash
+   docker compose up -d postgres
+   ```
+
+   This runs Postgres 17 on `localhost:5432` with the credentials in [docker-compose.yml](docker-compose.yml).
+
+3. Apply migrations.
+
+   ```bash
+   turbo run db:migrate
+   ```
+
+4. Generate the API clients. The platform's `prebuild` hook runs this automatically before `pnpm build`, but `pnpm dev` does not, so run it once after a fresh clone or whenever `openapi/*.yaml` changes.
+
+   ```bash
+   pnpm gen
+   ```
+
+5. Start the dev server.
+
+   ```bash
+   pnpm dev
+   ```
+
+   Open http://localhost:3000.
+
+`pnpm dev` runs `turbo run dev`, which starts the Next.js server and the shared component library's watch build together. Turbo's `dev` task depends on `^build`, so on a fresh clone the components package is built once before the two persistent dev tasks start in parallel. Edits to `packages/components/src/**` rebuild the package and trigger HMR in the platform.
+
+To browse the database, open Drizzle Studio.
+
+```bash
+turbo run db:studio
+```
 
 For the full feature walk-through and acceptance scenarios see [plans/starwars-team-builder/verification.md](plans/starwars-team-builder/verification.md). The execution path starts at [plans/starwars-team-builder/001-setup.md](plans/starwars-team-builder/001-setup.md) and runs through slice 008.
 
@@ -167,9 +207,9 @@ Postgres-backed commands live in `apps/platform`:
 
 ```bash
 docker compose up -d postgres                                  # Start Postgres on :5432
-pnpm --filter @stijnvanhulle/platform run db:migrate           # Apply migrations
-pnpm --filter @stijnvanhulle/platform run db:generate          # Generate a new migration from schema.ts
-pnpm --filter @stijnvanhulle/platform run db:studio            # Drizzle Studio
+pnpm --filter @whale/platform run db:migrate           # Apply migrations
+pnpm --filter @whale/platform run db:generate          # Generate a new migration from schema.ts
+pnpm --filter @whale/platform run db:studio            # Drizzle Studio
 ```
 
 ## Codegen (Kubb)

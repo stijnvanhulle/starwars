@@ -2,7 +2,7 @@
 
 import Button from '@mui/material/Button'
 import Link from 'next/link'
-import { StatePanel } from '@stijnvanhulle/components'
+import { StatePanel } from '@whale/components'
 
 export default function CharacterNotFound() {
   return (

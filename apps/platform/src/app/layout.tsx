@@ -1,4 +1,4 @@
-import '@stijnvanhulle/components/style.css'
+import '@whale/components/style.css'
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 import { Nunito_Sans } from 'next/font/google'

@@ -64,6 +64,18 @@
     "release:canary": {
       "dependsOn": ["build"],
       "outputs": []
+    },
+    "db:migrate": {
+      "cache": false,
+      "outputs": []
+    },
+    "db:generate": {
+      "cache": false,
+      "outputs": []
+    },
+    "db:studio": {
+      "cache": false,
+      "persistent": true
     }
   }
 }

@@ -14,7 +14,7 @@ export default defineConfig({
     assetFileNames: 'style.css',
   },
   deps: {
-    neverBundle: [/^@stijnvanhulle\//],
+    neverBundle: [/^@whale\//],
     onlyBundle: false,
   },
 })

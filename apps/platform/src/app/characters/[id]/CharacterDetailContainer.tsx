@@ -1,8 +1,9 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useHotkey } from '@tanstack/react-hotkeys'
-import { CharacterDetail, CharacterDetailSkeleton, StatePanel } from '@stijnvanhulle/components'
+import { CharacterDetail, CharacterDetailSkeleton, StatePanel } from '@whale/components'
 import { describeApiError } from '@/lib/apiError'
 import { isDarkSide } from '@/lib/darkSide'
 import { useAddTeamMemberMutation, useGetCharacterQuery, useGetTeamQuery, useListCharactersQuery, useRemoveTeamMemberMutation } from '@/store/api'
@@ -13,6 +14,8 @@ type Props = { id: number }
 
 export function CharacterDetailContainer({ id }: Props) {
   const router = useRouter()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
   const detail = useGetCharacterQuery(id)
   const list = useListCharactersQuery()
   const team = useGetTeamQuery()
@@ -55,6 +58,10 @@ export function CharacterDetailContainer({ id }: Props) {
     { enabled: next !== undefined },
   )
   useHotkey('Space', toggleTeam, { enabled: canToggleTeam, preventDefault: true })
+
+  if (!mounted) {
+    return <CharacterDetailSkeleton />
+  }
 
   if (detail.isError) {
     return <StatePanel variant="error" description={describeApiError(detail.error) ?? undefined} />

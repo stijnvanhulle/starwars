@@ -1,4 +1,4 @@
-import { TeamListSkeleton } from '@stijnvanhulle/components'
+import { TeamListSkeleton } from '@whale/components'
 
 export default function Loading() {
   return <TeamListSkeleton />

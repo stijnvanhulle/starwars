@@ -40,12 +40,12 @@ pnpm lint                                              # Lint with oxlint
 pnpm format                                            # Format with oxfmt
 pnpm changeset                                         # Add a changelog entry
 
-# Run from apps/platform or via pnpm --filter @stijnvanhulle/platform
+# Run from apps/platform or via pnpm --filter @whale/platform
 turbo run db:migrate                                   # Apply Drizzle migrations (requires Docker Postgres)
 turbo run db:generate                                  # Generate a new Drizzle migration from schema changes
 turbo run db:studio                                    # Open Drizzle Studio
 turbo run gen                                          # Re-run Kubb codegen (both api + starwars pipelines)
-pnpm --filter @stijnvanhulle/platform run test:e2e     # Run Playwright e2e tests (requires built app + Postgres)
+pnpm --filter @whale/platform run test:e2e     # Run Playwright e2e tests (requires built app + Postgres)
 ```
 
 ## Architecture notes
