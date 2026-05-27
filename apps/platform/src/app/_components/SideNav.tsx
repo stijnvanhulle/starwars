@@ -12,7 +12,7 @@ import { useAppSelector } from '@/store/hooks'
 
 const NAV: Array<{ href: string; label: string; icon: ReactNode; match: (p: string) => boolean }> = [
   {
-    href: '/',
+    href: '/characters',
     label: 'Characters',
     match: (p) => p === '/' || p.startsWith('/characters'),
     icon: (

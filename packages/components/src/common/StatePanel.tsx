@@ -21,6 +21,7 @@ const DEFAULTS: Record<StatePanelVariant, { title: string; description: string }
 
 export function StatePanel({ variant, title, description, action }: StatePanelProps) {
   const fallback = DEFAULTS[variant]
+
   return (
     <Paper role="status" data-variant={variant} variant="outlined" sx={{ borderRadius: 4, p: 8, textAlign: 'center' }}>
       <Stack spacing={3} sx={{ alignItems: 'center' }}>

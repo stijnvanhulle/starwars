@@ -16,7 +16,7 @@ export function TeamSidebarContainer() {
   const cta = onTeamPage ? (
     <Button
       component={Link}
-      href="/"
+      href="/characters"
       variant="outlined"
       fullWidth
       sx={{

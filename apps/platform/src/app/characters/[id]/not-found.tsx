@@ -11,7 +11,7 @@ export default function CharacterNotFound() {
       title="Character not found"
       description="That character id doesn't exist."
       action={
-        <Button component={Link} href="/" variant="contained">
+        <Button component={Link} href="/characters" variant="contained">
           Back to characters
         </Button>
       }

@@ -21,6 +21,7 @@ export function CharacterList({ state, characters, errorMessage, onSelect }: Cha
   if (state === 'loading') return <CharacterListSkeleton />
   if (state === 'error') return <StatePanel variant="error" description={errorMessage} />
   if (characters === undefined || characters.length === 0) return <StatePanel variant="empty" />
+
   return (
     <Box
       sx={{

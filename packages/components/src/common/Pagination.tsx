@@ -12,6 +12,7 @@ export type PaginationProps = {
  */
 export function Pagination({ page, count, onChange }: PaginationProps) {
   if (count <= 1) return null
+
   return (
     <MuiPagination
       page={page}

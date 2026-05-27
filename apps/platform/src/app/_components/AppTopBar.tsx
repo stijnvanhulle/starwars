@@ -41,7 +41,7 @@ function Breadcrumb() {
     if (pathname.startsWith('/characters/')) {
       const parsed = characterIdSchema.safeParse(pathname.split('/')[2])
       const charactersCrumb = (
-        <Box key="c" component={Link} href="/" sx={{ color: 'text.secondary', textDecoration: 'none', '&:hover': { color: 'primary.dark' } }}>
+        <Box key="c" component={Link} href="/characters" sx={{ color: 'text.secondary', textDecoration: 'none', '&:hover': { color: 'primary.dark' } }}>
           Characters
         </Box>
       )

@@ -20,6 +20,7 @@ export function ActionButton({ loading, disabledReason, variant = 'contained', s
     </Button>
   )
   if (disabledReason === undefined) return button
+
   return (
     <Tooltip title={disabledReason}>
       <Box component="span" sx={{ display: 'inline-block' }}>
