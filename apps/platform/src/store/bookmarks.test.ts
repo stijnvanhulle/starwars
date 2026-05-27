@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { add, bookmarksSlice, clear, remove, selectBookmarks, toggle } from './bookmarks'
+import { add, bookmarksSlice, clear, hydrate, remove, selectBookmarks, toggle } from './bookmarks'
 import { makeStore } from './store'
 
 const initial = bookmarksSlice.getInitialState()
@@ -31,6 +31,16 @@ describe('bookmarksSlice reducers', () => {
   it('clear empties the list', () => {
     const state = bookmarksSlice.reducer([1, 2, 3], clear())
     expect(state).toEqual([])
+  })
+
+  it('hydrate replaces the state with the payload', () => {
+    const replaced = bookmarksSlice.reducer([1, 2], hydrate([7, 8]))
+    expect(replaced).toEqual([7, 8])
+  })
+
+  it('hydrate with an empty payload empties the list', () => {
+    const replaced = bookmarksSlice.reducer([1, 2], hydrate([]))
+    expect(replaced).toEqual([])
   })
 })
 

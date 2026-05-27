@@ -22,6 +22,12 @@ for (const row of rawFixtures) {
   if (typeof row?.id !== 'number' || typeof row?.name !== 'string') {
     throw new Error(`fixture row missing required id/name: ${JSON.stringify(row)}`)
   }
+  if (row.affiliations !== undefined && !Array.isArray(row.affiliations)) {
+    throw new Error(`fixture row ${row.id} has non-array affiliations: ${JSON.stringify(row.affiliations)}`)
+  }
+  if (row.masters !== undefined && !Array.isArray(row.masters)) {
+    throw new Error(`fixture row ${row.id} has non-array masters: ${JSON.stringify(row.masters)}`)
+  }
 }
 export const characters = rawFixtures as Array<FixtureCharacter>
 
@@ -32,7 +38,7 @@ export async function activeMemberCount(): Promise<number> {
   await client.connect()
   try {
     const res = await client.query<{ count: string }>('select count(*)::text as count from team_members where deleted_at is null')
-    return Number(res.rows[0]!.count)
+    return Number(res.rows[0]?.count ?? '0')
   } finally {
     await client.end()
   }

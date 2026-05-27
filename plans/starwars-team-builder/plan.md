@@ -215,11 +215,11 @@ Gate for Slice 003: `plans/starwars-team-builder/design.md` has tokens, layout s
 
 ### Final checks
 
-- [ ] Global verification, `verification.md` walked end-to-end against a clean checkout
+- [x] Global verification, `verification.md` walked end-to-end against a clean checkout
 - [x] `Changesets` entry
 - [x] `README.md` updated, tech stack, use cases, folder structure
-- [ ] `AGENTS.md` / `CLAUDE.md` refreshed:
+- [x] `AGENTS.md` / `CLAUDE.md` refreshed:
   - New scripts: `dev`, `db:migrate`, `db:generate`, `db:studio`, `gen`, `test`, `test:e2e`
   - New workspace layout: `apps/platform`, `packages/components`; `packages/core` and `packages/demo` removed
   - Skill notes: Drizzle in repositories only, Kubb's regen step, the `isDarkSide` single-implementation rule
-- [ ] `plans/starwars-team-builder/research.md` open items closed or moved to follow-up issues
+- [x] `plans/starwars-team-builder/research.md` open items closed or moved to follow-up issues

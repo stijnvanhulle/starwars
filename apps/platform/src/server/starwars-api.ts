@@ -26,6 +26,12 @@ function loadFixtures(): ReadonlyArray<StarwarsApiCharacter> {
     if (typeof row?.id !== 'number' || typeof row?.name !== 'string') {
       throw new Error(`E2E fixture row missing required id/name: ${JSON.stringify(row)}`)
     }
+    if (row.affiliations !== undefined && !Array.isArray(row.affiliations)) {
+      throw new Error(`E2E fixture row ${row.id} has non-array affiliations: ${JSON.stringify(row.affiliations)}`)
+    }
+    if (row.masters !== undefined && !Array.isArray(row.masters)) {
+      throw new Error(`E2E fixture row ${row.id} has non-array masters: ${JSON.stringify(row.masters)}`)
+    }
   }
   cachedFixtures = parsed as ReadonlyArray<StarwarsApiCharacter>
   return cachedFixtures
