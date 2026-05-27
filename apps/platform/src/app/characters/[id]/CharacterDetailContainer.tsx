@@ -29,6 +29,17 @@ export function CharacterDetailContainer({ id }: Props) {
   const prev = ids.length > 0 && index !== -1 ? characters[(index - 1 + ids.length) % ids.length] : undefined
   const next = ids.length > 0 && index !== -1 ? characters[(index + 1) % ids.length] : undefined
 
+  const character = detail.data
+  const onTeam = character !== undefined && (team.data ?? []).some((member) => member.characterId === character.id)
+  const evil = character !== undefined && isDarkSide(character)
+  const mutating = addState.isLoading || removeState.isLoading
+  const canToggleTeam = character !== undefined && !mutating && !(evil && !onTeam)
+  const toggleTeam = () => {
+    if (character === undefined) return
+    if (onTeam) removeMember(character.id)
+    else addMember({ characterId: character.id })
+  }
+
   useHotkey(
     'ArrowLeft',
     () => {
@@ -43,18 +54,15 @@ export function CharacterDetailContainer({ id }: Props) {
     },
     { enabled: next !== undefined },
   )
+  useHotkey('Space', toggleTeam, { enabled: canToggleTeam, preventDefault: true })
 
   if (detail.isError) {
     return <StatePanel variant="error" description={describeApiError(detail.error) ?? undefined} />
   }
 
-  if (detail.isLoading || detail.data === undefined) {
+  if (detail.isLoading || character === undefined) {
     return <CharacterDetailSkeleton />
   }
-  const character = detail.data
-  const onTeam = (team.data ?? []).some((member) => member.characterId === character.id)
-  const evil = isDarkSide(character)
-  const mutating = addState.isLoading || removeState.isLoading
   const mutationError = describeApiError(addState.error ?? removeState.error)
 
   return (
@@ -67,10 +75,7 @@ export function CharacterDetailContainer({ id }: Props) {
       prevName={prev?.name}
       nextName={next?.name}
       position={characters.length > 0 && index !== -1 ? { index: index + 1, total: characters.length } : undefined}
-      onAddOrRemove={() => {
-        if (onTeam) removeMember(character.id)
-        else addMember({ characterId: character.id })
-      }}
+      onAddOrRemove={toggleTeam}
       onPrev={prev === undefined ? undefined : () => router.push(`/characters/${prev.id}`)}
       onNext={next === undefined ? undefined : () => router.push(`/characters/${next.id}`)}
       bookmarked={bookmarks.includes(character.id)}

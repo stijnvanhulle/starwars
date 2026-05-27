@@ -65,6 +65,72 @@ const pagerButtonSx = {
   '&:hover': { borderColor: 'primary.main', color: 'primary.dark' },
 }
 
+const kbdSx = {
+  display: 'inline-block',
+  px: 1.25,
+  py: 0.25,
+  mx: 0.5,
+  borderRadius: 1,
+  border: '1px solid',
+  borderColor: 'divider',
+  bgcolor: 'background.paper',
+  fontFamily: 'monospace',
+  fontSize: 11,
+  fontWeight: 700,
+  color: 'text.primary',
+  lineHeight: 1.4,
+}
+
+function KeyboardShortcutsHint({ canToggleTeam }: { canToggleTeam: boolean }) {
+  return (
+    <Typography
+      component="p"
+      sx={{
+        position: 'fixed',
+        bottom: 16,
+        left: '50%',
+        transform: 'translateX(-50%)',
+        zIndex: (theme) => theme.zIndex.appBar,
+        px: 3,
+        py: 1.5,
+        borderRadius: 9999,
+        border: '1px solid',
+        borderColor: 'divider',
+        bgcolor: 'background.paper',
+        boxShadow: 2,
+        fontSize: 13,
+        color: 'text.secondary',
+        display: 'flex',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        rowGap: 1,
+      }}
+    >
+      <Box component="span" sx={{ mr: 1, fontWeight: 600 }}>
+        Shortcuts:
+      </Box>
+      <Box component="kbd" sx={kbdSx}>
+        ←
+      </Box>
+      <Box component="kbd" sx={kbdSx}>
+        →
+      </Box>
+      prev / next
+      {canToggleTeam && (
+        <>
+          <Box component="span" sx={{ mx: 1.5 }}>
+            ·
+          </Box>
+          <Box component="kbd" sx={kbdSx}>
+            Space
+          </Box>
+          toggle team
+        </>
+      )}
+    </Typography>
+  )
+}
+
 export function CharacterDetail({
   character,
   onTeam,
@@ -156,7 +222,7 @@ export function CharacterDetail({
               <Typography sx={{ fontSize: 11, fontWeight: 700, color: 'text.disabled', letterSpacing: '0.08em', textTransform: 'uppercase', mb: 2 }}>
                 Affiliations
               </Typography>
-              <Stack direction="row" spacing={1.5} sx={{ flexWrap: 'wrap', rowGap: 1.5 }}>
+              <Stack direction="row" spacing={1.5} useFlexGap sx={{ flexWrap: 'wrap' }}>
                 {character.affiliations.map((affiliation) => {
                   const dark = DARTH_OR_SITH.test(affiliation)
                   return <Chip key={affiliation} label={affiliation} size="small" color={dark ? 'error' : 'default'} variant={dark ? 'filled' : 'outlined'} />
@@ -216,6 +282,7 @@ export function CharacterDetail({
               {errorMessage}
             </Typography>
           )}
+          <KeyboardShortcutsHint canToggleTeam={!showEvilBanner} />
         </Box>
       </Card>
     </Box>
