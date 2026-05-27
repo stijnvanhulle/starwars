@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { fetchAllCharacters } from '@/server/starwars-api'
+import { createCharacterFetcher } from '@/server/starwars-api'
 import { mapError, toCharacter } from '@/server/utils'
 
 /**
@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return
   }
   try {
-    const list = await fetchAllCharacters()
+    const list = await createCharacterFetcher().all()
     res.status(200).json(list.map(toCharacter))
   } catch (error) {
     const { status, body } = mapError({ error, upstreamAsNotFound: true })

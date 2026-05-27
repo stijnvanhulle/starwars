@@ -1,30 +1,35 @@
 import Box from '@mui/material/Box'
 import type { ReactNode } from 'react'
+import styles from './AppShell.module.css'
 
 export type AppShellProps = {
   topBar: ReactNode
   sidebar: ReactNode
+  rightPane?: ReactNode
   children: ReactNode
 }
 
-/**
- * Three-slot layout for every page: fixed top bar, sticky 280px sidebar, scrollable content.
- * Renders slots verbatim. No data fetching, no business logic.
- */
-export function AppShell({ topBar, sidebar, children }: AppShellProps) {
+export function AppShell({ topBar, sidebar, rightPane, children }: AppShellProps) {
+  const withRight = rightPane !== undefined
+  const shellClass = `${styles.shell} ${withRight ? styles['shell-withRight'] : ''}`.trim()
   return (
-    <Box sx={{ display: 'grid', gridTemplateColumns: '80px 1fr', minHeight: '100vh' }}>
-      <Box component="aside" sx={{ bgcolor: '#0F1664', color: '#FFFFFF' }}>
+    <Box className={shellClass}>
+      <Box component="aside" className={styles.sidebar}>
         {sidebar}
       </Box>
-      <Box sx={{ display: 'grid', gridTemplateRows: '52px 1fr', bgcolor: '#F5F7FB' }}>
-        <Box component="header" sx={{ display: 'flex', alignItems: 'center', px: 6, borderBottom: '1px solid #E2E8F0' }}>
+      <Box className={styles.main}>
+        <Box component="header" className={styles.topbar}>
           {topBar}
         </Box>
-        <Box component="main" sx={{ p: 8 }}>
+        <Box component="main" className={styles.content}>
           {children}
         </Box>
       </Box>
+      {withRight && (
+        <Box component="aside" className={styles.rightPane}>
+          {rightPane}
+        </Box>
+      )}
     </Box>
   )
 }

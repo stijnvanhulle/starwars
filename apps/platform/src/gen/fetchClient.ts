@@ -24,10 +24,36 @@ export type ResponseErrorConfig<TError> = {
 
 export type Client = <TData = unknown, _TError = unknown, TVariables = unknown>(config: RequestConfig<TVariables>) => Promise<ResponseConfig<TData>>
 
+export type ApiRequestError = Error & {
+  readonly name: 'ApiRequestError'
+  readonly status: number
+  readonly statusText: string
+  readonly body: unknown
+}
+
 /**
- * The single fetch seam every generated Kubb client routes through. Owning this
- * wrapper lets us add tracing, retries, or auth without re-generating code.
+ * Tagged error thrown on any non-2xx response. The parsed JSON body (if any)
+ * lives on `body` so callers can surface contract-shaped `{ code, message }`
+ * errors without re-fetching.
  */
+export function createApiRequestError(status: number, statusText: string, body: unknown): ApiRequestError {
+  const err = new Error(`Request failed: ${status} ${statusText}`) as Error & {
+    name: 'ApiRequestError'
+    status: number
+    statusText: string
+    body: unknown
+  }
+  err.name = 'ApiRequestError'
+  err.status = status
+  err.statusText = statusText
+  err.body = body
+  return err
+}
+
+export function isApiRequestError(value: unknown): value is ApiRequestError {
+  return value instanceof Error && (value as { name?: string }).name === 'ApiRequestError'
+}
+
 const client: Client = async function client<TData = unknown, _TError = unknown, TVariables = unknown>(
   config: RequestConfig<TVariables>,
 ): Promise<ResponseConfig<TData>> {
@@ -46,7 +72,8 @@ const client: Client = async function client<TData = unknown, _TError = unknown,
   })
 
   if (!res.ok) {
-    throw new Error(`Request failed: ${res.status} ${res.statusText}`)
+    const body = await res.json().catch(() => undefined)
+    throw createApiRequestError(res.status, res.statusText, body)
   }
 
   const body = res.status === 204 ? (undefined as TData) : ((await res.json()) as TData)

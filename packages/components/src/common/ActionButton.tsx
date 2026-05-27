@@ -1,7 +1,7 @@
+import Box from '@mui/material/Box'
 import Button, { type ButtonProps } from '@mui/material/Button'
 import CircularProgress from '@mui/material/CircularProgress'
 import Tooltip from '@mui/material/Tooltip'
-import Box from '@mui/material/Box'
 
 export type ActionButtonProps = Omit<ButtonProps, 'disabled'> & {
   loading?: boolean
@@ -9,14 +9,13 @@ export type ActionButtonProps = Omit<ButtonProps, 'disabled'> & {
 }
 
 /**
- * Project-standard button. When `loading` is true a spinner replaces the children. When
- * `disabledReason` is passed the button is disabled and the reason renders as a tooltip
- * (this is the pattern Darth Vader's Add button uses on the detail page).
+ * Thin wrapper over MUI `Button`. `loading` swaps the children for a spinner;
+ * `disabledReason` disables the button and surfaces the reason via `Tooltip`.
  */
-export function ActionButton({ loading, disabledReason, children, ...rest }: ActionButtonProps) {
+export function ActionButton({ loading, disabledReason, variant = 'contained', sx, children, ...rest }: ActionButtonProps) {
   const disabled = loading === true || disabledReason !== undefined
   const button = (
-    <Button {...rest} disabled={disabled}>
+    <Button {...rest} variant={variant} disabled={disabled} sx={{ borderRadius: 9999, fontWeight: 700, ...sx }}>
       {loading ? <CircularProgress size={16} color="inherit" /> : children}
     </Button>
   )

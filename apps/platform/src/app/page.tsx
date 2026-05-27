@@ -1,35 +1,62 @@
 'use client'
 
-import Container from '@mui/material/Container'
+import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import { StatePanel } from '@stijnvanhulle/components'
-import { useListCharactersQuery } from '@/store/api'
+import { useRouter } from 'next/navigation'
+import { CharacterCard, CharacterListSkeleton, StatePanel, pickChip } from '@stijnvanhulle/components'
+import { describeApiError } from '@/lib/apiError'
+import { useGetTeamQuery, useListCharactersQuery } from '@/store/api'
 
 export default function HomePage() {
+  const router = useRouter()
   const { data, isLoading, isError, error } = useListCharactersQuery()
-
-  if (isLoading) {
-    return (
-      <Container>
-        <StatePanel variant="loading" />
-      </Container>
-    )
-  }
-
-  if (isError) {
-    return (
-      <Container>
-        <StatePanel variant="error" description={(error as { message?: string } | undefined)?.message ?? 'Request failed.'} />
-      </Container>
-    )
-  }
+  const team = useGetTeamQuery()
+  const teamIds = new Set((team.data ?? []).map((member) => member.characterId))
 
   return (
-    <Container>
-      <Typography variant="h3" component="h1" gutterBottom>
-        Whale Star Wars Team Builder
-      </Typography>
-      <Typography variant="body1">{data?.length ?? 0} characters</Typography>
-    </Container>
+    <Box>
+      <Box sx={{ maxWidth: 720, mb: 8 }}>
+        <Typography
+          component="h1"
+          sx={{
+            fontSize: 40,
+            lineHeight: 1.1,
+            fontWeight: 800,
+            letterSpacing: '-0.02em',
+            color: '#121A52',
+            mb: 2,
+          }}
+        >
+          Star Wars characters
+        </Typography>
+        <Typography sx={{ fontSize: 16, lineHeight: 1.5, color: '#334155' }}>Pick five characters for your team. Evil characters can&apos;t join.</Typography>
+      </Box>
+
+      {isLoading && <CharacterListSkeleton />}
+
+      {isError && <StatePanel variant="error" description={describeApiError(error) ?? undefined} />}
+
+      {!isLoading && !isError && (data === undefined || data.length === 0) && <StatePanel variant="empty" />}
+
+      {data && data.length > 0 && (
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+            gap: 6,
+          }}
+        >
+          {data.map((character) => (
+            <CharacterCard
+              key={character.id}
+              name={character.name}
+              image={character.image}
+              chip={pickChip(character, teamIds.has(character.id))}
+              onClick={() => router.push(`/characters/${character.id}`)}
+            />
+          ))}
+        </Box>
+      )}
+    </Box>
   )
 }

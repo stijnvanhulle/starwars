@@ -13,7 +13,7 @@
       "outputs": ["src/gen/api/**", "src/gen/starwars/**"]
     },
     "typecheck": {
-      "dependsOn": ["gen"],
+      "dependsOn": ["gen", "^build"],
       "inputs": ["src/**/*.ts", "src/**/*.tsx", "tsconfig.json"],
       "outputs": [],
       "cache": false

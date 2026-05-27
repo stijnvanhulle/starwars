@@ -146,7 +146,8 @@ The slice files in `plans/starwars-team-builder/00X-*.md` are this feature's `ta
 | `plans/starwars-team-builder/004-api.md`         | 002 + Planning Phase 1 `api.yaml` + `starwars.yaml` | `/api/characters` and `/api/team` route handlers. Proxy uses a server-only `starwars-api` fetcher; team handlers go through `Service` + `Repository`                                                                                         |
 | `plans/starwars-team-builder/005-client-kubb.md` | 003 + 004                                           | `turbo run gen` produces `src/gen/api/` (types + client + `Zod`) and `src/gen/starwars/` (types + `Zod`, server-only). `store.ts` wires the single `api` RTK Query slice into `<Providers>`.                                    |
 | `plans/starwars-team-builder/006-features.md`    | 005                                                 | All UI requirements live: list, detail with prev/next, persistent `<TeamSidebar />`, `/team`, real `isDarkSide`, evil-Add disabled. Screens built from the 003 components. `Vitest` covers `isDarkSide` and key components.                  |
-| `plans/starwars-team-builder/007-testing.md`     | 006                                                 | `Playwright` specs cover browse/team/cap/evil. CI runs `Postgres` service container, migrations, unit + integration + e2e. One `Changesets` entry.                                                                                           |
+| `plans/starwars-team-builder/007-extras.md`      | 006                                                 | Bookmarks (`createSlice` + `localStorage` persistence + typed hooks + `/bookmarks` page + sidenav count badge) and URL-driven pagination on `/` (`<Pagination>` in the components lib, `?page=N`, page-size 24).                              |
+| `plans/starwars-team-builder/008-testing.md`     | 006                                                 | `Playwright` specs cover browse/team/cap/evil. CI runs `Postgres` service container, migrations, unit + integration + e2e. One `Changesets` entry.                                                                                           |
 
 ## Planning Phase 3: Frontend Design
 
@@ -193,7 +194,8 @@ Gate for Slice 003: `plans/starwars-team-builder/design.md` has tokens, layout s
 - [x] `plans/starwars-team-builder/004-api.md`: done
 - [x] `plans/starwars-team-builder/005-client-kubb.md`: done
 - [x] `plans/starwars-team-builder/006-features.md`: done
-- [x] `plans/starwars-team-builder/007-testing.md`: done
+- [x] `plans/starwars-team-builder/007-extras.md`: done
+- [x] `plans/starwars-team-builder/008-testing.md`: done
 
 ### Planning Phase 3: Frontend Design
 
@@ -207,8 +209,9 @@ Gate for Slice 003: `plans/starwars-team-builder/design.md` has tokens, layout s
 - [x] **003-design**: todo
 - [x] **004-api**: todo
 - [x] **005-client-kubb**: done
-- [ ] **006-features**: todo
-- [ ] **007-testing**: todo
+- [x] **006-features**: done
+- [ ] **007-extras**: todo
+- [ ] **008-testing**: todo
 
 ### Final checks
 
