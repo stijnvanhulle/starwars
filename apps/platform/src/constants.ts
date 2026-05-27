@@ -1,7 +1,11 @@
-/** All domain error codes used in the API contract (`Error.code` in `api.openapi.yaml`). */
+/**
+ * Domain error codes from the API contract (`Error.code` in `api.openapi.yaml`).
+ */
 export type DomainErrorCode = 'NOT_FOUND' | 'ALREADY_MEMBER' | 'TEAM_FULL' | 'EVIL_FORBIDDEN'
 
-/** HTTP status + API contract code pairs for every domain error. Spread into `createError`. */
+/**
+ * HTTP status + contract code pairs for every domain error, spread into `createError`.
+ */
 export const errors = {
   notFound: { statusCode: 404, code: 'NOT_FOUND' },
   alreadyMember: { statusCode: 409, code: 'ALREADY_MEMBER' },
@@ -9,18 +13,23 @@ export const errors = {
   evilForbidden: { statusCode: 422, code: 'EVIL_FORBIDDEN' },
 } as const satisfies Record<string, { statusCode: number; code: DomainErrorCode }>
 
-/** Maximum number of active members the default team may hold. */
+/**
+ * Maximum number of active members the default team may hold.
+ */
 export const TEAM_CAP = 5
 
-/** Number of character cards displayed per page on the home grid. */
+/**
+ * Number of character cards displayed per page on the home grid.
+ */
 export const CHARACTER_PAGE_SIZE = 24
 
-/** `localStorage` key under which bookmark character ids are persisted. */
+/**
+ * `localStorage` key under which bookmark character ids are persisted.
+ */
 export const BOOKMARK_STORAGE_KEY = 'whale.bookmarks.v1'
 
 /**
- * Upstream starwars-api coordinates. `source` is shared between the server-side
- * proxy fetcher and the MSW test stubs so both always point at the same origin.
+ * Upstream starwars-api coordinates, shared between the server fetcher and MSW stubs.
  */
 export const starwarsApi = {
   source: 'https://akabab.github.io/starwars-api/api',

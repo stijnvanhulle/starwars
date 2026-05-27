@@ -6,10 +6,7 @@ test.describe('Team cap', () => {
     await resetTeam()
   })
 
-  test('the sixth add is refused with TEAM_FULL, the inline alert surfaces, and the active member count stays at five', async ({
-    page,
-    request,
-  }) => {
+  test('the sixth add is refused with TEAM_FULL, the inline alert surfaces, and the active member count stays at five', async ({ page, request }) => {
     for (const characterId of [1, 2, 3, 4, 5]) {
       const res = await request.post('/api/team', { data: { characterId } })
 
