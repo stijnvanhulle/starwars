@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box'
+import { StatePanel } from '@whale/components'
 import { CharacterCard, type CharacterCardChip } from './CharacterCard'
 import { CharacterListSkeleton } from './CharacterListSkeleton'
-import { StatePanel } from '../common/StatePanel'
 
 export type CharacterListItem = {
   id: number

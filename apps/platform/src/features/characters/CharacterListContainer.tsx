@@ -4,11 +4,14 @@ import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { useRouter } from 'next/navigation'
-import { CharacterCard, CharacterListSkeleton, Pagination, StatePanel, pickChip } from '@whale/components'
+import { Pagination, StatePanel } from '@whale/components'
+import { CharacterCard } from './CharacterCard'
+import { CharacterListSkeleton } from './CharacterListSkeleton'
+import { pickChip } from './pickChip'
 import { useCharacterListPagination } from './useCharacterListPagination'
 import { describeApiError } from '@/lib/apiError'
 
-export function CharactersListContainer() {
+export function CharacterListContainer() {
   const router = useRouter()
   const { page, totalPages, pageItems, teamIds, totalCharacters, isLoading, isError, error } = useCharacterListPagination()
 

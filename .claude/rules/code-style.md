@@ -19,12 +19,19 @@ rule.
 
 ## Naming
 
-| Context                | Convention  |
-| ---------------------- | ----------- |
-| File / directory names | `camelCase` |
-| Variables / functions  | `camelCase` |
-| Types / interfaces     | `PascalCase`|
-| React components        | `PascalCase`|
+| Context                                 | Convention                                |
+| --------------------------------------- | ----------------------------------------- |
+| File / directory names (non-component)  | `camelCase`                               |
+| Files exporting a React component       | `PascalCase`, matching the component name |
+| Next.js route files (page, layout, ...) | `lowercase`, per framework                |
+| Variables / functions                   | `camelCase`                               |
+| Types / interfaces                      | `PascalCase`                              |
+| React components                        | `PascalCase`                              |
+
+Features live under `apps/platform/src/features/<feature>/`. Each folder is flat; the file's
+role is encoded by its suffix (`Container`, `List`, `Table`, `Header`, `Skeleton`, `use...`).
+A container must pair with a presentational component of the same prefix in the same folder
+(for example `CharacterList` paired with `CharacterListContainer`).
 
 ## TypeScript
 

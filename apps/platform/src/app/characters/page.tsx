@@ -1,5 +1,5 @@
-import { CharactersListContainer } from './CharactersListContainer'
+import { CharacterListContainer } from '@/features/characters/CharacterListContainer'
 
 export default function CharactersPage() {
-  return <CharactersListContainer />
+  return <CharacterListContainer />
 }

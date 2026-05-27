@@ -5,10 +5,10 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v16-appRouter'
 import { ThemeProvider } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
 import { AppShell, lightTheme } from '@whale/components'
-import { AppTopBarContainer } from '@/app/_components/AppTopBarContainer'
-import { SideNavContainer } from '@/app/_components/SideNavContainer'
-import { TeamSidebarContainer } from '@/app/team/TeamSidebarContainer'
-import { Providers as StoreProviders } from '@/store/Providers'
+import { SideNavContainer } from '@/features/shell/SideNavContainer'
+import { TopBarContainer } from '@/features/shell/TopBarContainer'
+import { TeamSidebarContainer } from '@/features/team/TeamSidebarContainer'
+import { StoreProvider } from '@/store/StoreProvider'
 
 type ProvidersProps = {
   children: ReactNode
@@ -19,11 +19,11 @@ export function Providers({ children }: ProvidersProps) {
     <AppRouterCacheProvider>
       <ThemeProvider theme={lightTheme}>
         <CssBaseline />
-        <StoreProviders>
-          <AppShell topBar={<AppTopBarContainer />} sidebar={<SideNavContainer />} rightPane={<TeamSidebarContainer />}>
+        <StoreProvider>
+          <AppShell topBar={<TopBarContainer />} sidebar={<SideNavContainer />} rightPane={<TeamSidebarContainer />}>
             {children}
           </AppShell>
-        </StoreProviders>
+        </StoreProvider>
       </ThemeProvider>
     </AppRouterCacheProvider>
   )

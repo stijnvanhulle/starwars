@@ -8,11 +8,11 @@ import { loadBookmarks } from './persistBookmarks'
 import { makeStore } from './store'
 import type { AppStore } from './store'
 
-type ProvidersProps = {
+type StoreProviderProps = {
   children: ReactNode
 }
 
-export function Providers({ children }: ProvidersProps) {
+export function StoreProvider({ children }: StoreProviderProps) {
   const storeRef = useRef<AppStore>(makeStore())
   const store = storeRef.current
 

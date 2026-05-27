@@ -3,7 +3,9 @@
 import Button from '@mui/material/Button'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { TeamMemberRow, TeamSidebar, TeamSidebarSkeleton } from '@whale/components'
+import { TeamMemberRow } from './TeamMemberRow'
+import { TeamSidebar } from './TeamSidebar'
+import { TeamSidebarSkeleton } from './TeamSidebarSkeleton'
 import { useTeamRows } from './useTeamRows'
 import { useRemoveTeamMemberMutation } from '@/store/api'
 

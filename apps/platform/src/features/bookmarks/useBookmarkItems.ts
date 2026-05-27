@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
-import { type CharacterListItem, pickChip } from '@whale/components'
+import { type CharacterListItem } from '@/features/characters/CharacterList'
+import { pickChip } from '@/features/characters/pickChip'
 import type { Character, TeamMember } from '@/gen/api'
 import { useGetTeamQuery, useListCharactersQuery } from '@/store/api'
 import { clear, selectBookmarks } from '@/store/bookmarks'

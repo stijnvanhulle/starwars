@@ -9,8 +9,7 @@ import IconButton from '@mui/material/IconButton'
 import Stack from '@mui/material/Stack'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
-import { PrimaryButton } from '../common/PrimaryButton'
-import { StatCard } from '../common/StatCard'
+import { PrimaryButton, StatCard } from '@whale/components'
 
 export type CharacterDetailItem = {
   id: number

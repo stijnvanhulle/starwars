@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { characterIdSchema } from '@/server/schemas'
-import { CharacterDetailContainer } from './CharacterDetailContainer'
+import { CharacterDetailContainer } from '@/features/characters/CharacterDetailContainer'
 
 type Params = { id: string }
 

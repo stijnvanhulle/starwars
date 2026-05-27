@@ -2,11 +2,13 @@
 
 import Box from '@mui/material/Box'
 import { useRouter } from 'next/navigation'
-import { BookmarksHeader, CharacterList, StatePanel } from '@whale/components'
+import { StatePanel } from '@whale/components'
+import { CharacterList } from '@/features/characters/CharacterList'
+import { BookmarksHeader } from './BookmarksHeader'
 import { useBookmarkItems } from './useBookmarkItems'
 import { describeApiError } from '@/lib/apiError'
 
-export function BookmarksContainer() {
+export function BookmarkListContainer() {
   const router = useRouter()
   const { items, isLoading, isError, error, clearAll } = useBookmarkItems()
 
