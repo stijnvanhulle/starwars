@@ -7,13 +7,11 @@ import Typography from '@mui/material/Typography'
 import { ProgressPill, StatePanel, TeamListSkeleton, TeamMemberRow } from '@whale/components'
 import { useTeamRows } from './useTeamRows'
 import { describeApiError } from '@/lib/apiError'
-import { useRemoveTeamMemberMutation } from '@/store/api'
 
 const TEAM_CAP = 5
 
 export default function TeamPage() {
-  const { rows, isLoading, isError, error } = useTeamRows()
-  const [removeMember, removeState] = useRemoveTeamMemberMutation()
+  const { rows, isLoading, isError, error, removeMember, removeState } = useTeamRows()
 
   if (isLoading) return <TeamListSkeleton />
   if (isError) {

@@ -5,8 +5,8 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v16-appRouter'
 import { ThemeProvider } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
 import { AppShell, lightTheme } from '@whale/components'
-import { AppTopBar } from '@/app/_components/AppTopBar'
-import { SideNav } from '@/app/_components/SideNav'
+import { AppTopBarContainer } from '@/app/_components/AppTopBarContainer'
+import { SideNavContainer } from '@/app/_components/SideNavContainer'
 import { TeamSidebarContainer } from '@/app/team/TeamSidebarContainer'
 import { Providers as StoreProviders } from '@/store/Providers'
 
@@ -20,7 +20,7 @@ export function Providers({ children }: ProvidersProps) {
       <ThemeProvider theme={lightTheme}>
         <CssBaseline />
         <StoreProviders>
-          <AppShell topBar={<AppTopBar />} sidebar={<SideNav />} rightPane={<TeamSidebarContainer />}>
+          <AppShell topBar={<AppTopBarContainer />} sidebar={<SideNavContainer />} rightPane={<TeamSidebarContainer />}>
             {children}
           </AppShell>
         </StoreProviders>

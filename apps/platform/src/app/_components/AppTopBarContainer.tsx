@@ -108,6 +108,6 @@ function TeamPill() {
   )
 }
 
-export function AppTopBar() {
+export function AppTopBarContainer() {
   return <TopBar title={<Breadcrumb />} teamLink={<TeamPill />} />
 }

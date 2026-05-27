@@ -1,5 +1,5 @@
 import type { Character, TeamMember } from '@/gen/api'
-import { useGetTeamQuery, useListCharactersQuery } from '@/store/api'
+import { useGetTeamQuery, useListCharactersQuery, useRemoveTeamMemberMutation } from '@/store/api'
 
 export type TeamRow = {
   key: string
@@ -31,7 +31,8 @@ export function buildTeamRows({ team, characters }: { team: ReadonlyArray<TeamMe
 export function useTeamRows() {
   const team = useGetTeamQuery()
   const characters = useListCharactersQuery()
+  const [removeMember, removeState] = useRemoveTeamMemberMutation()
   const rows = buildTeamRows({ team: team.data ?? [], characters: characters.data ?? [] })
 
-  return { rows, isLoading: team.isLoading, isError: team.isError, error: team.error }
+  return { rows, isLoading: team.isLoading, isError: team.isError, error: team.error, removeMember, removeState }
 }

@@ -5,13 +5,10 @@ import { useRouter } from 'next/navigation'
 import { BookmarksHeader, CharacterList, StatePanel } from '@whale/components'
 import { useBookmarkItems } from './useBookmarkItems'
 import { describeApiError } from '@/lib/apiError'
-import { clear } from '@/store/bookmarks'
-import { useAppDispatch } from '@/store/hooks'
 
 export default function BookmarksPage() {
   const router = useRouter()
-  const dispatch = useAppDispatch()
-  const { items, isLoading, isError, error } = useBookmarkItems()
+  const { items, isLoading, isError, error, clearAll } = useBookmarkItems()
 
   if (isLoading) {
     return <CharacterList state="loading" />
@@ -22,7 +19,7 @@ export default function BookmarksPage() {
 
   return (
     <Box>
-      <BookmarksHeader count={items.length} onClear={() => dispatch(clear())} />
+      <BookmarksHeader count={items.length} onClear={clearAll} />
       {items.length === 0 ? (
         <StatePanel variant="empty" title="No bookmarks yet" description="Tap the heart on a character to save them here." />
       ) : (

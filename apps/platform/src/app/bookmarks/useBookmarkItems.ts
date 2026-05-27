@@ -1,8 +1,9 @@
+import { useCallback } from 'react'
 import { type CharacterListItem, pickChip } from '@whale/components'
 import type { Character, TeamMember } from '@/gen/api'
 import { useGetTeamQuery, useListCharactersQuery } from '@/store/api'
-import { selectBookmarks } from '@/store/bookmarks'
-import { useAppSelector } from '@/store/hooks'
+import { clear, selectBookmarks } from '@/store/bookmarks'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
 
 /**
  * Resolves bookmarked ids to renderable items by joining against the character list, then
@@ -38,11 +39,13 @@ export function useBookmarkItems() {
   const list = useListCharactersQuery()
   const team = useGetTeamQuery()
   const bookmarks = useAppSelector(selectBookmarks)
+  const dispatch = useAppDispatch()
   const items = buildBookmarkItems({
     bookmarks,
     characters: list.data ?? [],
     team: team.data ?? [],
   })
+  const clearAll = useCallback(() => dispatch(clear()), [dispatch])
 
-  return { items, isLoading: list.isLoading, isError: list.isError, error: list.error }
+  return { items, isLoading: list.isLoading, isError: list.isError, error: list.error, clearAll }
 }

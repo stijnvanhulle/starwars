@@ -49,7 +49,7 @@ const NAV: Array<{ href: string; label: string; icon: ReactNode; match: (p: stri
   },
 ]
 
-export function SideNav() {
+export function SideNavContainer() {
   const pathname = usePathname() ?? '/'
   const storedBookmarkCount = useAppSelector(selectBookmarks).length
   const [mounted, setMounted] = useState(false)
