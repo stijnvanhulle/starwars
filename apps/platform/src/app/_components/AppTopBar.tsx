@@ -38,11 +38,15 @@ function Breadcrumb() {
 
     if (pathname.startsWith('/characters/')) {
       const id = Number.parseInt(pathname.split('/')[2] ?? '', 10)
-
-      return [
+      const charactersCrumb = (
         <Box key="c" component={Link} href="/" sx={{ color: '#334155', textDecoration: 'none', '&:hover': { color: '#E61F75' } }}>
           Characters
-        </Box>,
+        </Box>
+      )
+      if (!Number.isFinite(id)) return [charactersCrumb]
+
+      return [
+        charactersCrumb,
         <Box key="n" component="span" sx={{ color: '#121A52' }}>
           <CharacterCrumb id={id} />
         </Box>,
