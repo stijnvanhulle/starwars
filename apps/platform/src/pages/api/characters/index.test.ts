@@ -19,21 +19,16 @@ describe('GET /api/characters', () => {
     const res = await fetch(api.baseUrl)
 
     expect(res.status).toBe(200)
-    expect(await res.json()).toMatchInlineSnapshot(`
-      [
-        {
-          "affiliations": [
-            "Jedi Order",
-          ],
-          "id": 1,
-          "image": "luke.jpg",
-          "masters": [
-            "Obi-Wan Kenobi",
-          ],
-          "name": "Luke Skywalker",
-        },
-      ]
-    `)
+    const body = await res.json()
+    expect(body).toHaveLength(1)
+    expect(body[0]).toMatchObject({
+      id: 1,
+      name: 'Luke Skywalker',
+      image: 'luke.jpg',
+      affiliations: ['Jedi Order'],
+      masters: ['Obi-Wan Kenobi'],
+    })
+    expect(body[0]).not.toHaveProperty('formerAffiliations')
   })
 
   it('405 on a non-GET method with Allow header', async () => {

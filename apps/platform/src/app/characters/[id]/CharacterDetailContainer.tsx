@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import { useHotkey } from '@tanstack/react-hotkeys'
 import { CharacterDetail, CharacterDetailSkeleton, StatePanel } from '@stijnvanhulle/components'
 import { describeApiError } from '@/lib/apiError'
 import { isDarkSide } from '@/lib/darkSide'
@@ -20,6 +21,29 @@ export function CharacterDetailContainer({ id }: Props) {
   const bookmarks = useAppSelector(selectBookmarks)
   const dispatch = useAppDispatch()
 
+  // Prev/next walks the full cached character list, never a paginated slice — keep this in sync
+  // with `app/page.tsx` whenever pagination changes.
+  const characters = list.data ?? []
+  const ids = characters.map((candidate) => candidate.id)
+  const index = ids.indexOf(id)
+  const prev = ids.length > 0 && index !== -1 ? characters[(index - 1 + ids.length) % ids.length] : undefined
+  const next = ids.length > 0 && index !== -1 ? characters[(index + 1) % ids.length] : undefined
+
+  useHotkey(
+    'ArrowLeft',
+    () => {
+      if (prev !== undefined) router.push(`/characters/${prev.id}`)
+    },
+    { enabled: prev !== undefined },
+  )
+  useHotkey(
+    'ArrowRight',
+    () => {
+      if (next !== undefined) router.push(`/characters/${next.id}`)
+    },
+    { enabled: next !== undefined },
+  )
+
   if (!Number.isFinite(id) || detail.isError) {
     return <StatePanel variant="error" description={describeApiError(detail.error) ?? undefined} />
   }
@@ -32,14 +56,6 @@ export function CharacterDetailContainer({ id }: Props) {
   const evil = isDarkSide(character)
   const mutating = addState.isLoading || removeState.isLoading
   const mutationError = describeApiError(addState.error ?? removeState.error)
-
-  // Prev/next walks the full cached character list, never a paginated slice — keep this in sync
-  // with `app/page.tsx` whenever pagination changes.
-  const characters = list.data ?? []
-  const ids = characters.map((candidate) => candidate.id)
-  const index = ids.indexOf(character.id)
-  const prev = ids.length > 0 ? characters[(index - 1 + ids.length) % ids.length] : undefined
-  const next = ids.length > 0 ? characters[(index + 1) % ids.length] : undefined
 
   return (
     <CharacterDetail

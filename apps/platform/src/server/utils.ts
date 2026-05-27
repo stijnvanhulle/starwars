@@ -1,6 +1,6 @@
 import { errorMessage } from '@/lib/utils'
 import type { Character } from '@/gen/api'
-import type { DomainErrorCode } from './constants'
+import type { DomainErrorCode } from '@/constants'
 import type { StarwarsApiCharacter } from './starwars-api'
 
 export type { Character } from '@/gen/api'
@@ -22,14 +22,9 @@ type CreateErrorParams = {
 
 /**
  * Builds a tagged domain error. Shape mirrors Nuxt's `createError`. Spread the matching
- * entry from `ERRORS` in `./constants`:
- *
- * ```ts
- * throw createError({ ...ERRORS.NOT_FOUND, message: `Character ${id} does not exist.` })
- * ```
- *
- * The wire body in `mapError` stays `{ code, message }` to match `api.openapi.yaml`'s
- * `Error` schema. `data` and `cause` are operational metadata only.
+ * entry from `errors` in `@/constants` to fill `statusCode` and `code`, then pass the
+ * `message`. The wire body in `mapError` stays `{ code, message }` to match
+ * `api.openapi.yaml`'s `Error` schema. `data` and `cause` are operational metadata only.
  */
 export function createError(params: CreateErrorParams): DomainError {
   const err = new Error(params.message, { cause: params.cause }) as Error & {
@@ -82,7 +77,7 @@ export function mapError({ error, upstreamAsNotFound = false }: MapErrorParams):
 }
 
 const CHARACTER_KEYS = ['id', 'name', 'image', 'height', 'mass', 'affiliations', 'masters'] as const
-const ARRAY_KEYS = new Set(['affiliations', 'masters'])
+const ARRAY_KEYS = new Set<string>(['affiliations', 'masters'])
 
 /**
  * Narrows a starwars-api payload to the `Character` shape from `api.openapi.yaml`.

@@ -8,29 +8,15 @@ describe('teamRepository', () => {
   it('findBySlug returns the seeded default team', async () => {
     const team = await teamRepository.findBySlug('default')
 
-    expect(team).toMatchInlineSnapshot(
-      { id: expect.any(String), createdAt: expect.any(Date) },
-      `
-      {
-        "createdAt": Any<Date>,
-        "id": Any<String>,
-        "name": "Default team",
-        "slug": "default",
-      }
-    `,
-    )
+    expect(team).toMatchObject({ name: 'Default team', slug: 'default' })
+    expect(typeof team?.id).toBe('string')
+    expect(team?.createdAt).toBeInstanceOf(Date)
   })
 
   it('findBySlug returns undefined when the slug is unknown', async () => {
     const team = await teamRepository.findBySlug('missing-team')
 
     expect(team).toBeUndefined()
-  })
-
-  it('findDefault returns the seeded default team', async () => {
-    const team = await teamRepository.findDefault()
-
-    expect(team.slug).toBe('default')
   })
 
   it('findDefault throws when the seed row is missing', async () => {

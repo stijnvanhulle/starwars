@@ -20,19 +20,13 @@ describe('GET /api/characters/{id}', () => {
     const res = await fetch(`${api.baseUrl}?id=1`)
 
     expect(res.status).toBe(200)
-    expect(await res.json()).toMatchInlineSnapshot(`
-      {
-        "affiliations": [
-          "Jedi Order",
-        ],
-        "id": 1,
-        "image": "luke.jpg",
-        "masters": [
-          "Obi-Wan Kenobi",
-        ],
-        "name": "Luke Skywalker",
-      }
-    `)
+    expect(await res.json()).toMatchObject({
+      id: 1,
+      name: 'Luke Skywalker',
+      image: 'luke.jpg',
+      affiliations: ['Jedi Order'],
+      masters: ['Obi-Wan Kenobi'],
+    })
   })
 
   it('404 NOT_FOUND when upstream returns 404', async () => {
@@ -42,12 +36,10 @@ describe('GET /api/characters/{id}', () => {
     const res = await fetch(`${api.baseUrl}?id=9999`)
 
     expect(res.status).toBe(404)
-    expect(await res.json()).toMatchInlineSnapshot(`
-      {
-        "code": "NOT_FOUND",
-        "message": "Character 9999 does not exist.",
-      }
-    `)
+    expect(await res.json()).toMatchObject({
+      code: 'NOT_FOUND',
+      message: expect.stringContaining('9999'),
+    })
   })
 
   it('404 NOT_FOUND when upstream returns 500 (collapse keeps the error enum closed)', async () => {

@@ -19,19 +19,11 @@ describe('teamMemberRepository', () => {
   it('insert returns a TeamMember with deletedAt null', async () => {
     const row = await teamMemberRepository.insert({ teamId, characterId: 42 })
 
-    expect(row).toMatchInlineSnapshot(
-      { id: expect.stringMatching(/^[0-9a-f-]{36}$/), teamId: expect.any(String), addedAt: expect.any(Date) },
-      `
-      {
-        "addedAt": Any<Date>,
-        "characterId": 42,
-        "deletedAt": null,
-        "id": StringMatching /\\^\\[0-9a-f-\\]\\{36\\}\\$/,
-        "teamId": Any<String>,
-      }
-    `,
-    )
+    expect(row.characterId).toBe(42)
+    expect(row.deletedAt).toBeNull()
     expect(row.teamId).toBe(teamId)
+    expect(row.id).toMatch(/^[0-9a-f-]{36}$/)
+    expect(row.addedAt).toBeInstanceOf(Date)
   })
 
   it('insert twice without removing rejects with unique violation (23505)', async () => {
@@ -88,12 +80,7 @@ describe('teamMemberRepository', () => {
     await teamMemberRepository.deleteByTeamAndCharacterId({ teamId, characterId: 2 })
 
     const rows = await teamMemberRepository.findAllByTeam({ teamId })
-    expect(rows.map((row) => row.characterId)).toMatchInlineSnapshot(`
-      [
-        1,
-        3,
-      ]
-    `)
+    expect(rows.map((row) => row.characterId)).toEqual([1, 3])
   })
 
   it('countByTeam reflects active rows only', async () => {

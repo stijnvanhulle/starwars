@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { createStarwarsApiCharacter } from '@/test/fixtures'
-import { ERRORS } from './constants'
+import { errors } from '@/constants'
 import { createError, isDomainError, toCharacter } from './utils'
 
 describe('utils', () => {
@@ -8,7 +8,7 @@ describe('utils', () => {
     it('builds a tagged DomainError with statusCode, code, message, data and cause', () => {
       const cause = new Error('upstream returned 500')
       const err = createError({
-        ...ERRORS.NOT_FOUND,
+        ...errors.notFound,
         message: 'Character 9999 does not exist.',
         data: { characterId: 9999 },
         cause,
@@ -24,17 +24,23 @@ describe('utils', () => {
     })
 
     it('omits data when not passed', () => {
-      const err = createError({ ...ERRORS.TEAM_FULL, message: 'Full.' })
+      const err = createError({ ...errors.teamFull, message: 'Full.' })
 
       expect(err.data).toBeUndefined()
     })
   })
 
-  describe('ERRORS table', () => {
+  describe('errors table', () => {
+    const lookup = {
+      NOT_FOUND: 'notFound',
+      ALREADY_MEMBER: 'alreadyMember',
+      TEAM_FULL: 'teamFull',
+      EVIL_FORBIDDEN: 'evilForbidden',
+    } as const
     it.each([['NOT_FOUND', 404] as const, ['ALREADY_MEMBER', 409] as const, ['TEAM_FULL', 422] as const, ['EVIL_FORBIDDEN', 422] as const])(
       '%s maps to %i',
       (code, statusCode) => {
-        expect(ERRORS[code]).toEqual({ statusCode, code })
+        expect(errors[lookup[code]]).toEqual({ statusCode, code })
       },
     )
   })
@@ -55,19 +61,15 @@ describe('utils', () => {
         formerAffiliations: ['Rebel Alliance'],
         masters: ['Obi-Wan Kenobi'],
       })
-      expect(toCharacter(src)).toMatchInlineSnapshot(`
-        {
-          "affiliations": [
-            "Jedi Order",
-          ],
-          "id": 1,
-          "image": "luke.jpg",
-          "masters": [
-            "Obi-Wan Kenobi",
-          ],
-          "name": "Luke Skywalker",
-        }
-      `)
+      const result = toCharacter(src)
+      expect(result).toMatchObject({
+        id: 1,
+        name: 'Luke Skywalker',
+        image: 'luke.jpg',
+        affiliations: ['Jedi Order'],
+        masters: ['Obi-Wan Kenobi'],
+      })
+      expect(result).not.toHaveProperty('formerAffiliations')
     })
 
     it('passes masters through unchanged including parenthetical role suffix', () => {

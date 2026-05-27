@@ -1,5 +1,4 @@
-/** Number of character cards shown per page on the home grid. */
-export const CHARACTER_PAGE_SIZE = 24
+export { CHARACTER_PAGE_SIZE } from '@/constants'
 
 /**
  * Return the slice of `items` that belongs on a given 1-based page. Empty

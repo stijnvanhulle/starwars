@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { ERRORS } from '@/server/constants'
+import { errors } from '@/constants'
 import { characterIdSchema } from '@/server/schemas'
 import { createCharacterFetcher } from '@/server/starwars-api'
 import { createError, mapError, toCharacter } from '@/server/utils'
@@ -22,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (!parsed.success) {
       throw createError({
-        ...ERRORS.NOT_FOUND,
+        ...errors.notFound,
         message: `Character ${String(req.query.id)} does not exist.`,
         data: { characterId: req.query.id },
       })
@@ -31,7 +31,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (character === null) {
       throw createError({
-        ...ERRORS.NOT_FOUND,
+        ...errors.notFound,
         message: `Character ${parsed.data} does not exist.`,
         data: { characterId: parsed.data },
       })

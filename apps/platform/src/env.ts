@@ -11,11 +11,9 @@ if (!databaseUrl && !inTest) {
   throw new Error('DATABASE_URL is required. Copy .env.example to .env and start postgres with `docker compose up -d postgres`.')
 }
 
-export const env = {
+const env = {
   databaseUrl,
 } as const
-
-export type Env = typeof env
 
 export function requireDatabaseUrl(): string {
   if (!env.databaseUrl) {

@@ -12,7 +12,7 @@ export type ApiTestServer = {
  * Collects an `IncomingMessage` body and parses it as JSON. Returns `undefined` when the
  * body is empty, and the raw string when the body is non-empty but not valid JSON.
  */
-export async function readJsonBody(req: IncomingMessage): Promise<unknown> {
+async function readJsonBody(req: IncomingMessage): Promise<unknown> {
   const chunks: Array<Buffer> = []
   for await (const chunk of req) chunks.push(chunk as Buffer)
   const raw = Buffer.concat(chunks).toString('utf8')
@@ -28,7 +28,7 @@ export async function readJsonBody(req: IncomingMessage): Promise<unknown> {
  * Builds Next.js's `req.query` shape from a parsed `URL`. Repeated keys collapse to a
  * `string[]`, single keys stay a `string`.
  */
-export function parseQuery(url: URL): Record<string, string | Array<string>> {
+function parseQuery(url: URL): Record<string, string | Array<string>> {
   const query: Record<string, string | Array<string>> = {}
   for (const key of url.searchParams.keys()) {
     const all = url.searchParams.getAll(key)
@@ -45,13 +45,7 @@ export function parseQuery(url: URL): Record<string, string | Array<string>> {
  *
  * Dynamic path params (`[id]`, `[characterId]`) pass via the query string. The handler
  * reads `req.query.id` either way, since Next.js merges path and query params there.
- *
- * Lifetime-bound with `await using`:
- *
- * ```ts
- * await using api = await startApiServer(handler)
- * const res = await fetch(`${api.baseUrl}?id=1`)
- * ```
+ * Lifetime-bound with `await using` so the server always closes after the test.
  */
 export async function startApiServer(handler: NextApiHandler): Promise<ApiTestServer> {
   const server = createServer(async (rawReq, rawRes) => {
