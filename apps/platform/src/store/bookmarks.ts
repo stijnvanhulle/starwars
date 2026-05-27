@@ -25,16 +25,15 @@ export const bookmarksSlice = createSlice({
     clear(state) {
       state.length = 0
     },
+    hydrate(_state, action: PayloadAction<Array<number>>) {
+      return action.payload
+    },
   },
 })
 
-export const { add, remove, toggle, clear } = bookmarksSlice.actions
+export const { add, remove, toggle, clear, hydrate } = bookmarksSlice.actions
 export const bookmarksReducer = bookmarksSlice.reducer
 
-/**
- * Stable selector returning the saved character ids in the order they were
- * added.
- */
 export function selectBookmarks(state: RootState): ReadonlyArray<number> {
   return state.bookmarks
 }

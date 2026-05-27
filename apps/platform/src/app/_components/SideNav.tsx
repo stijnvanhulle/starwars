@@ -6,7 +6,7 @@ import Stack from '@mui/material/Stack'
 import Tooltip from '@mui/material/Tooltip'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import type { ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { selectBookmarks } from '@/store/bookmarks'
 import { useAppSelector } from '@/store/hooks'
 
@@ -51,13 +51,18 @@ const NAV: Array<{ href: string; label: string; icon: ReactNode; match: (p: stri
 
 export function SideNav() {
   const pathname = usePathname() ?? '/'
-  const bookmarkCount = useAppSelector(selectBookmarks).length
+  const storedBookmarkCount = useAppSelector(selectBookmarks).length
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+  const bookmarkCount = mounted ? storedBookmarkCount : 0
   return (
     <Stack spacing={1} sx={{ alignItems: 'center', py: 4, position: 'sticky', top: 0, height: '100vh' }}>
       <Stack
         component={Link}
         href="/"
-        aria-label="Whale"
+        aria-label="Whale Star Wars Team Builder, home"
         sx={{
           width: 40,
           height: 40,
@@ -86,9 +91,9 @@ export function SideNav() {
       </Stack>
       {NAV.map((item) => {
         const active = item.match(pathname)
-        const showBadge = item.href === '/bookmarks' && bookmarkCount > 0
-        const iconContent = showBadge ? (
-          <Badge badgeContent={bookmarkCount} color="primary" overlap="circular">
+        const isBookmarks = item.href === '/bookmarks'
+        const iconContent = isBookmarks ? (
+          <Badge badgeContent={bookmarkCount} color="primary" overlap="circular" invisible={bookmarkCount === 0}>
             {item.icon}
           </Badge>
         ) : (

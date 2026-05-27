@@ -18,7 +18,16 @@ let cachedFixtures: ReadonlyArray<StarwarsApiCharacter> | undefined
 function loadFixtures(): ReadonlyArray<StarwarsApiCharacter> {
   if (cachedFixtures !== undefined) return cachedFixtures
   const file = path.resolve(process.cwd(), FIXTURE_PATH)
-  cachedFixtures = JSON.parse(readFileSync(file, 'utf-8')) as ReadonlyArray<StarwarsApiCharacter>
+  const parsed: unknown = JSON.parse(readFileSync(file, 'utf-8'))
+  if (!Array.isArray(parsed) || parsed.length === 0) {
+    throw new Error(`E2E fixtures at ${FIXTURE_PATH} are missing or empty`)
+  }
+  for (const row of parsed) {
+    if (typeof row?.id !== 'number' || typeof row?.name !== 'string') {
+      throw new Error(`E2E fixture row missing required id/name: ${JSON.stringify(row)}`)
+    }
+  }
+  cachedFixtures = parsed as ReadonlyArray<StarwarsApiCharacter>
   return cachedFixtures
 }
 

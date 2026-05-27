@@ -1,19 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { Client } from 'pg'
-import { resetTeam } from './setup'
-
-const DATABASE_URL = process.env.DATABASE_URL ?? 'postgres://platform:platform@localhost:5432/platform'
-
-async function activeMemberCount(): Promise<number> {
-  const client = new Client({ connectionString: DATABASE_URL })
-  await client.connect()
-  try {
-    const res = await client.query<{ count: string }>('select count(*)::text as count from team_members where deleted_at is null')
-    return Number(res.rows[0]!.count)
-  } finally {
-    await client.end()
-  }
-}
+import { activeMemberCount, resetTeam } from './setup'
 
 test.beforeEach(async () => {
   await resetTeam()

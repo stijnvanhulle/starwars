@@ -3,8 +3,6 @@ import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import { Client } from 'pg'
 
-const DATABASE_URL = process.env.DATABASE_URL ?? 'postgres://platform:platform@localhost:5432/platform'
-
 export type FixtureCharacter = {
   id: number
   name: string
@@ -16,7 +14,29 @@ export type FixtureCharacter = {
 }
 
 const here = path.dirname(fileURLToPath(import.meta.url))
-export const characters = JSON.parse(readFileSync(path.join(here, 'fixtures/characters.json'), 'utf-8')) as Array<FixtureCharacter>
+const rawFixtures: unknown = JSON.parse(readFileSync(path.join(here, 'fixtures/characters.json'), 'utf-8'))
+if (!Array.isArray(rawFixtures) || rawFixtures.length === 0) {
+  throw new Error('e2e/fixtures/characters.json is missing or empty')
+}
+for (const row of rawFixtures) {
+  if (typeof row?.id !== 'number' || typeof row?.name !== 'string') {
+    throw new Error(`fixture row missing required id/name: ${JSON.stringify(row)}`)
+  }
+}
+export const characters = rawFixtures as Array<FixtureCharacter>
+
+export const DATABASE_URL = process.env.DATABASE_URL ?? 'postgres://platform:platform@localhost:5432/platform'
+
+export async function activeMemberCount(): Promise<number> {
+  const client = new Client({ connectionString: DATABASE_URL })
+  await client.connect()
+  try {
+    const res = await client.query<{ count: string }>('select count(*)::text as count from team_members where deleted_at is null')
+    return Number(res.rows[0]!.count)
+  } finally {
+    await client.end()
+  }
+}
 
 export function characterById(id: number): FixtureCharacter {
   const found = characters.find((c) => c.id === id)

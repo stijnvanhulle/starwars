@@ -25,11 +25,11 @@ export function loadBookmarks(): Array<number> {
 
 /**
  * Persist bookmark changes to `localStorage` after every bookmark action. The
- * middleware is a no-op during server-side rendering. Typed as
- * `Middleware<{}, { bookmarks: Array<number> }>` so it never imports the
- * full `RootState` (which would close a circular type loop with `store.ts`).
+ * middleware is a no-op during server-side rendering. The state-slice generic
+ * is kept local (`{ bookmarks: Array<number> }`) so this file never imports
+ * `RootState` and closes a circular type loop with `store.ts`.
  */
-export const persistBookmarks: Middleware<{}, { bookmarks: Array<number> }> = (storeApi) => (next) => (action) => {
+export const persistBookmarks: Middleware<Record<string, never>, { bookmarks: Array<number> }> = (storeApi) => (next) => (action) => {
   const result = next(action)
   const type = (action as { type?: string }).type
   if (type !== undefined && BOOKMARK_ACTION_TYPES.has(type) && typeof window !== 'undefined') {

@@ -18,8 +18,12 @@ for (const { id, rule } of EVIL_IDS) {
     const addButton = page.getByRole('button', { name: 'Add to team' })
     await expect(addButton).toBeDisabled()
 
+    // The button is disabled and wrapped in a span that intercepts pointer events;
+    // hovering must be forced to surface the MUI Tooltip anchored to the wrapper.
     await addButton.hover({ force: true })
-    await expect(page.getByRole('tooltip')).toContainText(/evil/i)
+    const tooltip = page.getByRole('tooltip')
+    await tooltip.waitFor()
+    await expect(tooltip).toContainText(/evil/i)
 
     const res = await request.post('/api/team', { data: { characterId: id } })
     expect(res.status()).toBe(422)
