@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useHotkey } from '@tanstack/react-hotkeys'
 import { CharacterDetail, CharacterDetailSkeleton, StatePanel } from '@whale/components'
 import { useCharacterNavigation } from './useCharacterNavigation'
-import { useCharacterTeamState } from './useCharacterTeamState'
+import { useTeamMembership } from './useTeamMembership'
 import { describeApiError } from '@/lib/apiError'
 import { useGetCharacterQuery } from '@/store/api'
 import { selectBookmarks, toggle as toggleBookmark } from '@/store/bookmarks'
@@ -19,7 +19,7 @@ export function CharacterDetailContainer({ id }: Props) {
   const detail = useGetCharacterQuery(id)
   const { prev, next, position } = useCharacterNavigation({ id })
   const character = detail.data
-  const { onTeam, evil, canToggleTeam, mutating, toggleTeam, mutationError } = useCharacterTeamState({ character })
+  const { onTeam, evil, canToggleTeam, mutating, toggleTeam, mutationError } = useTeamMembership({ character })
   const bookmarks = useAppSelector(selectBookmarks)
   const dispatch = useAppDispatch()
 
