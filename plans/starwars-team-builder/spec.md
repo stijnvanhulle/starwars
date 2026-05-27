@@ -42,14 +42,14 @@ One per requirement bullet from `prompt.md`. Each one is something we can write 
 
 ## Acceptance checklist
 
-One row per requirement bullet in `prompt.md`. Each maps to a numbered scenario in `verification.md`.
+One row per requirement bullet in `prompt.md`. Each maps to a scenario in `verification.md` Section A.
 
-- [x] **AC-1** `/` renders the character list from `/api/characters`. → verification §1
-- [x] **AC-2** Every character has a reachable detail page at `/characters/[id]`. → verification §2
-- [x] **AC-3** The detail page shows name, image, height, mass, and affiliations. → verification §2
-- [x] **AC-4** `Prev` / `Next` on the detail page walk the list order and wrap at both ends. → verification §3
-- [x] **AC-5** Add and remove from the detail page hit `/api/team` and stick. → verification §4
-- [x] **AC-6** `/team` lists the team and lets you remove members. → verification §5
-- [x] **AC-7** The team is visible and manageable from every page (sidebar). → verification §5
-- [x] **AC-8** Sixth add is refused. Server returns `422 TEAM_FULL`, UI shows the error. → verification §6
-- [x] **AC-9** Evil characters can't be added; their `Add` is disabled with a tooltip (Vader is the obvious test). → verification §6
+- [x] **AC-1** `/` renders the character list from `/api/characters`. → verification A.1
+- [x] **AC-2** Every character has a reachable detail page at `/characters/[id]`. → verification A.2
+- [x] **AC-3** The detail page shows name, image, height, mass, and affiliations. → verification A.2
+- [x] **AC-4** `Prev` / `Next` on the detail page walk the list order and wrap at both ends. → verification A.3
+- [x] **AC-5** Add and remove from the detail page hit `/api/team` and stick. → verification A.4
+- [x] **AC-6** `/team` lists the team and lets you remove members. → verification A.5
+- [x] **AC-7** The team is visible and manageable from every page (sidebar). → verification A.5
+- [x] **AC-8** Sixth add is refused. Server returns `422 TEAM_FULL`, UI shows the error. → verification A.6
+- [x] **AC-9** Evil characters can't be added; their `Add` is disabled with a tooltip (Vader is the obvious test). → verification A.6

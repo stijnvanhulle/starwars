@@ -85,12 +85,12 @@ No new product features; if an e2e spec fails, the fix lives in Slice 006.
 
 ## Done criteria
 
-- [ ] Four Playwright specs cover AC-1..AC-9 and pass locally and in CI
-- [ ] The `starwars-api` is faked via the `E2E_FIXTURES=1` server-side switch; no real network calls leave CI and the browser still hits only `/api/*`
-- [ ] `apps/platform/playwright.config.ts` runs against the built app (`pnpm start`), not the dev server, in CI
-- [ ] The CI workflow scaffolded in Slice 001 now exercises unit, integration, and e2e against the `postgres:17-alpine` service on every push, and uploads the Playwright report on failure
-- [ ] One initial changeset is checked in; the Slice 001 release workflow picks it up on the next push to `main`
-- [ ] `README.md` covers tech stack, use cases, folder structure, and current status per the prompt
-- [ ] `plans/starwars-team-builder/research.md` has no unresolved open items at slice close
-- [ ] `plans/starwars-team-builder/plan.md` Progress Tracking shows all slices and the three Close-out items as done
-- [ ] `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm test:e2e` are green locally and in CI
+- [x] Four Playwright specs cover AC-1..AC-9 and pass locally and in CI
+- [x] The `starwars-api` is faked via the `E2E_FIXTURES=1` server-side switch; no real network calls leave CI and the browser still hits only `/api/*`
+- [x] `apps/platform/playwright.config.ts` runs against the built app (`pnpm start`), not the dev server, in CI
+- [x] The CI workflow scaffolded in Slice 001 now exercises unit, integration, and e2e against the `postgres:17-alpine` service on every push, and uploads the Playwright report on failure
+- [x] One initial changeset is checked in; the Slice 001 release workflow picks it up on the next push to `main`
+- [x] `README.md` covers tech stack, use cases, folder structure, and current status per the prompt
+- [x] `plans/starwars-team-builder/research.md` has no unresolved open items at slice close
+- [x] `plans/starwars-team-builder/plan.md` Progress Tracking shows all slices and the three Close-out items as done
+- [x] `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm test:e2e` are green locally and in CI

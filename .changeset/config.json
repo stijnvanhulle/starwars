@@ -7,7 +7,7 @@
     }
   ],
   "commit": false,
-  "fixed": [["@stijnvanhulle/template-*"]],
+  "fixed": [],
   "linked": [],
   "access": "restricted",
   "baseBranch": "main",

@@ -5,7 +5,9 @@ import Button from '@mui/material/Button'
 import Card from '@mui/material/Card'
 import CardMedia from '@mui/material/CardMedia'
 import Chip from '@mui/material/Chip'
+import IconButton from '@mui/material/IconButton'
 import Stack from '@mui/material/Stack'
+import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import { PrimaryButton } from '../common/PrimaryButton'
 import { StatCard } from '../common/StatCard'
@@ -31,10 +33,30 @@ export type CharacterDetailProps = {
   onPrev?: () => void
   onNext?: () => void
   onAddOrRemove?: () => void
+  bookmarked?: boolean
+  onBookmarkToggle?: () => void
 }
 
 const EVIL_REASON = 'Evil characters cannot join the team.'
 const DARTH_OR_SITH = /darth|sith/i
+
+function HeartIcon({ filled }: { filled: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width={20}
+      height={20}
+      aria-hidden
+      fill={filled ? 'currentColor' : 'none'}
+      stroke="currentColor"
+      strokeWidth={1.75}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12 21s-7-4.35-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.65-9.5 9-9.5 9z" />
+    </svg>
+  )
+}
 
 const pagerButtonSx = {
   borderRadius: 9999,
@@ -56,6 +78,8 @@ export function CharacterDetail({
   onPrev,
   onNext,
   onAddOrRemove,
+  bookmarked,
+  onBookmarkToggle,
 }: CharacterDetailProps) {
   const showEvilBanner = evil && !onTeam
   const actionLabel = onTeam ? 'Remove from team' : 'Add to team'
@@ -144,17 +168,47 @@ export function CharacterDetail({
           )}
 
           {showEvilBanner ? (
-            <Alert
-              severity="error"
-              action={<PrimaryButton label={actionLabel} onClick={onAddOrRemove} loading={loading} disabledReason={disabledReason} />}
-              sx={{ alignItems: 'center', '& .MuiAlert-action': { alignItems: 'center', pt: 0 } }}
-            >
-              <AlertTitle sx={{ mb: 0 }}>On the dark side</AlertTitle>
-              This character is evil and cannot join your team.
-            </Alert>
+            <Stack spacing={2}>
+              <Alert
+                severity="error"
+                action={
+                  <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                    {onBookmarkToggle !== undefined && (
+                      <Tooltip title={bookmarked ? 'Remove bookmark' : 'Bookmark'}>
+                        <IconButton
+                          aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark'}
+                          aria-pressed={bookmarked}
+                          onClick={onBookmarkToggle}
+                          color={bookmarked ? 'primary' : 'default'}
+                        >
+                          <HeartIcon filled={bookmarked === true} />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                    <PrimaryButton label={actionLabel} onClick={onAddOrRemove} loading={loading} disabledReason={disabledReason} />
+                  </Stack>
+                }
+                sx={{ alignItems: 'center', '& .MuiAlert-action': { alignItems: 'center', pt: 0 } }}
+              >
+                <AlertTitle sx={{ mb: 0 }}>On the dark side</AlertTitle>
+                This character is evil and cannot join your team.
+              </Alert>
+            </Stack>
           ) : (
             <Stack direction="row" spacing={3} sx={{ alignItems: 'center' }}>
               <PrimaryButton label={actionLabel} onClick={onAddOrRemove} loading={loading} />
+              {onBookmarkToggle !== undefined && (
+                <Tooltip title={bookmarked ? 'Remove bookmark' : 'Bookmark'}>
+                  <IconButton
+                    aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark'}
+                    aria-pressed={bookmarked}
+                    onClick={onBookmarkToggle}
+                    color={bookmarked ? 'primary' : 'default'}
+                  >
+                    <HeartIcon filled={bookmarked === true} />
+                  </IconButton>
+                </Tooltip>
+              )}
               {errorMessage !== undefined && (
                 <Typography role="alert" color="error">
                   {errorMessage}

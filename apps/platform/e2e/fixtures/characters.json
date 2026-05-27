@@ -1,0 +1,83 @@
+[
+  {
+    "id": 1,
+    "name": "Luke Skywalker",
+    "image": "https://example.test/img/luke.jpg",
+    "height": 1.72,
+    "mass": 73,
+    "affiliations": ["Jedi Order", "Rebel Alliance"],
+    "masters": ["Obi-Wan Kenobi", "Yoda"]
+  },
+  {
+    "id": 2,
+    "name": "Leia Organa",
+    "image": "https://example.test/img/leia.jpg",
+    "height": 1.5,
+    "mass": 49,
+    "affiliations": ["Rebel Alliance", "New Republic"],
+    "masters": []
+  },
+  {
+    "id": 3,
+    "name": "Han Solo",
+    "image": "https://example.test/img/han.jpg",
+    "height": 1.8,
+    "mass": 80,
+    "affiliations": ["Rebel Alliance"],
+    "masters": []
+  },
+  {
+    "id": 4,
+    "name": "Chewbacca",
+    "image": "https://example.test/img/chewie.jpg",
+    "height": 2.28,
+    "mass": 112,
+    "affiliations": ["Rebel Alliance"],
+    "masters": []
+  },
+  {
+    "id": 5,
+    "name": "R2-D2",
+    "image": "https://example.test/img/r2d2.jpg",
+    "height": 0.96,
+    "mass": 32,
+    "affiliations": ["Rebel Alliance"],
+    "masters": []
+  },
+  {
+    "id": 6,
+    "name": "C-3PO",
+    "image": "https://example.test/img/c3po.jpg",
+    "height": 1.67,
+    "mass": 75,
+    "affiliations": ["Rebel Alliance"],
+    "masters": []
+  },
+  {
+    "id": 7,
+    "name": "Darth Vader",
+    "image": "https://example.test/img/vader.jpg",
+    "height": 2.02,
+    "mass": 136,
+    "affiliations": ["Galactic Empire"],
+    "masters": ["Darth Sidious"]
+  },
+  {
+    "id": 8,
+    "name": "Sheev Palpatine",
+    "image": "https://example.test/img/palpatine.jpg",
+    "height": 1.73,
+    "mass": 75,
+    "affiliations": ["Galactic Empire", "Sith Order"],
+    "masters": []
+  },
+  {
+    "id": 9,
+    "name": "Maul",
+    "image": "https://example.test/img/maul.jpg",
+    "height": 1.75,
+    "mass": 80,
+    "affiliations": ["Crimson Dawn", "Shadow Collective"],
+    "masters": ["Darth Sidious (Sith Master)"]
+  }
+]

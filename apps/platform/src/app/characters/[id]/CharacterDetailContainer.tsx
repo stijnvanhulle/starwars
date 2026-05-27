@@ -5,6 +5,8 @@ import { CharacterDetail, CharacterDetailSkeleton, StatePanel } from '@stijnvanh
 import { describeApiError } from '@/lib/apiError'
 import { isDarkSide } from '@/lib/darkSide'
 import { useAddTeamMemberMutation, useGetCharacterQuery, useGetTeamQuery, useListCharactersQuery, useRemoveTeamMemberMutation } from '@/store/api'
+import { selectBookmarks, toggle as toggleBookmark } from '@/store/bookmarks'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
 
 type Props = { id: number }
 
@@ -15,6 +17,8 @@ export function CharacterDetailContainer({ id }: Props) {
   const team = useGetTeamQuery()
   const [addMember, addState] = useAddTeamMemberMutation()
   const [removeMember, removeState] = useRemoveTeamMemberMutation()
+  const bookmarks = useAppSelector(selectBookmarks)
+  const dispatch = useAppDispatch()
 
   if (!Number.isFinite(id) || detail.isError) {
     return <StatePanel variant="error" description={describeApiError(detail.error) ?? undefined} />
@@ -29,6 +33,8 @@ export function CharacterDetailContainer({ id }: Props) {
   const mutating = addState.isLoading || removeState.isLoading
   const mutationError = describeApiError(addState.error ?? removeState.error)
 
+  // Prev/next walks the full cached character list, never a paginated slice — keep this in sync
+  // with `app/page.tsx` whenever pagination changes.
   const characters = list.data ?? []
   const ids = characters.map((candidate) => candidate.id)
   const index = ids.indexOf(character.id)
@@ -51,6 +57,8 @@ export function CharacterDetailContainer({ id }: Props) {
       }}
       onPrev={prev === undefined ? undefined : () => router.push(`/characters/${prev.id}`)}
       onNext={next === undefined ? undefined : () => router.push(`/characters/${next.id}`)}
+      bookmarked={bookmarks.includes(character.id)}
+      onBookmarkToggle={() => dispatch(toggleBookmark(character.id))}
     />
   )
 }

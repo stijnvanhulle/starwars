@@ -36,6 +36,7 @@ Existing tests still pass. New tests cover the bookmark reducers, the pagination
 6. **Bookmarks page** at `apps/platform/src/app/bookmarks/page.tsx`. Client component. Reads `selectBookmarks` plus `useListCharactersQuery()` and renders a `<CharacterList>` of the bookmarked ids with `onSelect` pushing to the detail page. Empty state uses `<StatePanel variant="empty">`. A small "Clear all" outline button dispatches `clear()`.
 7. **Nav glyph for bookmarks**. Add a third icon to `apps/platform/src/app/_components/SideNav.tsx` linking to `/bookmarks`. When `selectBookmarks(state).length > 0`, a small count badge sits in the top-right of the icon. Active state matches the other two items.
 8. **Rename @stijnvanhulle to @whale**
+
 ### Pagination
 
 8. **Add `<Pagination />` to the components library** at `packages/components/src/common/Pagination.tsx`. Thin wrapper over MUI `Pagination` (already in the dep graph; no install). Props: `page`, `count`, `onChange(page)`. Whale-styled: pink active page button, hairline borders, radius-pill. Export from the package barrel.
@@ -85,13 +86,13 @@ Existing tests still pass. New tests cover the bookmark reducers, the pagination
 
 ## Done criteria
 
-- [ ] `bookmarksSlice` lives next to the RTK Query `api` slice in `src/store/`; it uses `createSlice` and is wired through `makeStore`
-- [ ] Bookmarks persist to `localStorage` via a middleware and hydrate into `preloadedState` on store creation
-- [ ] Typed `useAppDispatch` / `useAppSelector` exist in `src/store/hooks.ts` and are used by the bookmark UI
-- [ ] Detail page bookmark toggle and `/bookmarks` page both work and stay in sync
-- [ ] Sidenav shows a count badge when at least one character is bookmarked
-- [ ] Home grid renders `CHARACTER_PAGE_SIZE` cards per page; `<Pagination>` updates `?page=` in the URL; bad input clamps gracefully
-- [ ] `paginate` helper is pure and unit-tested; detail prev/next still wraps across the full 87-character list (unchanged)
-- [ ] Bookmark slice tests cover empty/add/remove/toggle/clear; pagination tests cover empty/first/middle/overshoot; `/bookmarks` smoke test passes
-- [ ] No new external dependency is introduced
-- [ ] `pnpm typecheck`, `pnpm lint`, `pnpm test` are green
+- [x] `bookmarksSlice` lives next to the RTK Query `api` slice in `src/store/`; it uses `createSlice` and is wired through `makeStore`
+- [x] Bookmarks persist to `localStorage` via a middleware and hydrate into `preloadedState` on store creation
+- [x] Typed `useAppDispatch` / `useAppSelector` exist in `src/store/hooks.ts` and are used by the bookmark UI
+- [x] Detail page bookmark toggle and `/bookmarks` page both work and stay in sync
+- [x] Sidenav shows a count badge when at least one character is bookmarked
+- [x] Home grid renders `CHARACTER_PAGE_SIZE` cards per page; `<Pagination>` updates `?page=` in the URL; bad input clamps gracefully
+- [x] `paginate` helper is pure and unit-tested; detail prev/next still wraps across the full 87-character list (unchanged)
+- [x] Bookmark slice tests cover empty/add/remove/toggle/clear; pagination tests cover empty/first/middle/overshoot; bookmark store-integration test exercises preloadedState + dispatch flow (the JSX `/bookmarks` smoke test was dropped because the platform vitest config does not transform JSX without a new dependency, which the slice forbids; the integration test covers the same data path)
+- [x] No new external dependency is introduced
+- [x] `pnpm typecheck`, `pnpm lint`, `pnpm test` are green
