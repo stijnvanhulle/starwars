@@ -13,7 +13,7 @@ type Props = { id: number }
 
 export function CharacterDetailContainer({ id }: Props) {
   const router = useRouter()
-  const detail = useGetCharacterQuery(id, { skip: !Number.isFinite(id) })
+  const detail = useGetCharacterQuery(id)
   const list = useListCharactersQuery()
   const team = useGetTeamQuery()
   const [addMember, addState] = useAddTeamMemberMutation()
@@ -44,7 +44,7 @@ export function CharacterDetailContainer({ id }: Props) {
     { enabled: next !== undefined },
   )
 
-  if (!Number.isFinite(id) || detail.isError) {
+  if (detail.isError) {
     return <StatePanel variant="error" description={describeApiError(detail.error) ?? undefined} />
   }
 
