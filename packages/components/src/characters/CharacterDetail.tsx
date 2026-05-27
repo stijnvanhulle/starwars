@@ -37,7 +37,6 @@ export type CharacterDetailProps = {
   onBookmarkToggle?: () => void
 }
 
-const EVIL_REASON = 'Evil characters cannot join the team.'
 const DARTH_OR_SITH = /darth|sith/i
 
 function HeartIcon({ filled }: { filled: boolean }) {
@@ -83,7 +82,6 @@ export function CharacterDetail({
 }: CharacterDetailProps) {
   const showEvilBanner = evil && !onTeam
   const actionLabel = onTeam ? 'Remove from team' : 'Add to team'
-  const disabledReason = showEvilBanner ? EVIL_REASON : undefined
 
   return (
     <Box>
@@ -170,23 +168,20 @@ export function CharacterDetail({
           {showEvilBanner ? (
             <Stack spacing={2}>
               <Alert
-                severity="error"
+                severity="info"
                 action={
-                  <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-                    {onBookmarkToggle !== undefined && (
-                      <Tooltip title={bookmarked ? 'Remove bookmark' : 'Bookmark'}>
-                        <IconButton
-                          aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark'}
-                          aria-pressed={bookmarked}
-                          onClick={onBookmarkToggle}
-                          color={bookmarked ? 'primary' : 'default'}
-                        >
-                          <HeartIcon filled={bookmarked === true} />
-                        </IconButton>
-                      </Tooltip>
-                    )}
-                    <PrimaryButton label={actionLabel} onClick={onAddOrRemove} loading={loading} disabledReason={disabledReason} />
-                  </Stack>
+                  onBookmarkToggle !== undefined ? (
+                    <Tooltip title={bookmarked ? 'Remove bookmark' : 'Bookmark'}>
+                      <IconButton
+                        aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark'}
+                        aria-pressed={bookmarked}
+                        onClick={onBookmarkToggle}
+                        color={bookmarked ? 'primary' : 'default'}
+                      >
+                        <HeartIcon filled={bookmarked === true} />
+                      </IconButton>
+                    </Tooltip>
+                  ) : undefined
                 }
                 sx={{ alignItems: 'center', '& .MuiAlert-action': { alignItems: 'center', pt: 0 } }}
               >
