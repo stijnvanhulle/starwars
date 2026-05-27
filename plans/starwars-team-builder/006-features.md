@@ -135,7 +135,7 @@ No new dependency lands in this slice beyond `@mui/icons-material` for the left-
 
 ## Verification
 
-1. `docker compose up -d postgres && pnpm db:migrate && pnpm gen && pnpm --filter @whale/components build && pnpm dev`. App boots.
+1. `docker compose up -d postgres && pnpm db:migrate && pnpm gen && turbo run build --filter=@whale/components && pnpm dev`. App boots.
 2. Walk each of the six scenarios in [`verification.md`](verification.md). All pass.
 3. AC-9: Darth Vader's detail page shows a disabled `Add to team` button; hovering it reveals the MUI tooltip; clicking does nothing. Force `POST /api/team` with Vader's id; server returns `422 EVIL_FORBIDDEN`.
 4. AC-8: add five non-evil characters, attempt a sixth. The inline error appears and the team stays at five rows in the DB.

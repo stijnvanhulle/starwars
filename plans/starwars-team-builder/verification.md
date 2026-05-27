@@ -34,7 +34,7 @@ For e2e tests (Playwright needs a built app):
 
 ```bash
 pnpm build
-pnpm --filter @whale/platform run test:e2e
+turbo run test:e2e --filter=@whale/platform
 ```
 
 For unit + integration tests only (no Docker needed, uses pglite):

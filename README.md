@@ -207,9 +207,9 @@ Postgres-backed commands live in `apps/platform`:
 
 ```bash
 docker compose up -d postgres                                  # Start Postgres on :5432
-pnpm --filter @whale/platform run db:migrate           # Apply migrations
-pnpm --filter @whale/platform run db:generate          # Generate a new migration from schema.ts
-pnpm --filter @whale/platform run db:studio            # Drizzle Studio
+turbo run db:migrate                                   # Apply migrations
+turbo run db:generate                                  # Generate a new migration from schema.ts
+turbo run db:studio                                    # Drizzle Studio
 ```
 
 ## Codegen (Kubb)

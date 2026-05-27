@@ -76,6 +76,10 @@
     "db:studio": {
       "cache": false,
       "persistent": true
+    },
+    "playwright:install": {
+      "cache": false,
+      "outputs": []
     }
   }
 }
