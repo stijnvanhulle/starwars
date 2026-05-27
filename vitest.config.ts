@@ -1,7 +1,9 @@
 import { defineConfig } from 'vitest/config'
+import { platformProjects } from './apps/platform/vitest.projects'
 
 export default defineConfig({
   test: {
-    projects: ['apps/*/vitest.config.ts', 'packages/*/vitest.config.ts', 'internals/*/vitest.config.ts'],
+    fileParallelism: false,
+    projects: [...platformProjects, 'packages/*/vitest.config.ts', 'internals/*/vitest.config.ts'],
   },
 })
