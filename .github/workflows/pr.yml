@@ -156,13 +156,13 @@ jobs:
         run: pnpm --filter @whale/platform run playwright:install
 
       - name: Migrate database
-        run: turbo run db:migrate
+        run: pnpm --filter @whale/platform run db:migrate
 
       - name: Build
         run: pnpm run build
 
       - name: Run Playwright tests
-        run: turbo run test:e2e --filter=@whale/platform
+        run: pnpm --filter @whale/platform run test:e2e
 
       - name: Upload Playwright report
         if: failure()
