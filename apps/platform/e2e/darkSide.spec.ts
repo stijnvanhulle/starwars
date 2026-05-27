@@ -15,15 +15,14 @@ for (const { id, rule } of EVIL_IDS) {
   test(`evil character ${id} (${rule}) cannot be added`, async ({ page, request }) => {
     await page.goto(`/characters/${id}`)
 
-    const addButton = page.getByRole('button', { name: 'Add to team' })
-    await expect(addButton).toBeDisabled()
-
-    // The button is disabled and wrapped in a span that intercepts pointer events;
-    // hovering must be forced to surface the MUI Tooltip anchored to the wrapper.
-    await addButton.hover({ force: true })
-    const tooltip = page.getByRole('tooltip')
-    await tooltip.waitFor()
-    await expect(tooltip).toContainText(/evil/i)
+    // Evil characters render the "On the dark side" alert in place of the Add button.
+    await expect(page.getByRole('button', { name: 'Add to team' })).toHaveCount(0)
+    const banner = page
+      .getByRole('alert')
+      .filter({ hasText: /on the dark side/i })
+      .first()
+    await expect(banner).toBeVisible()
+    await expect(banner).toContainText(/evil/i)
 
     const res = await request.post('/api/team', { data: { characterId: id } })
     expect(res.status()).toBe(422)

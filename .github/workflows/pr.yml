@@ -153,7 +153,7 @@ jobs:
           node-version: '22'
 
       - name: Install Playwright browsers
-        run: turbo run playwright:install --filter=@whale/platform
+        run: pnpm --filter @whale/platform run playwright:install
 
       - name: Migrate database
         run: turbo run db:migrate

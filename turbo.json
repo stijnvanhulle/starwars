@@ -1,7 +1,7 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": ["tsconfig.json"],
-  "globalEnv": ["NODE_ENV"],
+  "globalEnv": ["NODE_ENV", "DATABASE_URL", "E2E_FIXTURES", "CI"],
   "tasks": {
     "build": {
       "dependsOn": ["^build", "gen"],
