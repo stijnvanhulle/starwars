@@ -23,7 +23,6 @@ A Star Wars team-builder app built as a Next.js monorepo (pnpm workspaces, Turbo
 | --- | --- |
 | `apps/platform` | Next.js 16 app (App Router, MUI v9, RTK Query, Drizzle + Postgres) |
 | `packages/components` | Shared React component library used by `apps/platform` |
-| `internals/utils` | Internal helpers shared across the workspace |
 | `configs/` | Shared tooling configs (TypeScript, Vitest, etc.) |
 
 `packages/core` and `packages/demo` were removed in slice 001 and are gone.

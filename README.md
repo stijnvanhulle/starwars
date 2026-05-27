@@ -161,7 +161,6 @@ Time spent on the Whale Star Wars team-builder exercise.
 │           ├── gen/        # Kubb output (gitignored) + fetchClient.ts seam (checked in)
 │           └── store/      # Redux store: makeStore, api slice, Providers
 ├── configs/                # Shared TS bases + vitest config
-├── internals/utils/        # Internal, non-published helpers
 ├── packages/
 │   └── components/         # Shared UI components, built with tsdown
 ├── plans/starwars-team-builder/  # Spec, plan, slices, verification
