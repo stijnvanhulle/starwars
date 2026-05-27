@@ -14,16 +14,17 @@ const TEAM_CAP = 5
 
 function CharacterCrumb({ id }: { id: number }) {
   const { data } = useGetCharacterQuery(id)
+
   return <span>{data?.name ?? `#${id}`}</span>
 }
 
 function Breadcrumb() {
   const pathname = usePathname() ?? '/'
 
-  const crumbs = (() => {
+  const items = (() => {
     if (pathname === '/team') {
       return [
-        <Box key="t" component="span" sx={{ color: '#121A52' }}>
+        <Box key="t" component="span" sx={{ color: 'text.primary' }}>
           Team
         </Box>,
       ]
@@ -31,7 +32,7 @@ function Breadcrumb() {
 
     if (pathname.startsWith('/bookmarks')) {
       return [
-        <Box key="b" component="span" sx={{ color: '#121A52' }}>
+        <Box key="b" component="span" sx={{ color: 'text.primary' }}>
           Bookmarks
         </Box>,
       ]
@@ -40,7 +41,7 @@ function Breadcrumb() {
     if (pathname.startsWith('/characters/')) {
       const parsed = characterIdSchema.safeParse(pathname.split('/')[2])
       const charactersCrumb = (
-        <Box key="c" component={Link} href="/" sx={{ color: '#334155', textDecoration: 'none', '&:hover': { color: '#E61F75' } }}>
+        <Box key="c" component={Link} href="/" sx={{ color: 'text.secondary', textDecoration: 'none', '&:hover': { color: 'primary.dark' } }}>
           Characters
         </Box>
       )
@@ -48,22 +49,22 @@ function Breadcrumb() {
 
       return [
         charactersCrumb,
-        <Box key="n" component="span" sx={{ color: '#121A52' }}>
+        <Box key="n" component="span" sx={{ color: 'text.primary' }}>
           <CharacterCrumb id={parsed.data} />
         </Box>,
       ]
     }
 
     return [
-      <Box key="c" component="span" sx={{ color: '#121A52' }}>
+      <Box key="c" component="span" sx={{ color: 'text.primary' }}>
         Characters
       </Box>,
     ]
   })()
 
   return (
-    <Breadcrumbs aria-label="Breadcrumb" separator="/" sx={{ fontSize: 14, fontWeight: 700, color: '#334155' }}>
-      {crumbs}
+    <Breadcrumbs aria-label="Breadcrumb" separator="/" sx={{ fontSize: 14, fontWeight: 700, color: 'text.secondary' }}>
+      {items}
     </Breadcrumbs>
   )
 }
@@ -92,14 +93,15 @@ function TeamPill() {
         py: 2.5,
         height: 'auto',
         borderRadius: 9999,
-        bgcolor: onTeamPage ? '#FF348A' : '#FFFFFF',
-        border: '1.5px solid #FF348A',
-        color: onTeamPage ? '#FFFFFF' : '#E61F75',
+        bgcolor: onTeamPage ? 'primary.main' : 'common.white',
+        border: '1.5px solid',
+        borderColor: 'primary.main',
+        color: onTeamPage ? 'common.white' : 'primary.dark',
         fontSize: 14,
         fontWeight: 700,
         '&:hover': {
-          bgcolor: onTeamPage ? '#E61F75' : '#FFF0F6',
-          borderColor: onTeamPage ? '#E61F75' : '#FF348A',
+          bgcolor: onTeamPage ? 'primary.dark' : 'primary.light',
+          borderColor: onTeamPage ? 'primary.dark' : 'primary.main',
         },
       }}
     />

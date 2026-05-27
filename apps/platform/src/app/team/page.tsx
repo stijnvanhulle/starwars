@@ -5,30 +5,20 @@ import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { ProgressPill, StatePanel, TeamListSkeleton, TeamMemberRow } from '@whale/components'
+import { useTeamRows } from './useTeamRows'
 import { describeApiError } from '@/lib/apiError'
-import { useGetTeamQuery, useListCharactersQuery, useRemoveTeamMemberMutation } from '@/store/api'
+import { useRemoveTeamMemberMutation } from '@/store/api'
 
 const TEAM_CAP = 5
 
 export default function TeamPage() {
-  const team = useGetTeamQuery()
-  const list = useListCharactersQuery()
+  const { rows, isLoading, isError, error } = useTeamRows()
   const [removeMember, removeState] = useRemoveTeamMemberMutation()
 
-  if (team.isLoading) return <TeamListSkeleton />
-  if (team.isError) {
-    return <StatePanel variant="error" description={describeApiError(team.error) ?? undefined} />
+  if (isLoading) return <TeamListSkeleton />
+  if (isError) {
+    return <StatePanel variant="error" description={describeApiError(error) ?? undefined} />
   }
-
-  const rows = (team.data ?? []).map((member) => {
-    const character = list.data?.find((candidate) => candidate.id === member.characterId)
-    return {
-      key: member.id,
-      characterId: member.characterId,
-      name: character?.name ?? `Character ${member.characterId}`,
-      image: character?.image,
-    }
-  })
 
   return (
     <Box>
@@ -40,7 +30,7 @@ export default function TeamPage() {
             lineHeight: 1.1,
             fontWeight: 800,
             letterSpacing: '-0.02em',
-            color: '#121A52',
+            color: 'text.primary',
           }}
         >
           Your team

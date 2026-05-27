@@ -3,33 +3,24 @@
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { CharacterCard, CharacterListSkeleton, Pagination, StatePanel, pickChip } from '@whale/components'
+import { useCharacterListPagination } from './useCharacterListPagination'
 import { describeApiError } from '@/lib/apiError'
-import { CHARACTER_PAGE_SIZE, paginate } from '@/lib/pagination'
-import { pageNumberSchema } from '@/server/schemas'
-import { useGetTeamQuery, useListCharactersQuery } from '@/store/api'
 
 export default function HomePage() {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const { data, isLoading, isError, error } = useListCharactersQuery()
-  const team = useGetTeamQuery()
-  const teamIds = new Set((team.data ?? []).map((member) => member.characterId))
-
-  const totalCharacters = data?.length ?? 0
-  const totalPages = Math.max(1, Math.ceil(totalCharacters / CHARACTER_PAGE_SIZE))
-  const parsedPage = pageNumberSchema.safeParse(searchParams?.get('page'))
-  const page = parsedPage.success ? Math.min(parsedPage.data, totalPages) : 1
-  const pageItems = data ? paginate(data, page, CHARACTER_PAGE_SIZE) : []
+  const { page, totalPages, pageItems, teamIds, totalCharacters, isLoading, isError, error } = useCharacterListPagination()
 
   return (
     <Box>
       <Box sx={{ maxWidth: 720, mb: 8 }}>
-        <Typography component="h1" sx={{ fontSize: 40, lineHeight: 1.1, fontWeight: 800, letterSpacing: '-0.02em', color: '#121A52', mb: 2 }}>
+        <Typography component="h1" sx={{ fontSize: 40, lineHeight: 1.1, fontWeight: 800, letterSpacing: '-0.02em', color: 'text.primary', mb: 2 }}>
           Star Wars characters
         </Typography>
-        <Typography sx={{ fontSize: 16, lineHeight: 1.5, color: '#334155' }}>Pick five characters for your team. Evil characters can&apos;t join.</Typography>
+        <Typography sx={{ fontSize: 16, lineHeight: 1.5, color: 'text.secondary' }}>
+          Pick five characters for your team. Evil characters can&apos;t join.
+        </Typography>
       </Box>
 
       {isLoading && <CharacterListSkeleton />}

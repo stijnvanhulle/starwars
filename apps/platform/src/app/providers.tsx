@@ -7,7 +7,7 @@ import CssBaseline from '@mui/material/CssBaseline'
 import { AppShell, lightTheme } from '@whale/components'
 import { AppTopBar } from '@/app/_components/AppTopBar'
 import { SideNav } from '@/app/_components/SideNav'
-import { TeamSidebarContainer } from '@/app/_components/TeamSidebarContainer'
+import { TeamSidebarContainer } from '@/app/team/TeamSidebarContainer'
 import { Providers as StoreProviders } from '@/store/Providers'
 
 type ProvidersProps = {

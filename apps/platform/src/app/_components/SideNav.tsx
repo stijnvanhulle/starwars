@@ -56,7 +56,9 @@ export function SideNav() {
   useEffect(() => {
     setMounted(true)
   }, [])
+
   const bookmarkCount = mounted ? storedBookmarkCount : 0
+
   return (
     <Stack spacing={1} sx={{ alignItems: 'center', py: 4, position: 'sticky', top: 0, height: '100vh' }}>
       <Stack
@@ -69,7 +71,7 @@ export function SideNav() {
           borderRadius: 2,
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#FFFFFF',
+          color: 'common.white',
           textDecoration: 'none',
           mb: 4,
         }}
@@ -114,9 +116,9 @@ export function SideNav() {
                 flex: 'none',
                 borderRadius: 3,
                 justifyContent: 'center',
-                color: active ? '#FFFFFF' : 'rgba(255, 255, 255, 0.7)',
-                '&.Mui-selected, &.Mui-selected:hover': { bgcolor: '#1E2A8D', color: '#FFFFFF' },
-                '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.08)', color: '#FFFFFF' },
+                color: active ? 'common.white' : 'rgba(255, 255, 255, 0.7)',
+                '&.Mui-selected, &.Mui-selected:hover': { bgcolor: 'secondary.main', color: 'common.white' },
+                '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.08)', color: 'common.white' },
               }}
             >
               {iconContent}

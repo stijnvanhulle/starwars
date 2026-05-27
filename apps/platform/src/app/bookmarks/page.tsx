@@ -40,7 +40,7 @@ export default function BookmarksPage() {
   return (
     <Box>
       <Stack direction="row" spacing={6} sx={{ alignItems: 'center', justifyContent: 'space-between', mb: 6 }}>
-        <Typography component="h1" sx={{ fontSize: 40, lineHeight: 1.1, fontWeight: 800, letterSpacing: '-0.02em', color: '#121A52' }}>
+        <Typography component="h1" sx={{ fontSize: 40, lineHeight: 1.1, fontWeight: 800, letterSpacing: '-0.02em', color: 'text.primary' }}>
           Bookmarks
         </Typography>
         {items.length > 0 && (

@@ -4,9 +4,10 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useHotkey } from '@tanstack/react-hotkeys'
 import { CharacterDetail, CharacterDetailSkeleton, StatePanel } from '@whale/components'
+import { useCharacterNavigation } from './useCharacterNavigation'
+import { useCharacterTeamState } from './useCharacterTeamState'
 import { describeApiError } from '@/lib/apiError'
-import { isDarkSide } from '@/lib/darkSide'
-import { useAddTeamMemberMutation, useGetCharacterQuery, useGetTeamQuery, useListCharactersQuery, useRemoveTeamMemberMutation } from '@/store/api'
+import { useGetCharacterQuery } from '@/store/api'
 import { selectBookmarks, toggle as toggleBookmark } from '@/store/bookmarks'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 
@@ -15,33 +16,14 @@ type Props = { id: number }
 export function CharacterDetailContainer({ id }: Props) {
   const router = useRouter()
   const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
   const detail = useGetCharacterQuery(id)
-  const list = useListCharactersQuery()
-  const team = useGetTeamQuery()
-  const [addMember, addState] = useAddTeamMemberMutation()
-  const [removeMember, removeState] = useRemoveTeamMemberMutation()
+  const { prev, next, position } = useCharacterNavigation({ id })
+  const character = detail.data
+  const { onTeam, evil, canToggleTeam, mutating, toggleTeam, mutationError } = useCharacterTeamState({ character })
   const bookmarks = useAppSelector(selectBookmarks)
   const dispatch = useAppDispatch()
 
-  // Prev/next walks the full cached character list, never a paginated slice — keep this in sync
-  // with `app/page.tsx` whenever pagination changes.
-  const characters = list.data ?? []
-  const ids = characters.map((candidate) => candidate.id)
-  const index = ids.indexOf(id)
-  const prev = ids.length > 0 && index !== -1 ? characters[(index - 1 + ids.length) % ids.length] : undefined
-  const next = ids.length > 0 && index !== -1 ? characters[(index + 1) % ids.length] : undefined
-
-  const character = detail.data
-  const onTeam = character !== undefined && (team.data ?? []).some((member) => member.characterId === character.id)
-  const evil = character !== undefined && isDarkSide(character)
-  const mutating = addState.isLoading || removeState.isLoading
-  const canToggleTeam = character !== undefined && !mutating && !(evil && !onTeam)
-  const toggleTeam = () => {
-    if (character === undefined) return
-    if (onTeam) removeMember(character.id)
-    else addMember({ characterId: character.id })
-  }
+  useEffect(() => setMounted(true), [])
 
   useHotkey(
     'ArrowLeft',
@@ -70,7 +52,6 @@ export function CharacterDetailContainer({ id }: Props) {
   if (detail.isLoading || character === undefined) {
     return <CharacterDetailSkeleton />
   }
-  const mutationError = describeApiError(addState.error ?? removeState.error)
 
   return (
     <CharacterDetail
@@ -81,7 +62,7 @@ export function CharacterDetailContainer({ id }: Props) {
       errorMessage={mutationError ?? undefined}
       prevName={prev?.name}
       nextName={next?.name}
-      position={characters.length > 0 && index !== -1 ? { index: index + 1, total: characters.length } : undefined}
+      position={position}
       onAddOrRemove={toggleTeam}
       onPrev={prev === undefined ? undefined : () => router.push(`/characters/${prev.id}`)}
       onNext={next === undefined ? undefined : () => router.push(`/characters/${next.id}`)}
