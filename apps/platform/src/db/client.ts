@@ -21,5 +21,3 @@ export const db = globalForDb.db ?? createDb()
 if (process.env.NODE_ENV !== 'production') {
   globalForDb.db = db
 }
-
-export type Db = typeof db

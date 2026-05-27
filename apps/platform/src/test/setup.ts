@@ -2,8 +2,8 @@ import { fileURLToPath } from 'node:url'
 import { migrate } from 'drizzle-orm/pglite/migrator'
 import { afterAll, afterEach, beforeAll } from 'vitest'
 import { db } from '@/db/client'
-import { resetTeamMembers } from '@/db/testReset'
 import { server } from './msw'
+import {teamMembers} from "@/db/schema.ts";
 
 const migrationsFolder = fileURLToPath(new URL('../db/migrations', import.meta.url))
 
@@ -23,7 +23,7 @@ beforeAll(async () => {
 afterEach(async () => {
   server.resetHandlers()
 
-  await resetTeamMembers()
+  await db.delete(teamMembers)
 })
 
 afterAll(() => {

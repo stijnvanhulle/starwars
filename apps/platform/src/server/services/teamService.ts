@@ -36,6 +36,7 @@ export async function addTeamMember({ memberRepo, fetchCharacter, isDarkSide, te
   if (character === null) {
     throw createError({ ...errors.notFound, message: `Character ${characterId} does not exist.`, data: { characterId } })
   }
+
   if (isDarkSide(character)) {
     throw createError({
       ...errors.evilForbidden,
@@ -43,9 +44,7 @@ export async function addTeamMember({ memberRepo, fetchCharacter, isDarkSide, te
       data: { characterId },
     })
   }
-  // The repositories share the global db handle. The partial unique index on
-  // (team_id, character_id) WHERE deleted_at IS NULL catches the duplicate race;
-  // the cap race window is narrow and acceptable for the single-team scope.
+
   const existing = await memberRepo.findByTeamAndCharacterId({ teamId, characterId })
   if (existing !== undefined) {
     throw createError({
@@ -55,6 +54,7 @@ export async function addTeamMember({ memberRepo, fetchCharacter, isDarkSide, te
     })
   }
   const current = await memberRepo.countByTeam({ teamId })
+
   if (current >= TEAM_CAP) {
     throw createError({ ...errors.teamFull, message: `The team already has ${TEAM_CAP} members.`, data: { cap: TEAM_CAP } })
   }

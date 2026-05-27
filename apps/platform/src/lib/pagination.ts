@@ -10,5 +10,6 @@ export function paginate<T>(items: ReadonlyArray<T>, page: number, size: number)
   const totalPages = Math.max(1, Math.ceil(items.length / size))
   const clamped = Math.min(Math.max(1, Math.trunc(page)), totalPages)
   const start = (clamped - 1) * size
+
   return items.slice(start, start + size)
 }
