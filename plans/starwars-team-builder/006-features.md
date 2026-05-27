@@ -152,7 +152,7 @@ No new dependency lands in this slice beyond `@mui/icons-material` for the left-
 
 - [x] `src/lib/darkSide.ts` implements the three rules with the documented short-circuit and is pure + synchronous
 - [x] `toArray` defensively coerces bare-string `masters` / `affiliations` from upstream
-- [x] `TeamService.add()` calls the real `isDarkSide(character)` on the `starwars-api`-shaped payload returned by the request-scoped fetcher
+- [x] `addTeamMember()` calls the real `isDarkSide(character)` on the `starwars-api`-shaped payload returned by the request-scoped fetcher
 - [x] Request-scoped `createCharacterFetcher()` dedupes repeat fetches within one request
 - [x] `toCharacter()` ships array-shaped `affiliations` / `masters` to the browser regardless of what upstream returns
 - [x] `/` renders the character list with loading (skeleton) and error states
