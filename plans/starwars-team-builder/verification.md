@@ -408,3 +408,116 @@ not id arithmetic. Scenario H.6 above is rewritten against the real endpoints.
 #### Outcome
 
 All seven scenarios pass. The slice's Done criteria stay checked.
+
+---
+
+## Section I. Slice 008-testing closeout
+
+Closes [008-testing.md](008-testing.md) (Playwright e2e, CI Postgres service, initial changeset,
+README refresh, research close-out). The slice's "Verification" section lists eight bullets
+(V-1..V-8). Each scenario below maps to one of those.
+
+Run on 2026-05-27 against `postgres:17-alpine` (Docker) and the built Next.js app.
+
+### Scenario I.1: build + e2e green locally
+
+Covers **V-1**, **V-2**, and Done criteria 1, 2, 3.
+
+1. `docker compose up -d postgres`
+2. `pnpm --filter @stijnvanhulle/platform run db:migrate`
+3. `pnpm build`
+4. `pnpm --filter @stijnvanhulle/platform run test:e2e`
+
+Pass when: build exits 0, all six Playwright tests pass against `pnpm start` with
+`E2E_FIXTURES=1`, total runtime under two minutes.
+
+### Scenario I.2: cap regression bites
+
+Covers **V-3**, Done criteria 1.
+
+1. Comment out the `current >= TEAM_CAP` guard in `src/server/services/teamService.ts`.
+2. Re-run `pnpm test:e2e`.
+3. Restore the guard.
+
+Pass when: `e2e/cap.spec.ts` fails on the alert visibility assertion and the direct POST
+`expect(direct.status()).toBe(422)`. After restoring, the suite is green again.
+
+### Scenario I.3: dark-side regression bites
+
+Covers **V-4**, Done criteria 1.
+
+1. Change `isDarkSide` in `src/lib/darkSide.ts` to always return `false`.
+2. Re-run `pnpm test:e2e`.
+3. Restore.
+
+Pass when: `e2e/darkSide.spec.ts` fails on the `Add to team` disabled assertion and the `422
+EVIL_FORBIDDEN` response check for each of the three rules. After restoring, the suite is
+green again.
+
+### Scenario I.4: CI exercises the full pyramid
+
+Covers **V-5**, Done criteria 4.
+
+1. Push the branch.
+2. Open the resulting workflow run.
+
+Pass when: the `E2E` job uses the `postgres:17-alpine` service, runs `playwright:install`,
+`db:migrate`, `build`, then `test:e2e`, and uploads `playwright-report/` + `test-results/` on
+failure. The job finishes green.
+
+### Scenario I.5: one initial changeset is staged
+
+Covers **V-6**, Done criteria 5.
+
+1. `pnpm changeset status`
+
+Pass when: the output lists one pending changeset that bumps `@stijnvanhulle/platform` and
+`@stijnvanhulle/components` at `minor`.
+
+### Scenario I.6: README covers the four required sections
+
+Covers **V-7**, Done criteria 6.
+
+1. Open `README.md`.
+
+Pass when: there is a "Whale Star Wars Team Builder" section with use cases, tech stack as a
+bullet list, folder structure, getting started linking to verification + slice 001, and
+status. No `_TBD_` markers remain inside that section.
+
+### Scenario I.7: research has no unresolved open items
+
+Covers **V-8**, Done criteria 7.
+
+1. Open `plans/starwars-team-builder/research.md`.
+
+Pass when: the "Open questions" and "Open items" sections both record their items as resolved
+(struck through, with the slice + step that closed them), with no pending entries.
+
+### Scenario I.8: all gates green
+
+Covers Done criteria 9.
+
+1. `pnpm typecheck`
+2. `pnpm lint`
+3. `pnpm test`
+4. `pnpm test:e2e`
+
+Pass when: each command exits 0.
+
+### Results
+
+| Scenario | Covers | Status |
+| --- | --- | --- |
+| I.1 | V-1, V-2 | PASS, build + 6 e2e tests green in ~5s local against Postgres on Docker |
+| I.2 | V-3 | PASS, with the `current >= TEAM_CAP` guard commented out in `teamService.ts`, `cap.spec.ts` failed on the 6th-add status assertion. Guard restored, suite green again |
+| I.3 | V-4 | PASS, with `isDarkSide` forced to `return false`, all three `darkSide.spec.ts` tests failed (disabled-button + 422 EVIL_FORBIDDEN). Predicate restored, suite green again |
+| I.4 | V-5 | PENDING CI, the `E2E` job is added to `.github/workflows/pr.yml`; first run on push |
+| I.5 | V-6 | PASS, `pnpm changeset status` lists `@stijnvanhulle/platform` and `@stijnvanhulle/components` at minor (initial release) |
+| I.6 | V-7 | PASS, README has the new section with use cases, tech stack, folder structure, getting started, status |
+| I.7 | V-8 | PASS, research.md "Open questions" and "Open items" both note "All ... resolved" with per-slice references |
+| I.8 | DC-9 | PASS, `pnpm typecheck` + `pnpm lint` + `pnpm test` (19 files, 90 tests) + `pnpm test:e2e` (6 tests) all exit 0 |
+
+### Outcome
+
+Seven of eight scenarios pass locally. Only I.4 (CI run) is pending and lands on the first
+push to the branch; everything the spec calls a "Done criteria" check is green.

@@ -115,6 +115,65 @@ jobs:
           NODE_OPTIONS: '--max_old_space_size=4096'
         run: pnpm run lint
 
+  e2e:
+    name: E2E
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    if: github.actor != 'github-actions[bot]'
+    needs: build
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: platform
+          POSTGRES_PASSWORD: platform
+          POSTGRES_DB: platform
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U platform"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgres://platform:platform@localhost:5432/platform
+      CI: 'true'
+    steps:
+      - name: Check out code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Tools
+        uses: ./.github/setup
+        with:
+          node-version: '22'
+
+      - name: Install Playwright browsers
+        run: pnpm --filter @stijnvanhulle/platform run playwright:install
+
+      - name: Migrate database
+        run: pnpm --filter @stijnvanhulle/platform run db:migrate
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Run Playwright tests
+        run: pnpm --filter @stijnvanhulle/platform run test:e2e
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            apps/platform/playwright-report/
+            apps/platform/test-results/
+          retention-days: 7
+
   spellcheck:
     name: Spell Check
     timeout-minutes: 15

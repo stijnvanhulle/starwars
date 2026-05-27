@@ -21,15 +21,70 @@ A drop-in monorepo starter. Fork it, rename a few fields, and you have a
 production-ready repository with build, test, lint, format, release and CI
 already wired up.
 
+## Whale Star Wars Team Builder
+
+The `apps/platform` app is a small Star Wars team-builder. You browse a character roster, open a detail page, and pick up to five neutral characters into a shared team that lives in Postgres. Evil characters are blocked at the server with a tooltip on the disabled add button.
+
+### Use cases
+
+A visitor lands on `/` and sees the character grid, paginated 24 per page. They open a detail page, walk the list with prev and next, and add or remove characters from the team through the sidebar that appears on every page. The team caps at five active members and refuses a sixth with a clear inline error.
+
+### Tech stack
+
+- `TypeScript` on Node 22, ESM-only.
+- `Next.js` 16 App Router, `React` 19, `MUI` v9 for the UI.
+- `@reduxjs/toolkit` 2 with one RTK Query slice for fetching, plus a `bookmarks` slice persisted to `localStorage`.
+- `Kubb` for OpenAPI → types + client + Zod (two pipelines: `api` for the browser, `starwars` for the server).
+- `Postgres 17` via `drizzle-orm`, `pg` driver. `drizzle-kit` for schema and migrations.
+- `Vitest` for unit + integration (pglite, no Docker), `Playwright` for e2e against a built app plus a `postgres:17-alpine` service.
+- `pnpm` workspaces, `turbo` task runner, `oxlint` + `oxfmt`, `Changesets` for releases, GitHub Actions for CI.
+
+### Folder structure
+
+```text
+apps/platform/
+  src/
+    app/                          # App Router pages, App-Router-side
+    pages/api/                    # Pages-Router API handlers (.api.ts discriminator)
+    store/                        # Redux: api slice, bookmarks slice, hooks, Providers
+    server/
+      repositories/               # Drizzle reads + writes
+      services/                   # rules: cap of 5, evil guard
+      starwars-api.ts             # upstream fetcher + E2E_FIXTURES switch
+    db/                           # schema, client, migrations
+    gen/                          # Kubb output (gitignored, regenerate with `pnpm gen`)
+    lib/                          # darkSide, pagination, apiError
+  e2e/                            # Playwright specs + fixtures + setup helpers
+  kubb.config.ts
+  openapi/
+    api.yaml
+    starwars.yaml
+  drizzle.config.ts
+packages/components/               # Shared MUI components, tsdown-built
+plans/starwars-team-builder/       # spec, plan, research, slice files, verification
+```
+
+### Getting started
+
+1. `pnpm install`.
+2. `docker compose up -d postgres` and `pnpm --filter @stijnvanhulle/platform run db:migrate`.
+3. `pnpm dev` and open `http://localhost:3000`.
+
+For the full feature walk-through and acceptance scenarios see [plans/starwars-team-builder/verification.md](plans/starwars-team-builder/verification.md). The execution path starts at [plans/starwars-team-builder/001-setup.md](plans/starwars-team-builder/001-setup.md) and runs through slice 008.
+
+### Status
+
+All eight execution slices land. See [plans/starwars-team-builder/plan.md](plans/starwars-team-builder/plan.md) Progress Tracking for the per-slice state.
+
 ## Exercise log
 
-Time spent on the Whale Star Wars team-builder exercise, by phase.
+Time spent on the Whale Star Wars team-builder exercise.
 
-| Phase | Output | Time  |
-|---|---|-------|
-| Planning | `plans/starwars-team-builder/plan.md`, `plans/starwars-team-builder/spec.md`, `plans/starwars-team-builder/research.md`, `plans/starwars-team-builder/contracts/*.yaml`, six slice files | TBD   |
-| Implementation | Slices 001 to 005 (Next.js + MUI shell, Postgres + Drizzle, `/api/team`, Kubb-generated clients, features) | _TBD_ |
-| Testing | Slice 006 (Vitest unit + integration, Playwright e2e, CI Postgres service) | _TBD_ |
+| Phase                                     | Time |
+|-------------------------------------------|------|
+| Planning (through advanced planning mode) | 3h   |
+| Implementation (single agent)             | 3h   |
+| Testing (automated and manual)            | 1h   |
 
 ## What's inside
 

@@ -58,6 +58,10 @@ test.json
 # per-package changelogs (root CHANGELOG.md is the single source of truth)
 packages/*/CHANGELOG.md
 
+# Playwright outputs
+apps/platform/playwright-report/
+apps/platform/test-results/
+
 ## Nitro
 .output
 .nitro
