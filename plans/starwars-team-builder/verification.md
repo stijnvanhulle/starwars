@@ -294,3 +294,117 @@ Covers slice 002 verification §7. Verifies the dev/prod path still fails fast e
 2. `pnpm --filter @stijnvanhulle/platform run db:migrate`.
 
 Pass when: the script exits non-zero with a clear `ECONNREFUSED` error. (Tests on the same checkout still pass via pglite; only the migrate path is gated on the real container.)
+
+---
+
+## Section H. Slice 007-extras closeout
+
+Closes [007-extras.md](007-extras.md) (bookmarks + pagination). The slice has no `AC-N` of its
+own, so each scenario maps to one bullet under the slice's "Verification" section (V-1..V-7)
+and to its "Done criteria".
+
+Run on 2026-05-27 against the dev server on `http://localhost:3000`, driven through the
+Claude in Chrome extension.
+
+### Scenario H.1: bookmark toggle and badge
+
+Covers **V-1**, Done criteria 1, 3, 4, 5.
+
+1. Open `/characters/1` (Luke).
+2. Click the heart button next to "Add to team".
+3. Watch the side nav bookmark icon.
+
+Pass when: the heart flips to filled, the side nav bookmark glyph shows a `1` count badge, and
+`localStorage.getItem('whale.bookmarks.v1') === '[1]'`.
+
+### Scenario H.2: bookmarks survive a reload
+
+Covers **V-2**, Done criteria 2.
+
+1. With at least one character bookmarked from H.1, hard-refresh the browser.
+2. Open devtools, Application, Local Storage, `http://localhost:3000`.
+3. Inspect `whale.bookmarks.v1`.
+
+Pass when: the heart stays filled, the badge stays at the same count, and `whale.bookmarks.v1`
+holds a JSON array containing the bookmarked id.
+
+### Scenario H.3: bookmarks page and clear all
+
+Covers **V-3**, Done criteria 4, 5.
+
+1. Bookmark two characters.
+2. Navigate to `/bookmarks` via the side nav.
+3. Click "Clear all".
+
+Pass when: `/bookmarks` lists both cards, the badge reads `2`, "Clear all" empties the list
+(empty state "No bookmarks yet") and drops `localStorage.whale.bookmarks.v1` to `[]`.
+
+### Scenario H.4: paginated home grid
+
+Covers **V-4**, Done criteria 6.
+
+1. Open `/`.
+2. Count the cards on the first page.
+3. Click page `2` in the pager.
+
+Pass when: page 1 shows exactly 24 cards, the pager shows pages 1..4 (`Math.ceil(87 / 24) = 4`),
+clicking page 2 changes the URL to `/?page=2`, the grid renders the next 24 ids (starting at
+"Lobot"), and the viewport scrolls to the top.
+
+### Scenario H.5: URL clamping
+
+Covers **V-5**, Done criteria 6.
+
+1. Visit `/?page=99`.
+2. Visit `/?page=foo`.
+
+Pass when: `?page=99` renders the last valid page (15 cards) and `?page=foo` falls back to
+page 1 (24 cards) without an error.
+
+### Scenario H.6: detail prev/next wraps the full list
+
+Covers **V-6**, Done criteria 7.
+
+Note: ids are not contiguous 1..87. `GET /api/characters` returns 87 items, the first is id 1
+(Luke) and the last is id 88 (Captain Phasma). The wrap is on list order, not id arithmetic.
+
+1. Visit `/characters/88` (Captain Phasma) and click `Next`.
+2. Visit `/characters/1` (Luke) and click `Prev`.
+
+Pass when: `Next` on id 88 lands on id 1 and `Prev` on id 1 lands on id 88, regardless of the
+home page last viewed.
+
+### Scenario H.7: typecheck, lint, test all green
+
+Covers **V-7**, Done criteria 8, 9.
+
+1. `pnpm typecheck`
+2. `pnpm lint`
+3. `pnpm test`
+
+Pass when: every command exits 0. Vitest covers the bookmark reducer cases (empty, add, remove,
+toggle, clear), the `paginate` window cases (empty, first, middle, overshoot), and the bookmark
+store-integration test (`preloadedState` plus dispatch).
+
+### Results
+
+| Scenario | Covers | Status |
+| --- | --- | --- |
+| H.1 | V-1 | PASS, click on Luke's heart flipped the icon to filled, side nav badge went 0 → 1, `localStorage.whale.bookmarks.v1 === "[1]"` |
+| H.2 | V-2 | PASS, after `location.reload()` the heart stayed filled, the badge stayed at `1`, and `localStorage.whale.bookmarks.v1 === "[1]"` |
+| H.3 | V-3 | PASS, bookmarked Luke + R2-D2, `/bookmarks` listed both cards, badge `2`, "Clear all" emptied the page and dropped `localStorage` to `[]` |
+| H.4 | V-4 | PASS, `/` rendered 24 cards, pager showed pages 1..4, clicking page 2 changed URL to `/?page=2`, grid rendered the next 24 starting at "Lobot", `window.scrollY === 0` |
+| H.5 | V-5 | PASS, `/?page=99` rendered 15 cards (last page) and `/?page=foo` rendered 24 cards (page 1 fallback), no error |
+| H.6 | V-6 | PASS, `/characters/88` Next went to `/characters/1`, `/characters/1` Prev went to `/characters/88` |
+| H.7 | V-7 | PASS, `pnpm typecheck` + `pnpm lint` + `pnpm test` (19 files, 90 tests) all exit 0 |
+
+#### Discovery, ids are not contiguous
+
+`GET /api/characters` returns 87 items but ids run 1..88 with one gap. The slice's V-6
+originally said "Next on id 87 wraps to id 1", which is wrong: id 87 is BB8 (index 86) and the
+actual last item is Captain Phasma (id 88). The wrap behaviour is correct, it walks list order
+not id arithmetic. Scenario H.6 above is rewritten against the real endpoints.
+
+#### Outcome
+
+All seven scenarios pass. The slice's Done criteria stay checked.
