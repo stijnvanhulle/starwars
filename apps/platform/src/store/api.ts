@@ -43,8 +43,11 @@ export const api = createApi({
       queryFn: (body) => wrap(() => addTeamMember(body)),
       invalidatesTags: ['team'],
     }),
-    removeTeamMember: build.mutation<void, RemoveTeamMemberPathCharacterId>({
-      queryFn: (characterId) => wrap(() => removeTeamMember(characterId)),
+    removeTeamMember: build.mutation<null, RemoveTeamMemberPathCharacterId>({
+      queryFn: async (characterId) => {
+        const result = await wrap(() => removeTeamMember(characterId))
+        return 'error' in result ? result : { data: null }
+      },
       invalidatesTags: ['team'],
     }),
   }),

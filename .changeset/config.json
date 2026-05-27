@@ -3,7 +3,7 @@
   "changelog": [
     "@changesets/changelog-github",
     {
-      "repo": "stijnvanhulle/template"
+      "repo": "stijnvanhulle/starwars"
     }
   ],
   "commit": false,
