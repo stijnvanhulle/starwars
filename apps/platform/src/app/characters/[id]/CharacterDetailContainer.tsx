@@ -24,13 +24,13 @@ export function CharacterDetailContainer({ id }: Props) {
   }
 
   const character = detail.data
-  const onTeam = (team.data ?? []).some((m) => m.characterId === character.id)
+  const onTeam = (team.data ?? []).some((member) => member.characterId === character.id)
   const evil = isDarkSide(character)
   const mutating = addState.isLoading || removeState.isLoading
   const mutationError = describeApiError(addState.error ?? removeState.error)
 
   const characters = list.data ?? []
-  const ids = characters.map((c) => c.id)
+  const ids = characters.map((candidate) => candidate.id)
   const index = ids.indexOf(character.id)
   const prev = ids.length > 0 ? characters[(index - 1 + ids.length) % ids.length] : undefined
   const next = ids.length > 0 ? characters[(index + 1) % ids.length] : undefined

@@ -88,7 +88,7 @@ describe('teamMemberRepository', () => {
     await teamMemberRepository.deleteByTeamAndCharacterId({ teamId, characterId: 2 })
 
     const rows = await teamMemberRepository.findAllByTeam({ teamId })
-    expect(rows.map((r) => r.characterId)).toMatchInlineSnapshot(`
+    expect(rows.map((row) => row.characterId)).toMatchInlineSnapshot(`
       [
         1,
         3,

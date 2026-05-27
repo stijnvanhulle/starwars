@@ -29,8 +29,14 @@ export function CharacterList({ state, characters, errorMessage, onSelect }: Cha
         gap: 6,
       }}
     >
-      {characters.map((c) => (
-        <CharacterCard key={c.id} name={c.name} image={c.image} chip={c.chip} onClick={onSelect ? () => onSelect(c.id) : undefined} />
+      {characters.map((character) => (
+        <CharacterCard
+          key={character.id}
+          name={character.name}
+          image={character.image}
+          chip={character.chip}
+          onClick={onSelect ? () => onSelect(character.id) : undefined}
+        />
       ))}
     </Box>
   )

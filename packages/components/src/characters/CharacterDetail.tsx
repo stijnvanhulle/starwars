@@ -135,9 +135,9 @@ export function CharacterDetail({
                 Affiliations
               </Typography>
               <Stack direction="row" spacing={1.5} sx={{ flexWrap: 'wrap', rowGap: 1.5 }}>
-                {character.affiliations.map((a) => {
-                  const dark = DARTH_OR_SITH.test(a)
-                  return <Chip key={a} label={a} size="small" color={dark ? 'error' : 'default'} variant={dark ? 'filled' : 'outlined'} />
+                {character.affiliations.map((affiliation) => {
+                  const dark = DARTH_OR_SITH.test(affiliation)
+                  return <Chip key={affiliation} label={affiliation} size="small" color={dark ? 'error' : 'default'} variant={dark ? 'filled' : 'outlined'} />
                 })}
               </Stack>
             </Box>

@@ -11,7 +11,7 @@ const DARTH_OR_SITH = /darth|sith/i
 export function pickChip(character: { name: string; affiliations?: ReadonlyArray<string> }, onTeam: boolean): CharacterCardChip | undefined {
   if (onTeam) return 'on-team'
   if (DARTH_OR_SITH.test(character.name)) return 'dark-side'
-  if ((character.affiliations ?? []).some((a) => DARTH_OR_SITH.test(a))) return 'dark-side'
+  if ((character.affiliations ?? []).some((affiliation) => DARTH_OR_SITH.test(affiliation))) return 'dark-side'
 
   return undefined
 }

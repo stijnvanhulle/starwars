@@ -21,7 +21,7 @@ export default function TeamPage() {
   }
 
   const rows = (team.data ?? []).map((member) => {
-    const character = list.data?.find((c) => c.id === member.characterId)
+    const character = list.data?.find((candidate) => candidate.id === member.characterId)
     return {
       key: member.id,
       characterId: member.characterId,

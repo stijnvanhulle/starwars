@@ -19,7 +19,7 @@ export function CharacterListSkeleton({ count = 8 }: CharacterListSkeletonProps)
       }}
     >
       {Array.from({ length: count }, (_, i) => (
-        <Card key={i} variant="outlined" sx={{ borderRadius: 4, overflow: 'hidden' }}>
+        <Card key={`character-skeleton-${i}`} variant="outlined" sx={{ borderRadius: 4, overflow: 'hidden' }}>
           <Box sx={{ aspectRatio: '1 / 1', width: '100%' }}>
             <Skeleton variant="rectangular" animation="wave" width="100%" height="100%" sx={{ transform: 'none' }} />
           </Box>

@@ -15,7 +15,7 @@ export function ProgressPill({ current, total }: ProgressPillProps) {
           {current} / {total}
         </Box>
         {Array.from({ length: total }, (_, i) => (
-          <Box key={i} aria-hidden sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: i < current ? 'primary.main' : 'divider' }} />
+          <Box key={`slot-${i + 1}`} aria-hidden sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: i < current ? 'primary.main' : 'divider' }} />
         ))}
       </Stack>
     </Paper>

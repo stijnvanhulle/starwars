@@ -11,7 +11,7 @@ export default function HomePage() {
   const router = useRouter()
   const { data, isLoading, isError, error } = useListCharactersQuery()
   const team = useGetTeamQuery()
-  const teamIds = new Set((team.data ?? []).map((m) => m.characterId))
+  const teamIds = new Set((team.data ?? []).map((member) => member.characterId))
 
   return (
     <Box>
@@ -46,8 +46,14 @@ export default function HomePage() {
             gap: 6,
           }}
         >
-          {data.map((c) => (
-            <CharacterCard key={c.id} name={c.name} image={c.image} chip={pickChip(c, teamIds.has(c.id))} onClick={() => router.push(`/characters/${c.id}`)} />
+          {data.map((character) => (
+            <CharacterCard
+              key={character.id}
+              name={character.name}
+              image={character.image}
+              chip={pickChip(character, teamIds.has(character.id))}
+              onClick={() => router.push(`/characters/${character.id}`)}
+            />
           ))}
         </Box>
       )}

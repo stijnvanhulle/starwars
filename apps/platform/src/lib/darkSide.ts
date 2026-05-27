@@ -9,7 +9,7 @@ const DARTH = /darth/i
  */
 function toArray(value: unknown): ReadonlyArray<string> {
   if (typeof value === 'string') return [value]
-  if (Array.isArray(value)) return value.filter((v): v is string => typeof v === 'string')
+  if (Array.isArray(value)) return value.filter((entry): entry is string => typeof entry === 'string')
   return []
 }
 
@@ -28,7 +28,7 @@ export type DarkSideCandidate = {
  */
 export function isDarkSide(character: DarkSideCandidate): boolean {
   if (DARTH_OR_SITH.test(character.name)) return true
-  if (toArray(character.affiliations).some((a) => DARTH_OR_SITH.test(a))) return true
-  if (toArray(character.masters).some((m) => DARTH.test(m))) return true
+  if (toArray(character.affiliations).some((affiliation) => DARTH_OR_SITH.test(affiliation))) return true
+  if (toArray(character.masters).some((master) => DARTH.test(master))) return true
   return false
 }
