@@ -8,7 +8,7 @@ export type TeamListSkeletonProps = {
 
 export function TeamListSkeleton({ count = 3 }: TeamListSkeletonProps) {
   return (
-    <Stack spacing={3} aria-busy aria-live="polite">
+    <Stack spacing={3}>
       {Array.from({ length: count }, (_, i) => (
         <Card key={`team-skeleton-${i}`} variant="outlined" sx={{ p: 4, borderRadius: 4 }}>
           <Stack direction="row" spacing={5} sx={{ alignItems: 'center' }}>

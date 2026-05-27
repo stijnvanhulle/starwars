@@ -9,14 +9,11 @@ const baseCharacter = {
 }
 
 describe('CharacterDetail', () => {
-  it('disables Add for an evil character and exposes the tooltip text', () => {
+  it('hides Add for an evil character and shows the dark side banner', () => {
     render(<CharacterDetail character={baseCharacter} onTeam={false} evil />)
 
-    const button = screen.getByRole('button', { name: /add to team/i })
-    expect(button).toBeDisabled()
-
-    const wrapper = button.parentElement as HTMLElement
-    expect(wrapper.getAttribute('aria-label') ?? wrapper.getAttribute('title') ?? '').toMatch(/evil/i)
+    expect(screen.queryByRole('button', { name: /add to team/i })).toBeNull()
+    expect(screen.getByText(/on the dark side/i)).toBeInTheDocument()
   })
 
   it('enables Add for a neutral character', () => {

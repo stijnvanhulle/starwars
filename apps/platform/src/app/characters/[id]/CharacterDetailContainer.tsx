@@ -47,10 +47,10 @@ export function CharacterDetailContainer({ id }: Props) {
   if (!Number.isFinite(id) || detail.isError) {
     return <StatePanel variant="error" description={describeApiError(detail.error) ?? undefined} />
   }
+
   if (detail.isLoading || detail.data === undefined) {
     return <CharacterDetailSkeleton />
   }
-
   const character = detail.data
   const onTeam = (team.data ?? []).some((member) => member.characterId === character.id)
   const evil = isDarkSide(character)

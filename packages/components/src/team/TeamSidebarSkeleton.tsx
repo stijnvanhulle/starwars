@@ -7,7 +7,7 @@ export type TeamSidebarSkeletonProps = {
 
 export function TeamSidebarSkeleton({ count = 2 }: TeamSidebarSkeletonProps) {
   return (
-    <Stack spacing={1.5} aria-busy aria-live="polite">
+    <Stack spacing={1.5}>
       {Array.from({ length: count }, (_, i) => (
         <Stack key={`roster-skeleton-${i}`} direction="row" spacing={2.5} sx={{ alignItems: 'center', px: 2, py: 1.5 }}>
           <Skeleton variant="circular" width={36} height={36} />
