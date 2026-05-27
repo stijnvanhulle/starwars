@@ -8,9 +8,7 @@ type ByTeamAndCharacterId = { teamId: string; characterId: number }
 const activeFilter = ({ teamId }: ByTeam) => and(eq(teamMembers.teamId, teamId), isNull(teamMembers.deletedAt))
 
 /**
- * Data-access methods for the `team_members` table. All read queries filter out
- * soft-deleted rows (`deletedAt IS NULL`). Deletes are soft: they stamp `deletedAt`
- * rather than removing the row, preserving audit history.
+ * Data access for `team_members`. Reads filter `deletedAt IS NULL`; deletes stamp `deletedAt`.
  */
 export const teamMemberRepository = {
   async insert({ teamId, characterId }: ByTeamAndCharacterId): Promise<TeamMember> {

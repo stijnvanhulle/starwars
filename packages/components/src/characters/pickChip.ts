@@ -3,10 +3,7 @@ import type { CharacterCardChip } from './CharacterCard'
 const DARTH_OR_SITH = /darth|sith/i
 
 /**
- * Choose the corner chip for a `CharacterCard` from the character's name and
- * affiliations plus whether they are already on the team. Mirrors the
- * server-side `isDarkSide` rules without the `masters` check (the proxy strips
- * that field from the frontend `Character`).
+ * Picks the corner chip for a `CharacterCard` from team membership and dark-side flags.
  */
 export function pickChip(character: { name: string; affiliations?: ReadonlyArray<string> }, onTeam: boolean): CharacterCardChip | undefined {
   if (onTeam) return 'on-team'

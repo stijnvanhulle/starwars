@@ -44,8 +44,7 @@ A visitor lands on `/` and sees the character grid, paginated 24 per page. They 
 ```text
 apps/platform/
   src/
-    app/                          # App Router pages, App-Router-side
-    pages/api/                    # Pages-Router API handlers (.api.ts discriminator)
+    app/                          # App Router UI pages and api/**/route.ts handlers
     store/                        # Redux: api slice, bookmarks slice, hooks, Providers
     server/
       repositories/               # Drizzle reads + writes

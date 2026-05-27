@@ -50,7 +50,7 @@ export default defineConfig({
       files: [
         '**/src/server/**',
         '**/src/lib/**',
-        '**/src/pages/api/**',
+        '**/src/app/api/**',
       ],
       rules: {
         'no-restricted-imports': 'off',

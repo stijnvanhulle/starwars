@@ -37,13 +37,7 @@ const fontBody = 'var(--font-nunito), "Nunito Sans", system-ui, sans-serif'
 const fontHead = 'var(--font-nunito), "Sofia Pro Soft", "Nunito Sans", system-ui, sans-serif'
 
 /**
- * Whale theme. `cssVariables: { cssVarPrefix: 'whale' }` emits MUI palette
- * variables under the `--whale-*` namespace so they sit alongside the
- * `--whale-*` tokens shipped in `tokens.css`. Components in this library
- * read both from their colocated CSS modules.
- *
- * The `--font-nunito` reference is supplied by the consuming app via
- * `next/font/google` (see the platform's `layout.tsx`).
+ * Whale MUI theme, emitting CSS variables under the `--whale-*` prefix.
  */
 export const lightTheme = createTheme({
   cssVariables: { cssVarPrefix: 'whale' },

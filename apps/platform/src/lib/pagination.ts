@@ -1,9 +1,7 @@
 export { CHARACTER_PAGE_SIZE } from '@/constants'
 
 /**
- * Return the slice of `items` that belongs on a given 1-based page. Empty
- * arrays return an empty window; out-of-range page numbers clamp to the last
- * valid page so a bad URL never renders an empty grid.
+ * Returns the slice of `items` for the given 1-based page, clamping out-of-range pages.
  */
 export function paginate<T>(items: ReadonlyArray<T>, page: number, size: number): Array<T> {
   if (items.length === 0 || size <= 0) return []

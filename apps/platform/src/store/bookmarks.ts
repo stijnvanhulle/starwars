@@ -2,8 +2,7 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from './store'
 
 /**
- * Client-only Redux slice tracking which character ids the user has saved.
- * Persisted to `localStorage` by the middleware in `persistBookmarks.ts`
+ * Bookmarked character ids, persisted to `localStorage` by `persistBookmarks.ts`.
  */
 export const bookmarksSlice = createSlice({
   name: 'bookmarks',

@@ -8,9 +8,7 @@ export type PaginationProps = {
 }
 
 /**
- * Whale-styled wrapper over MUI `Pagination`. The pink active page button and
- * the pill borders come from the theme so callers only pass `page`, `count`,
- * and `onChange`.
+ * Whale-styled wrapper over MUI `Pagination`. Renders nothing when `count <= 1`.
  */
 export function Pagination({ page, count, onChange }: PaginationProps) {
   if (count <= 1) return null

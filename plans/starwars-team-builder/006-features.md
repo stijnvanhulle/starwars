@@ -30,7 +30,7 @@ No new dependency lands in this slice beyond `@mui/icons-material` for the left-
 
 - Slice 005 is done. The single `api` RTK Query slice exists. Generated types and Zod are present under `src/gen/api/` (frontend) and `src/gen/starwars/` (server-only). `<Providers />` wraps the app in `layout.tsx`.
 - The smoke `useListCharactersQuery()` consumer from Slice 005's `page.tsx` exists and is about to be replaced.
-- Pages-Router API routes from Slice 004 live under `src/pages/api/**` (per the `App Router for UI, Pages Router for API` rule). The slice text below uses those paths.
+- API Route Handlers from Slice 004 live under `src/app/api/**/route.ts`. The slice text below uses those paths.
 
 ## Steps
 
@@ -41,7 +41,7 @@ No new dependency lands in this slice beyond `@mui/icons-material` for the left-
    2. `character.affiliations` contains a string matching `/darth|sith/i`.
    3. `character.masters` contains a string matching `/darth/i`.
    A small `toArray(value: unknown)` helper coerces strings to single-element arrays before `.some(...)`, because upstream `starwars-api` returns `masters` as a bare string for 8 of 87 records (Leia, Palpatine, Qui-Gon Jinn, Darth Maul, Mace Windu, Barriss Offee, Grievous, Rey). Each rule short-circuits to `false` when its source is empty so a partial upstream payload never flips a character to evil. Pure, synchronous.
-2. **Request-scoped character fetcher** at `apps/platform/src/server/starwars-api.ts`. Replace the named `fetchCharacter` / `fetchAllCharacters` exports with `createCharacterFetcher()` that returns `{ all, byId }` backed by an internal `Map<number, Promise<StarwarsApiCharacter | null>>` so one request never fetches the same id twice. Update call sites: `src/pages/api/characters/index.api.ts` (`all()`), `src/pages/api/characters/[id].api.ts` (`byId(id)`), and `src/pages/api/team/index.api.ts` (passes `fetcher.byId` to `addTeamMember`).
+2. **Request-scoped character fetcher** at `apps/platform/src/server/starwars-api.ts`. Replace the named `fetchCharacter` / `fetchAllCharacters` exports with `createCharacterFetcher()` that returns `{ all, byId }` backed by an internal `Map<number, Promise<StarwarsApiCharacter | null>>` so one request never fetches the same id twice. Update call sites: `src/app/api/characters/route.ts` (`all()`), `src/app/api/characters/[id]/route.ts` (`byId(id)`), and `src/app/api/team/route.ts` (passes `fetcher.byId` to `addTeamMember`).
 3. **Normalize the frontend `Character` shape** in `apps/platform/src/server/utils.ts`. `toCharacter()` coerces stringy `affiliations` / `masters` to arrays before shipping to the browser, so the contract type `Character.masters: string[]` is honored even when upstream lies.
 4. **Preserve `{ code, message }` through the fetch seam.** Extend `apps/platform/src/gen/fetchClient.ts` with a tagged `ApiRequestError` (factory + `isApiRequestError` predicate, no ES class) that carries `status`, `statusText`, and the parsed JSON body. The kubb generated clients throw it on any non-2xx response. `wrap` in `src/store/api.ts` reads `error.body` so `error.code` / `error.message` reach the UI.
 
@@ -80,14 +80,14 @@ No new dependency lands in this slice beyond `@mui/icons-material` for the left-
 16. **Team** at `apps/platform/src/app/team/page.tsx` (`'use client'`). Header row is the h1 left + `<ProgressPill current={count} total={5} />` right. Rows are `<TeamMemberRow variant="full">`. Loading → `<TeamListSkeleton>`, empty → `<StatePanel variant="empty">`, errors → `describeApiError`.
 17. **Nunito Sans via `next/font`** in `apps/platform/src/app/layout.tsx` (`Nunito_Sans` weights `400/600/700/800`, exposed as `--font-nunito`). The MUI theme reads `var(--font-nunito)`. The layout also side-effect imports `@whale/components/style.css`, so the lib's bundled stylesheet ships with the page.
 18. **`describeApiError`** at `apps/platform/src/lib/apiError.ts`. Accepts our tagged `ClientError` (`{ status, code, message }`) or RTK Query's `SerializedError`. Picks a user-facing message with a code-aware fallback for `TEAM_FULL`, `EVIL_FORBIDDEN`, `ALREADY_MEMBER`, `NOT_FOUND`.
-19. **oxlint restriction** on `@/gen/starwars` imports: only `**/src/server/**`, `**/src/lib/**`, `**/src/pages/api/**` may import the server-only generated bundle.
+19. **oxlint restriction** on `@/gen/starwars` imports: only `**/src/server/**`, `**/src/lib/**`, and `**/src/app/api/**` may import the server-only generated bundle.
 
 ### Tests
 
 20. **`isDarkSide`** at `apps/platform/src/lib/darkSide.test.ts`. Cases: empty, name match (Darth/sith case-insensitive), affiliations match, empty affiliations short-circuit, masters substring match (tolerates parenthetical role suffix), benign masters, empty masters, **bare-string masters** (covers the upstream-lies case for Leia/Palpatine/Maul).
 21. **`<CharacterDetail>` evil-disabled** at `packages/components/src/characters/CharacterDetail.test.tsx`. Vader-shaped character → Add disabled, tooltip mentions "evil". Neutral character → Add enabled.
 22. **`<ActionButton>`** at `packages/components/src/common/ActionButton.test.tsx`. Three cases: default-enabled, `disabledReason` shows the MUI Tooltip on hover, `loading` disables.
-23. **Team route `EVIL_FORBIDDEN`** at `apps/platform/src/pages/api/team/index.test.ts`. MSW feeds a Vader-shaped upstream payload (name + Sith master). Assert `422` + `{ code: 'EVIL_FORBIDDEN' }`. Drove by the real `isDarkSide`, no `vi.spyOn` stub.
+23. **Team route `EVIL_FORBIDDEN`** at `apps/platform/src/app/api/team/route.test.ts`. MSW feeds a Vader-shaped upstream payload (name + Sith master). Assert `422` + `{ code: 'EVIL_FORBIDDEN' }`. Drove by the real `isDarkSide`, no `vi.spyOn` stub.
 
 ## Files touched
 
@@ -97,8 +97,8 @@ No new dependency lands in this slice beyond `@mui/icons-material` for the left-
 - `apps/platform/src/lib/apiError.ts`: created
 - `apps/platform/src/server/starwars-api.ts`: `createCharacterFetcher()` factory + per-request id cache
 - `apps/platform/src/server/utils.ts`: `toCharacter()` coerces stringy `affiliations` / `masters`
-- `apps/platform/src/pages/api/characters/index.api.ts`, `[id].api.ts`, `team/index.api.ts`: use the fetcher
-- `apps/platform/src/pages/api/team/index.test.ts`: `EVIL_FORBIDDEN` branch driven by the real `isDarkSide`
+- `apps/platform/src/app/api/characters/route.ts`, `characters/[id]/route.ts`, `team/route.ts`: use the fetcher
+- `apps/platform/src/app/api/team/route.test.ts`: `EVIL_FORBIDDEN` branch driven by the real `isDarkSide`
 - `apps/platform/src/gen/fetchClient.ts`: tagged `ApiRequestError`; non-2xx preserves the parsed body
 - `apps/platform/src/store/api.ts`: `wrap` reads `ApiRequestError.body`
 
@@ -130,7 +130,7 @@ No new dependency lands in this slice beyond `@mui/icons-material` for the left-
 - `apps/platform/src/app/_components/SideNav.tsx`: Whale glyph + characters + team SVG icons
 - `apps/platform/src/app/_components/TeamSidebarContainer.tsx`: RTK-bound wrapper
 - `apps/platform/next.config.ts`: no `transpilePackages` (the lib ships built dist)
-- `oxlint.config.ts`: `@/gen/starwars` import override (`**/src/server/**`, `**/src/lib/**`, `**/src/pages/api/**`)
+- `oxlint.config.ts`: `@/gen/starwars` import override (`**/src/server/**`, `**/src/lib/**`, `**/src/app/api/**`)
 - `apps/platform/package.json`: adds `@mui/icons-material`
 
 ## Verification

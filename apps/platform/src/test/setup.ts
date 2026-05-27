@@ -3,7 +3,7 @@ import { migrate } from 'drizzle-orm/pglite/migrator'
 import { afterAll, afterEach, beforeAll } from 'vitest'
 import { db } from '@/db/client'
 import { server } from './msw'
-import {teamMembers} from "@/db/schema.ts";
+import { teamMembers } from '@/db/schema.ts'
 
 const migrationsFolder = fileURLToPath(new URL('../db/migrations', import.meta.url))
 

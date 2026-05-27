@@ -38,11 +38,7 @@ function createFixtureFetcher(): CharacterFetcher {
 }
 
 /**
- * Per-request fetcher with an internal id cache. A single request that touches
- * the same character twice (list + detail; service then route handler) only
- * issues one network call. When `E2E_FIXTURES=1` is set, the upstream fetch is
- * replaced with a disk read of `e2e/fixtures/characters.json` so Playwright
- * specs never reach the real network.
+ * Per-request fetcher with id-level caching, or a disk fixture fetcher when `E2E_FIXTURES=1`.
  */
 export function createCharacterFetcher(): CharacterFetcher {
   if (process.env[starwarsApi.fixtureFlag] === '1') return createFixtureFetcher()

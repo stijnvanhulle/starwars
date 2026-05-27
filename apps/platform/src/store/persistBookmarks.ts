@@ -11,9 +11,7 @@ const BOOKMARK_ACTION_TYPES: Set<string> = new Set(
 )
 
 /**
- * Read the persisted bookmark ids from `localStorage`. Returns an empty array
- * during server-side rendering, when the key is missing, or when the payload
- * fails the array-of-numbers shape check.
+ * Reads persisted bookmark ids from `localStorage`, returning `[]` on miss or invalid shape.
  */
 export function loadBookmarks(): Array<number> {
   if (typeof window === 'undefined') return []
@@ -28,10 +26,7 @@ export function loadBookmarks(): Array<number> {
 }
 
 /**
- * Persist bookmark changes to `localStorage` after every bookmark action. The
- * middleware is a no-op during server-side rendering. The state-slice generic
- * is kept local (`{ bookmarks: Array<number> }`) so this file never imports
- * `RootState` and closes a circular type loop with `store.ts`.
+ * Redux middleware that writes the bookmarks slice to `localStorage` after each bookmark action.
  */
 export const persistBookmarks: Middleware<Record<string, never>, { bookmarks: Array<number> }> = (storeApi) => (next) => (action) => {
   const result = next(action)

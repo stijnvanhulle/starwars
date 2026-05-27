@@ -8,10 +8,7 @@ const CODE_COPY = {
 } as const satisfies Record<ErrorCodeEnumKey, string>
 
 /**
- * Pick a user-facing message for any RTK Query error shape (our tagged
- * `ClientError` or the built-in `SerializedError`). Prefers the server's
- * `message`, falls back to a code-specific copy line, then to the generic
- * fallback. Returns null when there is no error to show.
+ * Picks a user-facing message from an RTK Query error, or null when none is set.
  */
 export function describeApiError(error: { message?: string; code?: string } | undefined | null, fallback = 'Something went wrong.'): string | null {
   if (error === undefined || error === null) return null
