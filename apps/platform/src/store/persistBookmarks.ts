@@ -1,5 +1,6 @@
 import { isAction, type Middleware } from '@reduxjs/toolkit'
 import { BOOKMARK_STORAGE_KEY } from '@/constants'
+import { bookmarkIdsSchema } from '@/server/schemas'
 import { bookmarksSlice, hydrate } from './bookmarks'
 
 // `hydrate` is excluded so the mount-time rehydrate never re-writes the same JSON back to localStorage.
@@ -19,9 +20,8 @@ export function loadBookmarks(): Array<number> {
   try {
     const raw = window.localStorage.getItem(BOOKMARK_STORAGE_KEY)
     if (raw === null) return []
-    const parsed = JSON.parse(raw)
-    if (!Array.isArray(parsed)) return []
-    return parsed.filter((entry): entry is number => typeof entry === 'number' && Number.isFinite(entry))
+    const parsed = bookmarkIdsSchema.safeParse(JSON.parse(raw))
+    return parsed.success ? parsed.data : []
   } catch {
     return []
   }

@@ -7,12 +7,13 @@ import Stack from '@mui/material/Stack'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { TopBar } from '@stijnvanhulle/components'
+import { characterIdSchema } from '@/server/schemas'
 import { useGetCharacterQuery, useGetTeamQuery } from '@/store/api'
 
 const TEAM_CAP = 5
 
 function CharacterCrumb({ id }: { id: number }) {
-  const { data } = useGetCharacterQuery(id, { skip: !Number.isFinite(id) })
+  const { data } = useGetCharacterQuery(id)
   return <span>{data?.name ?? `#${id}`}</span>
 }
 
@@ -37,18 +38,18 @@ function Breadcrumb() {
     }
 
     if (pathname.startsWith('/characters/')) {
-      const id = Number.parseInt(pathname.split('/')[2] ?? '', 10)
+      const parsed = characterIdSchema.safeParse(pathname.split('/')[2])
       const charactersCrumb = (
         <Box key="c" component={Link} href="/" sx={{ color: '#334155', textDecoration: 'none', '&:hover': { color: '#E61F75' } }}>
           Characters
         </Box>
       )
-      if (!Number.isFinite(id)) return [charactersCrumb]
+      if (!parsed.success) return [charactersCrumb]
 
       return [
         charactersCrumb,
         <Box key="n" component="span" sx={{ color: '#121A52' }}>
-          <CharacterCrumb id={id} />
+          <CharacterCrumb id={parsed.data} />
         </Box>,
       ]
     }

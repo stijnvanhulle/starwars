@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { CharacterCard, CharacterListSkeleton, Pagination, StatePanel, pickChip } from '@stijnvanhulle/components'
 import { describeApiError } from '@/lib/apiError'
 import { CHARACTER_PAGE_SIZE, paginate } from '@/lib/pagination'
+import { pageNumberSchema } from '@/server/schemas'
 import { useGetTeamQuery, useListCharactersQuery } from '@/store/api'
 
 export default function HomePage() {
@@ -18,8 +19,8 @@ export default function HomePage() {
 
   const totalCharacters = data?.length ?? 0
   const totalPages = Math.max(1, Math.ceil(totalCharacters / CHARACTER_PAGE_SIZE))
-  const rawPage = Number.parseInt(searchParams?.get('page') ?? '1', 10)
-  const page = Number.isFinite(rawPage) && rawPage > 0 ? Math.min(rawPage, totalPages) : 1
+  const parsedPage = pageNumberSchema.safeParse(searchParams?.get('page'))
+  const page = parsedPage.success ? Math.min(parsedPage.data, totalPages) : 1
   const pageItems = data ? paginate(data, page, CHARACTER_PAGE_SIZE) : []
 
   return (
