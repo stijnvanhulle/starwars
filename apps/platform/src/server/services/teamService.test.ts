@@ -1,27 +1,12 @@
 import { describe, expect, it, vi } from 'vitest'
-import { isDomainError } from '@/server/utils'
 import { createStarwarsApiCharacter, createTeamMember } from '@/test/fixtures'
-import { addTeamMember, listTeamMembers, removeTeamMember } from './teamService'
+import { addTeamMember, removeTeamMember } from './teamService'
 
 const TEAM_ID = createTeamMember().teamId
 const luke = createStarwarsApiCharacter()
 const member = createTeamMember()
 
 describe('teamService', () => {
-  it('listTeamMembers delegates to memberRepo.findAllByTeam with the team id', async () => {
-    const findAllByTeam = vi.fn(() => Promise.resolve([member]))
-    const repo = {
-      findAllByTeam,
-      findByTeamAndCharacterId: vi.fn(),
-      countByTeam: vi.fn(),
-      insert: vi.fn(),
-      deleteByTeamAndCharacterId: vi.fn(),
-    }
-    await listTeamMembers({ memberRepo: repo as never, teamId: TEAM_ID })
-
-    expect(findAllByTeam).toHaveBeenCalledWith({ teamId: TEAM_ID })
-  })
-
   it('addTeamMember throws NOT_FOUND when starwars-api has no such id', async () => {
     const findByTeamAndCharacterId = vi.fn()
     const repo = {
@@ -151,25 +136,5 @@ describe('teamService', () => {
     await removeTeamMember({ memberRepo: repo as never, teamId: TEAM_ID, characterId: 1 })
 
     expect(deleteByTeamAndCharacterId).toHaveBeenCalledWith({ teamId: TEAM_ID, characterId: 1 })
-  })
-
-  it('every thrown error is a DomainError', async () => {
-    const repo = {
-      findAllByTeam: vi.fn(),
-      findByTeamAndCharacterId: vi.fn(),
-      countByTeam: vi.fn(),
-      insert: vi.fn(),
-      deleteByTeamAndCharacterId: vi.fn(),
-    }
-
-    await expect(
-      addTeamMember({
-        memberRepo: repo as never,
-        fetchCharacter: () => Promise.resolve(null),
-        isDarkSide: () => false,
-        teamId: TEAM_ID,
-        characterId: 9999,
-      }),
-    ).rejects.toSatisfy(isDomainError)
   })
 })

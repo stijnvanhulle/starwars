@@ -34,7 +34,7 @@ For e2e tests (Playwright needs a built app):
 
 ```bash
 pnpm build
-pnpm --filter @stijnvanhulle/platform run test:e2e
+turbo run test:e2e --filter=@whale/platform
 ```
 
 For unit + integration tests only (no Docker needed, uses pglite):
@@ -128,7 +128,7 @@ removes `packages/core` and `packages/demo`, and wires root tooling.
 | B.2 | `packages/core` and `packages/demo` are gone; `git grep` returns no hits | PASS |
 | B.3 | `pnpm dev` serves the MUI-themed home page at HTTP 200 | PASS |
 | B.4 | `next.config.ts` allowlists `akabab.github.io` in `images.remotePatterns` | PASS |
-| B.5 | `@stijnvanhulle/components` workspace symlink resolves | PASS |
+| B.5 | `@whale/components` workspace symlink resolves | PASS |
 | B.6 | `pnpm test` exits 0; Playwright config parses without errors | PASS |
 | B.7 | `pnpm typecheck && pnpm lint && pnpm test && pnpm build` all exit 0 | PASS |
 | B.8 | No `drizzle-orm`, `@reduxjs/toolkit`, or `@kubb` imports in source yet | PASS |
@@ -269,7 +269,7 @@ Run on 2026-05-27 against `postgres:17-alpine` (Docker) and the built Next.js ap
 | I.2 | Commenting out the `TEAM_CAP` guard causes `cap.spec.ts` to fail; restoring makes it green | PASS |
 | I.3 | Forcing `isDarkSide` to return `false` causes `darkSide.spec.ts` to fail; restoring makes it green | PASS |
 | I.4 | CI `pr.yml` E2E job uses `postgres:17-alpine` service, runs `db:migrate`, `build`, `test:e2e`, uploads reports on failure | PASS (first run on push) |
-| I.5 | `pnpm changeset status` lists one pending changeset bumping `@stijnvanhulle/platform` and `@stijnvanhulle/components` at `minor` | PASS |
+| I.5 | `pnpm changeset status` lists one pending changeset bumping `@whale/platform` and `@whale/components` at `minor` | PASS |
 | I.6 | `README.md` has use cases, tech stack, folder structure, getting started, and status with no `_TBD_` markers | PASS |
 | I.7 | `research.md` "Open questions" and "Open items" are all struck through with per-slice resolution notes | PASS |
 | I.8 | `pnpm typecheck && pnpm lint && pnpm test` (19 files, 92 tests) + `pnpm test:e2e` (6 tests) all exit 0 | PASS |

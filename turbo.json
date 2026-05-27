@@ -1,7 +1,7 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": ["tsconfig.json"],
-  "globalEnv": ["NODE_ENV"],
+  "globalEnv": ["NODE_ENV", "DATABASE_URL", "E2E_FIXTURES", "CI"],
   "tasks": {
     "build": {
       "dependsOn": ["^build", "gen"],
@@ -63,6 +63,22 @@
     },
     "release:canary": {
       "dependsOn": ["build"],
+      "outputs": []
+    },
+    "db:migrate": {
+      "cache": false,
+      "outputs": []
+    },
+    "db:generate": {
+      "cache": false,
+      "outputs": []
+    },
+    "db:studio": {
+      "cache": false,
+      "persistent": true
+    },
+    "playwright:install": {
+      "cache": false,
       "outputs": []
     }
   }

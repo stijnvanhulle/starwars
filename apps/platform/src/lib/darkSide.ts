@@ -2,10 +2,7 @@ const DARTH_OR_SITH = /darth|sith/i
 const DARTH = /darth/i
 
 /**
- * Upstream `starwars-api` is inconsistent: `masters` (and occasionally
- * `affiliations`) lands as a plain string on a handful of records (e.g. Leia,
- * Palpatine, Darth Maul). Coerce to an array so the predicate never blows up
- * on `.some` for a non-array value.
+ * Coerces an upstream `string | string[]` field into a string array.
  */
 function toArray(value: unknown): ReadonlyArray<string> {
   if (typeof value === 'string') return [value]
@@ -20,11 +17,7 @@ export type DarkSideCandidate = {
 }
 
 /**
- * Three-rule predicate, OR'd left to right. Each rule short-circuits to false
- * when its source array is empty so a partial upstream payload never flips a
- * character to evil. Shared between the API server (full
- * `StarwarsApiCharacter`) and the browser (proxied `Character` without
- * `masters`); the missing field is treated as empty.
+ * True if the character's name, affiliations, or masters match the dark-side rules.
  */
 export function isDarkSide(character: DarkSideCandidate): boolean {
   if (DARTH_OR_SITH.test(character.name)) return true

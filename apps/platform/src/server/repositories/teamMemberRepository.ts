@@ -2,11 +2,14 @@ import { and, asc, count, eq, isNull, sql } from 'drizzle-orm'
 import { db } from '@/db/client'
 import { teamMembers, type TeamMember } from '@/db/schema'
 
-type ByTeam = { teamId: string }
+type ByTeam = Pick<ByTeamAndCharacterId, 'teamId'>
 type ByTeamAndCharacterId = { teamId: string; characterId: number }
 
 const activeFilter = ({ teamId }: ByTeam) => and(eq(teamMembers.teamId, teamId), isNull(teamMembers.deletedAt))
 
+/**
+ * Data access for `team_members`. Reads filter `deletedAt IS NULL`; deletes stamp `deletedAt`.
+ */
 export const teamMemberRepository = {
   async insert({ teamId, characterId }: ByTeamAndCharacterId): Promise<TeamMember> {
     const [row] = await db.insert(teamMembers).values({ teamId, characterId }).returning()

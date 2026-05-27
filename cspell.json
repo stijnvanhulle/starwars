@@ -90,6 +90,7 @@
     "Sidenav",
     "inlines",
     "Phasma",
-    "refetches"
+    "refetches",
+    "renderable"
   ]
 }

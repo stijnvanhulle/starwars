@@ -5,9 +5,7 @@
     "rootDir": ".",
     "types": ["bun-types"],
     "paths": {
-      "#mocks": ["./internals/utils/src/mocks.ts"],
-      "@internals/utils": ["./internals/utils/src/index.ts"],
-      "@stijnvanhulle/components": ["./packages/components/src/index.ts"]
+      "@whale/components": ["./packages/components/src/index.ts"]
     }
   },
   "include": ["./package.json", "./tsdown.config.ts", "./vitest.config.ts", "./src/**/*"],

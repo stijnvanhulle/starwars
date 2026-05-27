@@ -1,6 +1,5 @@
-import { errorMessage } from '@/lib/utils'
 import type { Character } from '@/gen/api'
-import type { DomainErrorCode } from './constants'
+import type { DomainErrorCode } from '@/constants'
 import type { StarwarsApiCharacter } from './starwars-api'
 
 export type { Character } from '@/gen/api'
@@ -21,15 +20,7 @@ type CreateErrorParams = {
 }
 
 /**
- * Builds a tagged domain error. Shape mirrors Nuxt's `createError`. Spread the matching
- * entry from `ERRORS` in `./constants`:
- *
- * ```ts
- * throw createError({ ...ERRORS.NOT_FOUND, message: `Character ${id} does not exist.` })
- * ```
- *
- * The wire body in `mapError` stays `{ code, message }` to match `api.openapi.yaml`'s
- * `Error` schema. `data` and `cause` are operational metadata only.
+ * Builds a tagged `DomainError` carrying an HTTP status and contract error code.
  */
 export function createError(params: CreateErrorParams): DomainError {
   const err = new Error(params.message, { cause: params.cause }) as Error & {
@@ -51,7 +42,9 @@ export function isDomainError(value: unknown): value is DomainError {
 
 type MapErrorParams = {
   error: unknown
-  /** When true, raw thrown errors collapse to a 404 NOT_FOUND (used by the character proxy routes). */
+  /**
+   * Collapse unknown errors to 404 NOT_FOUND (used by the character proxy routes).
+   */
   upstreamAsNotFound?: boolean
 }
 
@@ -61,14 +54,7 @@ export type MappedError = {
 }
 
 /**
- * Funnels thrown values into HTTP responses. Services and the proxy fetcher throw plain
- * errors. Route handlers call this and write `res.status(status).json(body)`.
- *
- * - `DomainError` returns the documented status + `{ code, message }` body.
- * - On the character proxy (`upstreamAsNotFound: true`), unknown errors collapse to
- *   `404 NOT_FOUND` so `api.openapi.yaml`'s error enum stays closed.
- * - On the team routes, unknown errors surface as an undocumented `502` with a plain
- *   `{ message }` body for operational diagnostics.
+ * Translates a thrown value into a safe `{ status, body }` envelope, logging unmapped errors.
  */
 export function mapError({ error, upstreamAsNotFound = false }: MapErrorParams): MappedError {
   if (isDomainError(error)) {
@@ -78,18 +64,14 @@ export function mapError({ error, upstreamAsNotFound = false }: MapErrorParams):
     return { status: 404, body: { code: 'NOT_FOUND', message: 'Character does not exist.' } }
   }
   console.error('[api] unhandled error', error)
-  return { status: 502, body: { message: errorMessage(error, 'Upstream request failed.') } }
+  return { status: 502, body: { message: 'Something went wrong. Please try again.' } }
 }
 
 const CHARACTER_KEYS = ['id', 'name', 'image', 'height', 'mass', 'affiliations', 'masters'] as const
-const ARRAY_KEYS = new Set(['affiliations', 'masters'])
+const ARRAY_KEYS = new Set<string>(['affiliations', 'masters'])
 
 /**
- * Narrows a starwars-api payload to the `Character` shape from `api.openapi.yaml`.
- * Drops fields the contract does not list (e.g. `formerAffiliations`). Coerces
- * `affiliations` and `masters` to arrays because upstream occasionally returns
- * a bare string (e.g. Leia's `masters: "Luke Skywalker"`). Absent optional
- * fields stay absent on the output (not set to `undefined`).
+ * Narrows the upstream payload to the contract `Character`, coercing stringy arrays.
  */
 export function toCharacter(src: StarwarsApiCharacter): Character {
   return Object.fromEntries(

@@ -153,16 +153,16 @@ jobs:
           node-version: '22'
 
       - name: Install Playwright browsers
-        run: pnpm --filter @stijnvanhulle/platform run playwright:install
+        run: pnpm --filter @whale/platform run playwright:install
 
       - name: Migrate database
-        run: pnpm --filter @stijnvanhulle/platform run db:migrate
+        run: pnpm --filter @whale/platform run db:migrate
 
       - name: Build
         run: pnpm run build
 
       - name: Run Playwright tests
-        run: pnpm --filter @stijnvanhulle/platform run test:e2e
+        run: pnpm --filter @whale/platform run test:e2e
 
       - name: Upload Playwright report
         if: failure()

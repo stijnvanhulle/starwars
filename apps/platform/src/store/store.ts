@@ -1,4 +1,4 @@
-import { combineReducers, configureStore } from '@reduxjs/toolkit'
+import { combineReducers, configureStore, Tuple } from '@reduxjs/toolkit'
 import { api } from './api'
 import { bookmarksReducer } from './bookmarks'
 import { persistBookmarks } from './persistBookmarks'
@@ -15,7 +15,7 @@ type PreloadedState = {
 export const makeStore = (preloadedState?: PreloadedState) =>
   configureStore({
     reducer: rootReducer,
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(api.middleware).concat(persistBookmarks),
+    middleware: (getDefaultMiddleware) => new Tuple(...getDefaultMiddleware(), api.middleware, persistBookmarks),
     preloadedState,
   })
 

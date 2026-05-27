@@ -1,5 +1,5 @@
 {
-  "name": "@stijnvanhulle/template",
+  "name": "@whale/template",
   "version": "0.0.0",
   "private": true,
   "description": "Modern TypeScript monorepo template with pnpm, Turborepo, oxlint, oxfmt, tsdown, Vitest and Changesets",
@@ -64,5 +64,5 @@
     "node": ">=22",
     "pnpm": ">=11.0.0"
   },
-  "namespace": "@stijnvanhulle"
+  "namespace": "@whale"
 }

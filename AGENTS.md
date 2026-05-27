@@ -23,7 +23,6 @@ A Star Wars team-builder app built as a Next.js monorepo (pnpm workspaces, Turbo
 | --- | --- |
 | `apps/platform` | Next.js 16 app (App Router, MUI v9, RTK Query, Drizzle + Postgres) |
 | `packages/components` | Shared React component library used by `apps/platform` |
-| `internals/utils` | Internal helpers shared across the workspace |
 | `configs/` | Shared tooling configs (TypeScript, Vitest, etc.) |
 
 `packages/core` and `packages/demo` were removed in slice 001 and are gone.
@@ -40,12 +39,12 @@ pnpm lint                                              # Lint with oxlint
 pnpm format                                            # Format with oxfmt
 pnpm changeset                                         # Add a changelog entry
 
-# Run from apps/platform or via pnpm --filter @stijnvanhulle/platform
+# Workspace tasks routed through Turbo
 turbo run db:migrate                                   # Apply Drizzle migrations (requires Docker Postgres)
 turbo run db:generate                                  # Generate a new Drizzle migration from schema changes
 turbo run db:studio                                    # Open Drizzle Studio
 turbo run gen                                          # Re-run Kubb codegen (both api + starwars pipelines)
-pnpm --filter @stijnvanhulle/platform run test:e2e     # Run Playwright e2e tests (requires built app + Postgres)
+turbo run test:e2e --filter=@whale/platform            # Run Playwright e2e tests (requires built app + Postgres)
 ```
 
 ## Architecture notes
