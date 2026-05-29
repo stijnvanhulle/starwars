@@ -12,13 +12,11 @@ export const bookmarksSlice = createSlice({
       if (!state.includes(action.payload)) state.push(action.payload)
     },
     remove(state, action: PayloadAction<number>) {
-      const idx = state.indexOf(action.payload)
-      if (idx >= 0) state.splice(idx, 1)
+      return state.filter((id) => id !== action.payload)
     },
     toggle(state, action: PayloadAction<number>) {
-      const idx = state.indexOf(action.payload)
-      if (idx >= 0) state.splice(idx, 1)
-      else state.push(action.payload)
+      if (state.includes(action.payload)) return state.filter((id) => id !== action.payload)
+      state.push(action.payload)
     },
     clear(state) {
       state.length = 0

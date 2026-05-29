@@ -29,12 +29,6 @@ Changesets for versioning and builds the changelog from changeset entries.
 | [changesets.md](references/changesets.md) | Creating a changeset and the version-bump types |
 | [format.md](references/format.md) | `docs/changelog.md` structure, change-type sections, and examples |
 
-## Related skills
-
-| Skill | Use for |
-| --- | --- |
-| [documentation](../documentation/SKILL.md) | Documentation style for changelog entries |
-
 ## Checklist
 
 - [ ] Code changes have matching documentation updates

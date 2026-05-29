@@ -41,7 +41,7 @@ describe('DELETE /api/team/{characterId}', () => {
     expect(tombstones).toHaveLength(1)
   })
 
-  it('should respond 204 when deleting a character that is not on the team (idempotent)', async () => {
+  it('should respond 204 when deleting a character that is not on the team', async () => {
     const res = await deleteCharacter('9999')
 
     expect(res.status).toBe(204)
