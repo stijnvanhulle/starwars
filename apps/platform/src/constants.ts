@@ -14,9 +14,9 @@ export const errors = {
 } as const satisfies Record<string, { statusCode: number; code: DomainErrorCode }>
 
 /**
- * Maximum number of active members the default team may hold.
+ * Maximum number of active members on the default team.
  */
-export const TEAM_CAP = 5
+export const TEAM_MAX = 5
 
 /**
  * Number of character cards displayed per page on the home grid.

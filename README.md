@@ -1,36 +1,24 @@
 <div align="center">
 
-  <h1>Whale Star Wars Team Builder</h1>
+  <h1>Star Wars Team Builder</h1>
 
   <p>
-    A Next.js app for the Whale front-end coding test: assemble a team of up to five Star Wars characters, with no dark-side members allowed.
+    A Next.js app to assemble a team of up to five Star Wars characters, with no dark-side members allowed.
   </p>
 </div>
 
 <br />
 
-## The assignment
-
-This repository answers the Whale Front-end Coding Test. The brief: build a
-Next.js application that lists Star Wars characters, gives each one a detail
-page, and lets you assemble a team of at most five characters while keeping
-evil characters out. The full prompt is at
-[plans/starwars-team-builder/prompt.md](plans/starwars-team-builder/prompt.md).
+## How it works
 
 A character counts as evil when their name contains "Darth" or "Sith", when any
 non-former affiliation mentions "Darth" or "Sith", or when any master is named
 "Darth".
 
 Character data comes from the public Star Wars API at
-https://akabab.github.io/starwars-api/. The browser never calls it directly; the
+https://akabab.github.io/starwars-api/. The browser never calls it directly. The
 Next.js server proxies it (see
 [apps/platform/src/server/starwars-api.ts](apps/platform/src/server/starwars-api.ts)).
-
-The test is evaluated on TypeScript usage, React design patterns, state
-management with Redux Toolkit and RTK Query, clean code, and solution and
-architecture design.
-
-## What it does
 
 A visitor lands on the character grid, paginated 24 per page. They open a detail
 page, walk the roster with prev and next, and add or remove characters through
@@ -39,11 +27,11 @@ members and refuses a sixth with an inline error. Evil characters are blocked at
 the server, and the UI disables their add button with a tooltip that explains
 why.
 
-## Requirements
+## Features
 
-Each requirement from the brief maps to where it lives in the code.
+Each feature maps to where it lives in the code.
 
-| Requirement | Where it is met |
+| Feature | Where it is met |
 | --- | --- |
 | List of characters | Grid route [app/characters/page.tsx](apps/platform/src/app/characters/page.tsx) with [CharacterList](apps/platform/src/features/characters/CharacterList.tsx) |
 | Detail page per character | [app/characters/[id]/page.tsx](apps/platform/src/app/characters/%5Bid%5D/page.tsx) with [CharacterDetail](apps/platform/src/features/characters/CharacterDetail.tsx) |
@@ -55,9 +43,9 @@ Each requirement from the brief maps to where it lives in the code.
 | Maximum of five members | `TEAM_CAP` in [constants.ts](apps/platform/src/constants.ts), enforced in [teamService.ts](apps/platform/src/server/services/teamService.ts) (returns 422 `TEAM_FULL`) |
 | No evil members | [darkSide.ts](apps/platform/src/lib/darkSide.ts), enforced in [teamService.ts](apps/platform/src/server/services/teamService.ts) (returns 422 `EVIL_FORBIDDEN`) |
 
-Bonus items from the brief are covered too.
+Additional features:
 
-| Bonus | Where it is met |
+| Feature | Where it is met |
 | --- | --- |
 | Pagination for the main list | [useCharacterListPagination.ts](apps/platform/src/features/characters/useCharacterListPagination.ts) |
 | Tests for components and business logic | Vitest unit and integration specs across `src/**`, plus Playwright e2e in [apps/platform/e2e](apps/platform/e2e) |
@@ -138,9 +126,7 @@ packages/components/      # Shared MUI components, built with tsdown
 plans/starwars-team-builder/  # prompt, spec, plan, slices, verification
 ```
 
-## Exercise log
-
-Time spent on the exercise.
+## Development log
 
 | Phase                                     | Time |
 |-------------------------------------------|------|

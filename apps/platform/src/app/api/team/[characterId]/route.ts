@@ -5,8 +5,8 @@ import { removeTeamMember } from '@/server/services/teamService'
 import { mapError } from '@/server/utils'
 
 /**
- * Soft-deletes a character from the default team. Idempotent: returns 204 whether
- * the row existed or not, and an unparseable id is treated as a no-op.
+ * Soft-deletes a character from the default team. Returns 204 whether the row existed
+ * or not; an unparseable id is treated as a no-op.
  */
 export async function DELETE(_request: Request, ctx: { params: Promise<{ characterId: string }> }): Promise<Response> {
   try {

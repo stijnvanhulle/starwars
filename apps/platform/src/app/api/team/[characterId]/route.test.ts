@@ -1,8 +1,7 @@
-import { and, eq, isNotNull } from 'drizzle-orm'
 import { http, HttpResponse } from 'msw'
 import { describe, expect, it } from 'vitest'
-import { db } from '@/db/client'
-import { teamMembers } from '@/db/schema'
+import { teamMemberRepository } from '@/server/repositories/teamMemberRepository'
+import { teamRepository } from '@/server/repositories/teamRepository'
 import { createStarwarsApiCharacter } from '@/test/fixtures'
 import { server, STARWARS_API } from '@/test/msw'
 import { GET as getTeam, POST as postTeam } from '../route'
@@ -36,15 +35,13 @@ describe('DELETE /api/team/{characterId}', () => {
 
     expect(await list.json()).toEqual([])
 
-    const tombstones = await db
-      .select()
-      .from(teamMembers)
-      .where(and(eq(teamMembers.characterId, 1), isNotNull(teamMembers.deletedAt)))
+    const team = await teamRepository.findDefault()
+    const tombstones = await teamMemberRepository.findTombstones({ teamId: team.id, characterId: 1 })
 
     expect(tombstones).toHaveLength(1)
   })
 
-  it('should respond 204 when deleting a character that is not on the team (idempotent)', async () => {
+  it('should respond 204 when deleting a character that is not on the team', async () => {
     const res = await deleteCharacter('9999')
 
     expect(res.status).toBe(204)

@@ -25,7 +25,7 @@
     "test:e2e:report": "playwright show-report"
   },
   "dependencies": {
-    "@electric-sql/pglite": "^0.4.5",
+    "@electric-sql/pglite": "^0.4.6",
     "@emotion/cache": "^11.14.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",

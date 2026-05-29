@@ -1,7 +1,7 @@
 import type { TeamMember } from '@/db/schema'
 import type { teamMemberRepository } from '@/server/repositories/teamMemberRepository'
 import type { StarwarsApiCharacter } from '@/server/starwars-api'
-import { errors, TEAM_CAP } from '@/constants'
+import { errors, TEAM_MAX } from '@/constants'
 import { createError } from '@/server/utils'
 
 type MemberRepo = typeof teamMemberRepository
@@ -55,8 +55,8 @@ export async function addTeamMember({ memberRepo, fetchCharacter, isDarkSide, te
   }
   const current = await memberRepo.countByTeam({ teamId })
 
-  if (current >= TEAM_CAP) {
-    throw createError({ ...errors.teamFull, message: `The team already has ${TEAM_CAP} members.`, data: { cap: TEAM_CAP } })
+  if (current >= TEAM_MAX) {
+    throw createError({ ...errors.teamFull, message: `The team already has ${TEAM_MAX} members.`, data: { max: TEAM_MAX } })
   }
   return memberRepo.insert({ teamId, characterId })
 }

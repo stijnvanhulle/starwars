@@ -9,7 +9,7 @@ describe('bookmarksSlice reducers', () => {
     expect(initial).toEqual([])
   })
 
-  it('add is idempotent for the same id', () => {
+  it('add does not duplicate an existing id', () => {
     const once = bookmarksSlice.reducer(initial, add(7))
     const twice = bookmarksSlice.reducer(once, add(7))
 
@@ -58,7 +58,7 @@ describe('bookmarks via the configured store', () => {
     expect(selectBookmarks(store.getState())).toEqual([4, 5])
   })
 
-  it('add is idempotent through the store dispatch flow', () => {
+  it('add does not duplicate an existing id through the store dispatch flow', () => {
     const store = makeStore()
     store.dispatch(add(7))
     store.dispatch(add(7))

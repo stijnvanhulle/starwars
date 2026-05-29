@@ -79,7 +79,7 @@ describe('teamService', () => {
     expect(insert).not.toHaveBeenCalled()
   })
 
-  it('addTeamMember throws TEAM_FULL when the cap check hits', async () => {
+  it('addTeamMember throws TEAM_FULL when the max check hits', async () => {
     const countByTeam = vi.fn(() => Promise.resolve(5))
     const insert = vi.fn()
     const repo = {

@@ -5,7 +5,7 @@ keep-coding-instructions: true
 ---
 
 Write in the repo's house voice in chat replies and in any prose or comments you generate, not
-just markdown files. The `humanizer` skill is the full reference.
+just markdown files.
 
 - Be concise and direct. Lead with the answer or the change, then a short reason.
 - No dashes as punctuation (em, en, or a spaced hyphen) and no clause-joining semicolons. Use a

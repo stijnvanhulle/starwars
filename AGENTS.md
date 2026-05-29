@@ -53,7 +53,7 @@ turbo run test:e2e --filter=@whale/platform            # Run Playwright e2e test
 
 `drizzle-orm` imports are only allowed inside `apps/platform/src/db/**` (schema + client) and
 `apps/platform/src/server/repositories/**`. Services, route handlers, components, and tests
-never import Drizzle directly; they go through the repository layer.
+never import Drizzle directly. They go through the repository layer.
 
 ### Kubb codegen
 
@@ -89,8 +89,6 @@ loads.
 You have new skills. If any skill might be relevant then you MUST read it.
 
 - [changelog](.agents/skills/changelog/SKILL.md) - Creates user-facing changelogs from git commits by analyzing commit history, categorizing changes, and transforming technical commits into clear, customer-friendly release notes.
-- [documentation](.agents/skills/documentation/SKILL.md) - Use when writing blog posts or documentation markdown files - provides writing style guide (active voice, present tense), content structure patterns, and SEO optimization. Overrides brevity rules for proper grammar.
-- [humanizer](.agents/skills/humanizer/SKILL.md) - Remove AI writing patterns to make documentation sound natural, specific, and human. Covers content patterns, language patterns, style patterns, and communication patterns.
 - [jsdoc](.agents/skills/jsdoc/SKILL.md) - Full JSDoc format guide for TypeScript, covering @example formats, tag usage (@default, @deprecated, what to avoid), documentation patterns for properties/enums/functions, and tag order.
 - [next-best-practices](.agents/skills/next-best-practices/SKILL.md) - Next.js best practices, file conventions, RSC boundaries, data patterns, async APIs, metadata, error handling, route handlers, image/font optimization, bundling.
 - [pr](.agents/skills/pr/SKILL.md) - Rules and checklist for preparing PRs, creating changesets, and releasing packages in the monorepo.

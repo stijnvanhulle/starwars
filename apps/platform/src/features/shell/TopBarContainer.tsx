@@ -10,7 +10,7 @@ import { TopBar } from '@whale/components'
 import { characterIdSchema } from '@/server/schemas'
 import { useGetCharacterQuery, useGetTeamQuery } from '@/store/api'
 
-const TEAM_CAP = 5
+const TEAM_MAX = 5
 
 function CharacterCrumb({ id }: { id: number }) {
   const { data } = useGetCharacterQuery(id)
@@ -84,7 +84,7 @@ function TeamPill() {
         <Stack component="span" direction="row" spacing={2} sx={{ alignItems: 'center' }}>
           <Box component="span">Your team</Box>
           <Box component="span" sx={{ fontVariantNumeric: 'tabular-nums', opacity: onTeamPage ? 0.9 : 1 }}>
-            {count} / {TEAM_CAP}
+            {count} / {TEAM_MAX}
           </Box>
         </Stack>
       }

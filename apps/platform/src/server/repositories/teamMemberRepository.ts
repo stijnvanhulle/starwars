@@ -1,4 +1,4 @@
-import { and, asc, count, eq, isNull, sql } from 'drizzle-orm'
+import { and, asc, count, eq, isNotNull, isNull, sql } from 'drizzle-orm'
 import { db } from '@/db/client'
 import { teamMembers, type TeamMember } from '@/db/schema'
 
@@ -38,6 +38,12 @@ export const teamMemberRepository = {
       .returning()
 
     return result.length > 0
+  },
+  async findTombstones({ teamId, characterId }: ByTeamAndCharacterId): Promise<Array<TeamMember>> {
+    return db
+      .select()
+      .from(teamMembers)
+      .where(and(eq(teamMembers.teamId, teamId), eq(teamMembers.characterId, characterId), isNotNull(teamMembers.deletedAt)))
   },
 
   async countByTeam({ teamId }: ByTeam): Promise<number> {

@@ -2,7 +2,7 @@
 
 ## Context
 
-Assemble the three screens (`/`, `/characters/[id]`, `/team`) and the persistent right-rail team panel from earlier slices. Real `isDarkSide` rules land in `src/lib/darkSide.ts` and are wired into both the server guard and the UI Add-button state. Slice 003 stopped at the presentational primitives; this slice owns data wiring, layout shell, the styling pattern the rest of the app follows, and the platform-side containers that bind the lib to RTK Query.
+Assemble the three screens (`/`, `/characters/[id]`, `/team`) and the persistent right-rail team panel from earlier slices. Real `isDarkSide` rules land in `src/lib/darkSide.ts` and are wired into both the server guard and the UI Add-button state. Slice 003 stopped at the presentational primitives. This slice owns data wiring, layout shell, the styling pattern the rest of the app follows, and the platform-side containers that bind the lib to RTK Query.
 
 ### Styling architecture
 
@@ -18,7 +18,7 @@ Assemble the three screens (`/`, `/characters/[id]`, `/team`) and the persistent
 
 - `dist/index.js` (ESM) + `dist/index.d.ts`
 - `dist/style.css` — every `*.module.css` (and the few inline CSS-module bits) bundled into a single stylesheet, side-effect-imported once by the platform's `app/layout.tsx` via `import '@whale/components/style.css'`
-- `@mui/material`, `@emotion/react`, `@emotion/styled`, `react`, `react-dom` are peer deps; the lib never bundles them
+- `@mui/material`, `@emotion/react`, `@emotion/styled`, `react`, `react-dom` are peer deps, and the lib never bundles them
 
 No new dependency lands in this slice beyond `@mui/icons-material` for the left-nav glyphs.
 
@@ -66,7 +66,7 @@ No new dependency lands in this slice beyond `@mui/icons-material` for the left-
    - `TeamListSkeleton`: full-row skeletons using MUI `Skeleton` + `Paper`.
    - `RosterSkeleton`: compact-roster skeletons for the right-pane loading state.
 9. **Shell**:
-   - `AppShell`: sticky 80 / 1fr / 280 grid styled by `AppShell.module.css`. Accepts `topBar`, `sidebar`, optional `rightPane` slots; right pane shows only at ≥ 1100px.
+   - `AppShell`: sticky 80 / 1fr / 280 grid styled by `AppShell.module.css`. Accepts `topBar`, `sidebar`, optional `rightPane` slots. Right pane shows only at ≥ 1100px.
    - `TopBar`: thin `Box` row with `title` and `teamLink` slots. Pure `sx`.
 
 ### Platform: app-side containers
@@ -99,11 +99,11 @@ No new dependency lands in this slice beyond `@mui/icons-material` for the left-
 - `apps/platform/src/server/utils.ts`: `toCharacter()` coerces stringy `affiliations` / `masters`
 - `apps/platform/src/app/api/characters/route.ts`, `characters/[id]/route.ts`, `team/route.ts`: use the fetcher
 - `apps/platform/src/app/api/team/route.test.ts`: `EVIL_FORBIDDEN` branch driven by the real `isDarkSide`
-- `apps/platform/src/gen/fetchClient.ts`: tagged `ApiRequestError`; non-2xx preserves the parsed body
+- `apps/platform/src/gen/fetchClient.ts`: tagged `ApiRequestError`, and non-2xx preserves the parsed body
 - `apps/platform/src/store/api.ts`: `wrap` reads `ApiRequestError.body`
 
 ### Library (`@whale/components`)
-- `packages/components/src/theme/theme.ts`: moved from the app; `cssVariables: { cssVarPrefix: 'whale' }`; shape.borderRadius = 4
+- `packages/components/src/theme/theme.ts`: moved from the app, `cssVariables: { cssVarPrefix: 'whale' }`, shape.borderRadius = 4
 - `packages/components/src/shell/AppShell.{tsx,module.css}`: 80/1fr/280 grid with optional right pane
 - `packages/components/src/shell/TopBar.tsx`: sx-only Box row
 - `packages/components/src/characters/CharacterCard.{tsx,module.css}`: ButtonBase + module
@@ -118,7 +118,7 @@ No new dependency lands in this slice beyond `@mui/icons-material` for the left-
 - `packages/components/src/team/TeamListSkeleton.tsx`, `RosterSkeleton.tsx`: created
 - `packages/components/src/common/ActionButton.tsx`, `PrimaryButton.tsx`, `StatCard.tsx`, `ProgressPill.tsx`, `StatePanel.tsx`: created/rewritten, MUI primitives + sx
 - `packages/components/src/index.ts`: barrel exports `lightTheme`, `tokens`, every component + type, plus `pickChip`
-- `packages/components/tsdown.config.ts` + `package.json`: `@tsdown/css` to bundle `*.module.css` into `dist/style.css`; new exports entry `./style.css`
+- `packages/components/tsdown.config.ts` + `package.json`: `@tsdown/css` to bundle `*.module.css` into `dist/style.css`, and new exports entry `./style.css`
 
 ### Platform
 - `apps/platform/src/app/layout.tsx`: loads `Nunito_Sans` + imports `@whale/components/style.css`
@@ -137,11 +137,11 @@ No new dependency lands in this slice beyond `@mui/icons-material` for the left-
 
 1. `docker compose up -d postgres && pnpm db:migrate && pnpm gen && turbo run build --filter=@whale/components && pnpm dev`. App boots.
 2. Walk each of the six scenarios in [`verification.md`](verification.md). All pass.
-3. AC-9: Darth Vader's detail page shows a disabled `Add to team` button; hovering it reveals the MUI tooltip; clicking does nothing. Force `POST /api/team` with Vader's id; server returns `422 EVIL_FORBIDDEN`.
+3. AC-9: Darth Vader's detail page shows a disabled `Add to team` button. Hovering it reveals the MUI tooltip, and clicking does nothing. Force `POST /api/team` with Vader's id. Server returns `422 EVIL_FORBIDDEN`.
 4. AC-8: add five non-evil characters, attempt a sixth. The inline error appears and the team stays at five rows in the DB.
-5. `pnpm test` is green; `darkSide.test.ts` covers the seven rule cases + the upstream-string-masters case.
-6. `pnpm test` is green; `EVIL_FORBIDDEN` integration test passes against the real `isDarkSide`.
-7. `pnpm test` is green; `<CharacterDetail>` covers Vader-disabled + neutral-enabled; `<ActionButton>` covers default/disabled-tooltip/loading.
+5. `pnpm test` is green, and `darkSide.test.ts` covers the seven rule cases + the upstream-string-masters case.
+6. `pnpm test` is green, and the `EVIL_FORBIDDEN` integration test passes against the real `isDarkSide`.
+7. `pnpm test` is green. `<CharacterDetail>` covers Vader-disabled + neutral-enabled, and `<ActionButton>` covers default/disabled-tooltip/loading.
 8. `pnpm typecheck && pnpm lint` are green across the workspace.
 9. Reload `/` after adding two characters. The right-rail panel still shows them (persistence).
 10. `Next` from the last character (id 87) wraps to the first id.

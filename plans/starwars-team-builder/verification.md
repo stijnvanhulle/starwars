@@ -16,7 +16,7 @@ global pass run after all slices landed.
 | AC-6 | `/team` lists the team and lets you remove members | PASS |
 | AC-7 | Sidebar shows the team on every page | PASS |
 | AC-8 | Sixth add is refused with `422 TEAM_FULL` | PASS |
-| AC-9 | Evil characters cannot be added; Add is disabled with a tooltip | PASS |
+| AC-9 | Evil characters cannot be added, and Add is disabled with a tooltip | PASS |
 
 ---
 
@@ -125,11 +125,11 @@ removes `packages/core` and `packages/demo`, and wires root tooling.
 | Scenario | Criterion | Result |
 | --- | --- | --- |
 | B.1 | `pnpm-workspace.yaml` includes `apps/*` | PASS |
-| B.2 | `packages/core` and `packages/demo` are gone; `git grep` returns no hits | PASS |
+| B.2 | `packages/core` and `packages/demo` are gone, and `git grep` returns no hits | PASS |
 | B.3 | `pnpm dev` serves the MUI-themed home page at HTTP 200 | PASS |
 | B.4 | `next.config.ts` allowlists `akabab.github.io` in `images.remotePatterns` | PASS |
 | B.5 | `@whale/components` workspace symlink resolves | PASS |
-| B.6 | `pnpm test` exits 0; Playwright config parses without errors | PASS |
+| B.6 | `pnpm test` exits 0 and Playwright config parses without errors | PASS |
 | B.7 | `pnpm typecheck && pnpm lint && pnpm test && pnpm build` all exit 0 | PASS |
 | B.8 | No `drizzle-orm`, `@reduxjs/toolkit`, or `@kubb` imports in source yet | PASS |
 | B.9 | `pr.yml` and `release.yml` workflows are present and cover the new paths | PASS |
@@ -146,7 +146,7 @@ for tests), and the migration runner. Team-cap and dark-side rules are not in sc
 | C.1 | `docker compose up -d postgres` comes up healthy | PASS |
 | C.2 | `\d teams` and `\d team_members` match the data model (FK, partial unique, index) | PASS |
 | C.3 | `0000_*.sql`, `0001_default_team.sql`, and `meta/_journal.json` are checked in | PASS |
-| C.4 | `db:migrate` is idempotent; re-running still leaves exactly one default team row | PASS |
+| C.4 | `db:migrate` is idempotent, and re-running still leaves exactly one default team row | PASS |
 | C.5 | `teamRepository` exports `findBySlug` and `findDefault` | PASS |
 | C.6 | `teamMemberRepository` is team-scoped, soft-delete aware, never issues hard DELETE | PASS |
 | C.7 | `drizzle-orm` imports only appear under `src/db/**` and `src/server/repositories/**` | PASS |
@@ -168,7 +168,7 @@ Adds MUI theme tokens (palette, typography, spacing, radius) and the initial com
 | D.1 | MUI theme token file exports `palette`, `typography`, `spacing`, and `shape.borderRadius` | PASS |
 | D.2 | `packages/components/src/index.ts` re-exports all components without circular imports | PASS |
 | D.3 | `AppShell` renders the top bar and a sidebar slot | PASS |
-| D.4 | `CharacterCard` renders name and image; handles missing image with a placeholder | PASS |
+| D.4 | `CharacterCard` renders name and image, and handles missing image with a placeholder | PASS |
 | D.5 | `StatePanel` renders loading, empty, and error states | PASS |
 | D.6 | `pnpm typecheck && pnpm lint && pnpm test && pnpm build` all exit 0 | PASS |
 
@@ -182,7 +182,7 @@ Team routes go through `TeamService` + repositories. Includes `isDarkSide` and t
 
 | Scenario | Criterion | Result |
 | --- | --- | --- |
-| E.1 | `GET /api/characters` returns all 87 characters; browser never calls `akabab.github.io` | PASS |
+| E.1 | `GET /api/characters` returns all 87 characters, and the browser never calls `akabab.github.io` | PASS |
 | E.2 | `GET /api/characters/1` returns Luke Skywalker's full payload | PASS |
 | E.3 | `GET /api/team` returns the current team (empty initially) | PASS |
 | E.4 | `POST /api/team` with a valid character id adds them and returns 201 | PASS |
@@ -209,7 +209,7 @@ into `src/gen/starwars/`. Wires the single `api` RTK Query slice and the Redux s
 | F.2 | `src/gen/api/` contains types, client functions, and Zod schemas for all endpoints | PASS |
 | F.3 | `src/gen/starwars/` contains types and Zod schemas (no client) | PASS |
 | F.4 | The `api` RTK Query slice is wired in the Redux store and available via `<Providers>` | PASS |
-| F.5 | `POST /api/team` body is validated against the generated `addTeamMemberRequestSchema`; malformed body returns 400 | PASS |
+| F.5 | `POST /api/team` body is validated against the generated `addTeamMemberRequestSchema`, and a malformed body returns 400 | PASS |
 | F.6 | `pnpm typecheck && pnpm lint && pnpm test && pnpm build` all exit 0 | PASS |
 
 ---
@@ -221,13 +221,13 @@ Wires all UI requirements: character list (`/`), detail page with Prev/Next, per
 
 | Scenario | Criterion | Result |
 | --- | --- | --- |
-| G.1 | `/` renders a character grid; each card links to `/characters/[id]` | PASS |
-| G.2 | Detail page shows name, image, height, mass, affiliations; missing fields show "Unknown" | PASS |
-| G.3 | Prev/Next walk list order; wrap at both ends; back button works | PASS |
-| G.4 | Add/Remove button toggles correctly; POST and DELETE fire as expected | PASS |
+| G.1 | `/` renders a character grid, and each card links to `/characters/[id]` | PASS |
+| G.2 | Detail page shows name, image, height, mass, affiliations, and missing fields show "Unknown" | PASS |
+| G.3 | Prev/Next walk list order, wrap at both ends, and the back button works | PASS |
+| G.4 | Add/Remove button toggles correctly, and POST and DELETE fire as expected | PASS |
 | G.5 | Sidebar shows the team on `/`, `/characters/[id]`, and `/team` | PASS |
 | G.6 | `/team` lists members with a working remove control | PASS |
-| G.7 | Vader's Add button is disabled with a tooltip; sixth add shows an error message | PASS |
+| G.7 | Vader's Add button is disabled with a tooltip, and a sixth add shows an error message | PASS |
 | G.8 | `isDarkSide` is imported from a single file by both the UI and `TeamService` | PASS |
 | G.9 | Vitest covers `isDarkSide` unit cases and key component render scenarios | PASS |
 | G.10 | `pnpm typecheck && pnpm lint && pnpm test && pnpm build` all exit 0 | PASS |
@@ -243,12 +243,12 @@ Run on 2026-05-27 against the dev server, driven through the Claude in Chrome ex
 
 | Scenario | Criterion | Result |
 | --- | --- | --- |
-| H.1 | Clicking the bookmark heart fills it and increments the sidenav badge; `localStorage.whale.bookmarks.v1` updates | PASS |
+| H.1 | Clicking the bookmark heart fills it and increments the sidenav badge, and `localStorage.whale.bookmarks.v1` updates | PASS |
 | H.2 | Hard-refresh keeps the bookmark state from `localStorage` | PASS |
-| H.3 | `/bookmarks` lists bookmarked cards; "Clear all" empties the list and clears `localStorage` | PASS |
-| H.4 | `/` shows 24 cards on page 1; pager shows pages 1..4; clicking page 2 sets `?page=2` and scrolls to top | PASS |
-| H.5 | `/?page=99` clamps to the last page (15 cards); `/?page=foo` falls back to page 1 | PASS |
-| H.6 | Next on id 88 (Captain Phasma) wraps to id 1 (Luke); Prev on id 1 wraps to id 88 | PASS |
+| H.3 | `/bookmarks` lists bookmarked cards, and "Clear all" empties the list and clears `localStorage` | PASS |
+| H.4 | `/` shows 24 cards on page 1, pager shows pages 1..4, and clicking page 2 sets `?page=2` and scrolls to top | PASS |
+| H.5 | `/?page=99` clamps to the last page (15 cards), and `/?page=foo` falls back to page 1 | PASS |
+| H.6 | Next on id 88 (Captain Phasma) wraps to id 1 (Luke), and Prev on id 1 wraps to id 88 | PASS |
 | H.7 | `pnpm typecheck && pnpm lint && pnpm test` (19 files, 90 tests) all exit 0 | PASS |
 
 Note: ids are not contiguous 1..87. The API returns 87 items but ids run 1..88 with one gap.
@@ -266,8 +266,8 @@ Run on 2026-05-27 against `postgres:17-alpine` (Docker) and the built Next.js ap
 | Scenario | Criterion | Result |
 | --- | --- | --- |
 | I.1 | `pnpm build && pnpm test:e2e` passes all 6 Playwright tests against Docker Postgres | PASS |
-| I.2 | Commenting out the `TEAM_CAP` guard causes `cap.spec.ts` to fail; restoring makes it green | PASS |
-| I.3 | Forcing `isDarkSide` to return `false` causes `darkSide.spec.ts` to fail; restoring makes it green | PASS |
+| I.2 | Commenting out the `TEAM_CAP` guard causes `cap.spec.ts` to fail, and restoring makes it green | PASS |
+| I.3 | Forcing `isDarkSide` to return `false` causes `darkSide.spec.ts` to fail, and restoring makes it green | PASS |
 | I.4 | CI `pr.yml` E2E job uses `postgres:17-alpine` service, runs `db:migrate`, `build`, `test:e2e`, uploads reports on failure | PASS (first run on push) |
 | I.5 | `pnpm changeset status` lists one pending changeset bumping `@whale/platform` and `@whale/components` at `minor` | PASS |
 | I.6 | `README.md` has use cases, tech stack, folder structure, getting started, and status with no `_TBD_` markers | PASS |
@@ -288,6 +288,6 @@ The six Playwright specs cover all Section A scenarios:
 | `e2e/browse.spec.ts` | A.1, A.2, A.3 (list, detail, prev/next) | PASS |
 | `e2e/team.spec.ts` | A.4, A.5 (add, remove, sidebar sync, `/team`) | PASS |
 | `e2e/cap.spec.ts` | A.6 cap path (sixth add refused, `422 TEAM_FULL`) | PASS |
-| `e2e/darkSide.spec.ts` | A.6 evil path (rules 1, 2, 3; disabled button; `422 EVIL_FORBIDDEN`) | PASS |
+| `e2e/darkSide.spec.ts` | A.6 evil path (rules 1, 2, 3, disabled button, `422 EVIL_FORBIDDEN`) | PASS |
 
 All 6 tests pass in 4.9 s. All AC-1 through AC-9 confirmed. Final checks complete.

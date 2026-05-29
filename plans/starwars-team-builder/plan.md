@@ -4,7 +4,7 @@
 
 Transform the current `TypeScript` library monorepo into a `Next.js` app that browses Star Wars characters and lets the user assemble a team.
 
-The browser talks to a single `Next.js` API. Character endpoints are a server-side proxy in front of `starwars-api`; team endpoints persist in `Postgres` via `Drizzle`. The schema has two tables: `teams` (seeded with a single `default` row) and `team_members`. The app uses the default team everywhere, so multi-team is a future feature, not a migration.
+The browser talks to a single `Next.js` API. Character endpoints are a server-side proxy in front of `starwars-api`, and team endpoints persist in `Postgres` via `Drizzle`. The schema has two tables: `teams` (seeded with a single `default` row) and `team_members`. The app uses the default team everywhere, so multi-team is a future feature, not a migration.
 
 `Kubb` generates one frontend client + `Zod` from `plans/starwars-team-builder/contracts/api.openapi.yaml`. That contract documents every endpoint the browser calls (characters proxy routes and team routes), so the frontend has a fully generated client and never imports `starwars.openapi.yaml`. A second pipeline against `plans/starwars-team-builder/contracts/starwars.openapi.yaml` emits server-only types + `Zod` for the source-API shape used by the proxy fetcher.
 
@@ -12,20 +12,20 @@ The browser talks to a single `Next.js` API. Character endpoints are a server-si
 
 Planning happens in markdown under `plans/starwars-team-builder/`: `spec.md`, `research.md`, `data-model.md`, `contracts/*.yaml`, `verification.md`, `design.md`, and the slice files. Execution then turns each slice into code, with each slice booting from a fresh `pnpm install` and ending in a demoable state.
 
-## Technical Context
+## Technical context
 
 | Field            | Value                                                                                                                      |
 | ---------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | Language/Version | `TypeScript` `^6.0.3`, Node 22, ESM-only                                                                                   |
 | Frontend         | `Next.js` ^`16.2.6` (App Router), `React` 19, `MUI` (^`9.0.1`)                                                             |
 | State            | `@reduxjs/toolkit` `^2.12.0`, `react-redux` `^9.3.0`, `RTK Query`                                                          |
-| Codegen          | `Kubb` `5.0.0-beta.31` (`adapter-oas`, `plugin-ts`, `plugin-client`, `plugin-zod`). Pinned exactly per the prompt (no `^`); all `@kubb/*` plugin packages share the same `5.0.0-beta.31` pin. |
+| Codegen          | `Kubb` `5.0.0-beta.31` (`adapter-oas`, `plugin-ts`, `plugin-client`, `plugin-zod`). Pinned exactly per the prompt (no `^`), and all `@kubb/*` plugin packages share the same `5.0.0-beta.31` pin. |
 | Storage          | `Postgres 17` via `drizzle-orm` `^0.45.2` + `drizzle-kit` `^0.31.10`, `pg` `^8.21.0` driver (`@types/pg` `^8.20.0`)        |
 | Testing          | `Vitest` `^4.1.6` (unit + integration), `@playwright/test` `^1.60.0` (e2e), `Testing Library` (components)                 |
 | Tooling          | `pnpm` `11.1.3`, `turbo` `^2.9.14`, `tsdown` `^0.22.0`, `oxlint` `^1.66.0`, `oxfmt` `^0.47.0`, `@changesets/cli` `^2.31.0` |
-| Project Type     | Web monorepo with `apps/platform` + shared `packages/`                                                                     |
+| Project type     | Web monorepo with `apps/platform` + shared `packages/`                                                                     |
 
-## Ground Rules
+## Ground rules
 
 ### Layered architecture
 
@@ -86,7 +86,7 @@ flowchart LR
   memberRepo --> members
 ```
 
-## Project Structure
+## Project structure
 
 ```text
 apps/platform/
@@ -113,30 +113,30 @@ packages/components/
     characters/                   # CharacterCard, CharacterList, CharacterDetail
     team/                         # TeamSidebar, TeamSidebarContainer, TeamMemberRow
     common/                       # StatePanel, ActionButton, Pill, Pager, ProgressDots, Tooltip
-    index.ts                      # single top-level barrel; no per-feature index.ts files
+    index.ts                      # single top-level barrel, no per-feature index.ts files
 internals/utils/                  # already present
 configs/                          # already present
 ```
 
 `packages/core` and `packages/demo` are deleted in Phase 2/001.
 
-## Planning Phase 0: Outline & Research
+## Planning Phase 0: Outline and research
 
 **Output**: `plans/starwars-team-builder/spec.md`, `plans/starwars-team-builder/research.md`.
 
 See those files for the resolved questions, scenarios, functional requirements, and acceptance checklist.
 
-## Planning Phase 1: Design & Contracts
+## Planning Phase 1: Design and contracts
 
 **Output**: `plans/starwars-team-builder/data-model.md`, `plans/starwars-team-builder/contracts/api.openapi.yaml`, `plans/starwars-team-builder/contracts/starwars.openapi.yaml`, `plans/starwars-team-builder/verification.md`.
 
 The contract specs are checked into `plans/starwars-team-builder/contracts/` and copied to `apps/platform/openapi/` when Slice 004 (mirrors `api.yaml`) and Slice 005 (mirrors `starwars.yaml`) run.
 
-## Planning Phase 2: Task split into Execution Slices
+## Planning Phase 2: Task split into execution slices
 
 The slice files in `plans/starwars-team-builder/00X-*.md` are this feature's `tasks.md` equivalent. They share the canonical skeleton at `plans/templates/slice.md`.
 
-### Execution Slices (one file each)
+### Execution slices (one file each)
 
 | Slice file                 | Depends on                                          | Demoable outcome                                                                                                                                                                                                                             |
 | -------------------------- | --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -149,7 +149,7 @@ The slice files in `plans/starwars-team-builder/00X-*.md` are this feature's `ta
 | `plans/starwars-team-builder/007-extras.md`      | 006                                                 | Bookmarks (`createSlice` + `localStorage` persistence + typed hooks + `/bookmarks` page + sidenav count badge) and URL-driven pagination on `/` (`<Pagination>` in the components lib, `?page=N`, page-size 24).                              |
 | `plans/starwars-team-builder/008-testing.md`     | 006                                                 | `Playwright` specs cover browse/team/cap/evil. CI runs `Postgres` service container, migrations, unit + integration + e2e. One `Changesets` entry.                                                                                           |
 
-## Planning Phase 3: Frontend Design
+## Planning Phase 3: Frontend design
 
 **Output**: `plans/starwars-team-builder/design.md` plus optional artifacts under `plans/starwars-team-builder/design/`.
 
@@ -163,7 +163,7 @@ Three passes:
 
 Gate for Slice 003: `plans/starwars-team-builder/design.md` has tokens, layout shell, one sketch per screen, component inventory, state matrix.
 
-## Complexity Tracking
+## Complexity tracking
 
 | Item                                         | Justification                                                                                                                                                                                                                                            |
 | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -172,21 +172,21 @@ Gate for Slice 003: `plans/starwars-team-builder/design.md` has tokens, layout s
 | `Drizzle` + `Postgres` for a single team row | The prompt explicitly requires the `DB` → `Repository` → `Service` → API layering. A simpler in-memory store would not satisfy that.                                                                                                                     |
 | `packages/components` holds all UI           | The prompt asks for it. We put every UI component there from the start (no single-consumer carve-out) so imports never have to move later. `apps/platform/src/components` is reserved for non-reusable app wiring.                                       |
 
-## Progress Tracking
+## Progress tracking
 
-### Planning Phase 0: Outline & Research
+### Planning Phase 0: Outline and research
 
 - [x] `plans/starwars-team-builder/spec.md`: done, user scenarios + FR-1..FR-7 + acceptance checklist
 - [x] `plans/starwars-team-builder/research.md`: done, 6-row decisions table moved out of `plan.md`
 
-### Planning Phase 1: Design & Contracts
+### Planning Phase 1: Design and contracts
 
 - [x] `plans/starwars-team-builder/data-model.md`: done, `TeamMember` columns + `Character` fields + invariants + `isDarkSide` rules
 - [x] `plans/starwars-team-builder/contracts/api.openapi.yaml`: done, the single frontend-facing spec covering `/api/characters`, `/api/characters/{id}`, `/api/team*`, and the shared `Character` schema
 - [x] `plans/starwars-team-builder/contracts/starwars.openapi.yaml`: done, `starwars-api` spec, server-only (used by the proxy fetcher's types)
 - [x] `plans/starwars-team-builder/verification.md`: done, 6 user-flow scenarios mapped to AC-1..AC-9
 
-### Planning Phase 2: Slice files authored
+### Planning Phase 2: slice files authored
 
 - [x] `plans/starwars-team-builder/001-setup.md`: done
 - [x] `plans/starwars-team-builder/002-database.md`: done
@@ -197,12 +197,12 @@ Gate for Slice 003: `plans/starwars-team-builder/design.md` has tokens, layout s
 - [x] `plans/starwars-team-builder/007-extras.md`: done
 - [x] `plans/starwars-team-builder/008-testing.md`: done
 
-### Planning Phase 3: Frontend Design
+### Planning Phase 3: Frontend design
 
 - [x] `plans/starwars-team-builder/design.md`: done. ASCII pass: tokens + layout shell + three screen sketches + component inventory + state matrix
 - [x] `plans/starwars-team-builder/design/` hi-fi mockups: done. `home.html`, `character-detail.html`, `team.html` generated via Claude design from the tokens in `design.md`
 
-### Execution Slices (each ends in a demoable state)
+### Execution slices (each ends in a demoable state)
 
 - [x] **001-setup**: todo
 - [x] **002-database**: todo
@@ -220,6 +220,6 @@ Gate for Slice 003: `plans/starwars-team-builder/design.md` has tokens, layout s
 - [x] `README.md` updated, tech stack, use cases, folder structure
 - [x] `AGENTS.md` / `CLAUDE.md` refreshed:
   - New scripts: `dev`, `db:migrate`, `db:generate`, `db:studio`, `gen`, `test`, `test:e2e`
-  - New workspace layout: `apps/platform`, `packages/components`; `packages/core` and `packages/demo` removed
+  - New workspace layout: `apps/platform`, `packages/components`. `packages/core` and `packages/demo` removed
   - Skill notes: Drizzle in repositories only, Kubb's regen step, the `isDarkSide` single-implementation rule
 - [x] `plans/starwars-team-builder/research.md` open items closed or moved to follow-up issues

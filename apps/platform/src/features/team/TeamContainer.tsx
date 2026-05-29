@@ -10,7 +10,7 @@ import { TeamMemberRow } from './TeamMemberRow'
 import { useTeamRows } from './useTeamRows'
 import { describeApiError } from '@/lib/apiError'
 
-const TEAM_CAP = 5
+const TEAM_MAX = 5
 
 export function TeamContainer() {
   const { rows, isLoading, isError, error, removeMember, removeState } = useTeamRows()
@@ -35,7 +35,7 @@ export function TeamContainer() {
         >
           Your team
         </Typography>
-        <ProgressPill current={rows.length} total={TEAM_CAP} />
+        <ProgressPill current={rows.length} total={TEAM_MAX} />
       </Stack>
       {removeState.isError && (
         <Alert severity="error" sx={{ mb: 3 }}>

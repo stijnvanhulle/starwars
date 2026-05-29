@@ -6,7 +6,7 @@ This is the Phase 0 spec. It captures what we're building before any code lands,
 
 You land on the home page and see a list of Star Wars characters, served by our `/api/characters` (a thin Next.js proxy in front of `starwars-api`). Click one and you're on its detail page (name, image, height, mass, affiliations) with `Prev` and `Next` to walk through the characters without going back to the list. The browser only ever talks to `/api/*` for JSON. The `starwars-api` URL is a server-side concern. Character images are the documented exception: the proxy passes through the upstream image URL verbatim and the browser loads them from the source CDN, so `next.config` allowlists that host (see slice 001).
 
-From any detail page you can add the character to your team or kick them out. The team is shared (no auth): everyone hits a single seeded **default team** (`slug = 'default'`) that lives in Postgres alongside its members. It's visible everywhere through a sidebar. There's also a `/team` page if you'd rather manage it from one screen.\
+From any detail page you can add the character to your team or kick them out. The team is shared (no auth): everyone hits a single seeded default team (`slug = 'default'`) that lives in Postgres alongside its members. It's visible everywhere through a sidebar. There's also a `/team` page if you'd rather manage it from one screen.\
 \
 The schema already carries a `Team` table so multi-team support is a future feature, not a migration, but only the default team is wired in.
 
