@@ -1,4 +1,4 @@
-import { and, asc, count, eq, isNull, sql } from 'drizzle-orm'
+import { and, asc, count, eq, isNotNull, isNull, sql } from 'drizzle-orm'
 import { db } from '@/db/client'
 import { teamMembers, type TeamMember } from '@/db/schema'
 
@@ -39,7 +39,6 @@ export const teamMemberRepository = {
 
     return result.length > 0
   },
-
   async countByTeam({ teamId }: ByTeam): Promise<number> {
     const [row] = await db.select({ value: count() }).from(teamMembers).where(activeFilter({ teamId }))
 

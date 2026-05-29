@@ -32,13 +32,13 @@ Slice 001 is done (`MUI` theme provider wired, `AppRouterCacheProvider` in place
 7. **Build `<StatePanel />`** in `packages/components/src/common/StatePanel.tsx`. Props: `variant: 'loading' | 'empty' | 'error'`, `title`, `description`, `action?`. Used for the empty team, loading list, and failed API calls.
 8. **Build `<TeamMemberRow />`** in `packages/components/src/team/TeamMemberRow.tsx`. Props: `name`, `image`, `onRemove`. Used in both the sidebar and `/team`.
 9. **Build `<ActionButton />`** in `packages/components/src/common/ActionButton.tsx`. Wraps `MUI` Button with the project's loading and disabled-with-tooltip patterns. Props: `loading`, `disabledReason?` (when present, the button is disabled and the reason renders as a tooltip).
-10. **Update the top-level barrel** `packages/components/src/index.ts` to re-export the six components (`AppShell`, `TeamSidebar`, `CharacterCard`, `StatePanel`, `TeamMemberRow`, `ActionButton`) directly from their feature-folder paths. No per-feature `index.ts` files; consumers either import from the package root or deep-path the component file.
+10. **Update the top-level barrel** `packages/components/src/index.ts` to re-export the six components (`AppShell`, `TeamSidebar`, `CharacterCard`, `StatePanel`, `TeamMemberRow`, `ActionButton`) directly from their feature-folder paths. No per-feature `index.ts` files. Consumers either import from the package root or deep-path the component file.
 11. **Add a `Vitest` smoke test** next to each component (`packages/components/src/<feature>/<Name>.test.tsx`) using Testing Library: renders without crashing, primary prop is reflected in the DOM, the disabled-with-tooltip pattern works on `<ActionButton />`, and `<StatePanel variant="loading" | "empty" | "error">` each render their distinct content.
 
 ## Files touched
 
 - `plans/starwars-team-builder/design.md`: created (includes wireframes for `/`, `/characters/[id]`, `/team`)
-- `plans/starwars-team-builder/design/`: created if hi-fi mockups are produced (exported PNG/SVG or tool source files); skipped otherwise
+- `plans/starwars-team-builder/design/`: created if hi-fi mockups are produced (exported PNG/SVG or tool source files), skipped otherwise
 - `apps/platform/src/theme/theme.ts`: modified (tokens replace the 001 placeholder values)
 - `packages/components/src/shell/AppShell.tsx`: created
 - `packages/components/src/team/TeamSidebar.tsx`: created
@@ -58,7 +58,7 @@ Slice 001 is done (`MUI` theme provider wired, `AppRouterCacheProvider` in place
 1. `pnpm install && turbo run build && pnpm dev`. App boots without errors. The placeholder page from Slice 001 still renders with the new theme tokens applied (devtools shows the new font / primary color).
 2. `turbo run test` is green.
 3. `pnpm typecheck && pnpm lint` are green.
-4. `plans/starwars-team-builder/design.md` is checked in and renders cleanly (every code fence closes; no `_TBD_` markers remain).
+4. `plans/starwars-team-builder/design.md` is checked in and renders cleanly (every code fence closes, no `_TBD_` markers remain).
 
 ## Done criteria
 
@@ -69,4 +69,4 @@ Slice 001 is done (`MUI` theme provider wired, `AppRouterCacheProvider` in place
 - [x] `<ActionButton disabledReason>` is disabled and the reason renders as a tooltip (the pattern Vader's Add button uses in 006)
 - [x] Each component has a passing Vitest smoke test
 - [x] `turbo run test`, `pnpm typecheck`, and `pnpm lint` are green
-- [x] No new app routes are added in this slice; first consumer is Slice 006
+- [x] No new app routes are added in this slice. First consumer is Slice 006

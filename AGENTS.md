@@ -53,7 +53,7 @@ turbo run test:e2e --filter=@whale/platform            # Run Playwright e2e test
 
 `drizzle-orm` imports are only allowed inside `apps/platform/src/db/**` (schema + client) and
 `apps/platform/src/server/repositories/**`. Services, route handlers, components, and tests
-never import Drizzle directly; they go through the repository layer.
+never import Drizzle directly. They go through the repository layer.
 
 ### Kubb codegen
 

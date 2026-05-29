@@ -1,7 +1,4 @@
-import { eq } from 'drizzle-orm'
-import { describe, expect, it } from 'vitest'
-import { db } from '@/db/client'
-import { teams } from '@/db/schema'
+import { describe, expect, it, vi } from 'vitest'
 import { teamRepository } from './teamRepository'
 
 describe('teamRepository', () => {
@@ -20,13 +17,8 @@ describe('teamRepository', () => {
   })
 
   it('findDefault throws when the seed row is missing', async () => {
-    const team = await teamRepository.findDefault()
-    await db.delete(teams).where(eq(teams.slug, 'default'))
+    using _ = vi.spyOn(teamRepository, 'findBySlug').mockResolvedValueOnce(undefined)
 
-    try {
-      await expect(teamRepository.findDefault()).rejects.toThrow(/Default team is missing/)
-    } finally {
-      await db.insert(teams).values(team)
-    }
+    await expect(teamRepository.findDefault()).rejects.toThrow(/Default team is missing/)
   })
 })

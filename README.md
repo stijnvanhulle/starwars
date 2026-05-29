@@ -16,7 +16,7 @@ non-former affiliation mentions "Darth" or "Sith", or when any master is named
 "Darth".
 
 Character data comes from the public Star Wars API at
-https://akabab.github.io/starwars-api/. The browser never calls it directly; the
+https://akabab.github.io/starwars-api/. The browser never calls it directly. The
 Next.js server proxies it (see
 [apps/platform/src/server/starwars-api.ts](apps/platform/src/server/starwars-api.ts)).
 
@@ -31,7 +31,7 @@ why.
 
 Each feature maps to where it lives in the code.
 
-| Requirement | Where it is met |
+| Feature | Where it is met |
 | --- | --- |
 | List of characters | Grid route [app/characters/page.tsx](apps/platform/src/app/characters/page.tsx) with [CharacterList](apps/platform/src/features/characters/CharacterList.tsx) |
 | Detail page per character | [app/characters/[id]/page.tsx](apps/platform/src/app/characters/%5Bid%5D/page.tsx) with [CharacterDetail](apps/platform/src/features/characters/CharacterDetail.tsx) |
@@ -45,7 +45,7 @@ Each feature maps to where it lives in the code.
 
 Additional features:
 
-| Bonus | Where it is met |
+| Feature | Where it is met |
 | --- | --- |
 | Pagination for the main list | [useCharacterListPagination.ts](apps/platform/src/features/characters/useCharacterListPagination.ts) |
 | Tests for components and business logic | Vitest unit and integration specs across `src/**`, plus Playwright e2e in [apps/platform/e2e](apps/platform/e2e) |

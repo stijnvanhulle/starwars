@@ -31,7 +31,7 @@ erDiagram
 
 The dotted line is the soft reference: `team_members.characterId` points at a `starwars-api` character, but there is no database foreign key because the character row lives outside our database. The service validates existence by fetching `/id/{id}.json` before insert.
 
-For now the app operates against a single seeded **default team** (`slug = 'default'`). The `Team` table exists so the multi-team case is a future addition, not a schema migration. The service factory resolves the default team id during service construction (once per request) and threads it through. `(teamId, characterId)` is unique **across active rows only** (the index predicate is `WHERE deleted_at IS NULL`), so the same character cannot appear twice in the team at the same time, but a previously-removed character can be re-added (the table then carries one active row plus one or more tombstones for the same pair). The five-member cap counts active rows only and is per-team.
+For now the app operates against a single seeded default team (`slug = 'default'`). The `Team` table exists so the multi-team case is a future addition, not a schema migration. The service factory resolves the default team id during service construction (once per request) and threads it through. `(teamId, characterId)` is unique across active rows only (the index predicate is `WHERE deleted_at IS NULL`), so the same character cannot appear twice in the team at the same time, but a previously-removed character can be re-added (the table then carries one active row plus one or more tombstones for the same pair). The five-member cap counts active rows only and is per-team.
 
 ## `Team`
 
@@ -60,20 +60,20 @@ Persisted in Postgres via Drizzle. Defined in `apps/platform/src/db/schema.ts`, 
 | `teamId`      | `uuid`        | (none)              | FK to `teams.id` with `ON DELETE CASCADE`. Always the default team for now.        |
 | `characterId` | `integer`     | (none)              | Matches `starwars-api` `Character.id`. No FK (character lives outside our DB).            |
 | `addedAt`     | `timestamptz` | `now()`             | Used for stable sort in `GET /api/team` (oldest first).                            |
-| `deletedAt`   | `timestamptz` | `null`              | Soft-delete marker. `null` means active; a timestamp means the member was removed. Every read filters `deletedAt IS NULL`. |
+| `deletedAt`   | `timestamptz` | `null`              | Soft-delete marker. `null` means active, a timestamp means the member was removed. Every read filters `deletedAt IS NULL`. |
 
 Indexes:
 
-- `team_members_team_id_character_id_active_unique` on `(teamId, characterId)` as a **partial unique index** with predicate `WHERE deleted_at IS NULL` (enforces the dedupe rule that surfaces as `409 ALREADY_MEMBER` only for active rows, so a previously-removed member can be re-added).
+- `team_members_team_id_character_id_active_unique` on `(teamId, characterId)` as a partial unique index with predicate `WHERE deleted_at IS NULL` (enforces the dedupe rule that surfaces as `409 ALREADY_MEMBER` only for active rows, so a previously-removed member can be re-added).
 - `team_members_team_id_idx` on `teamId` (every list query filters by it).
 
-`DELETE /api/team/{characterId}` is a soft delete: the row stays in the table with `deletedAt` set to `now()`. The API still returns `204` and the row is hidden from every read path. Re-adding the same character after removal is allowed; it inserts a new row rather than reviving the old one, so `addedAt` reflects the latest add.
+`DELETE /api/team/{characterId}` is a soft delete: the row stays in the table with `deletedAt` set to `now()`. The API still returns `204` and the row is hidden from every read path. Re-adding the same character after removal is allowed. It inserts a new row rather than reviving the old one, so `addedAt` reflects the latest add.
 
 The Drizzle table name is `team_members` (snake_case in SQL, camelCase in TS via the column mapping).
 
 ## `Character`
 
-Read-only. The browser fetches characters from our own `/api/characters` and `/api/characters/{id}`; behind those routes the server proxies `starwars-api` (`/all.json`, `/id/{id}.json`) and reuses the same response for the server-side evil check.
+Read-only. The browser fetches characters from our own `/api/characters` and `/api/characters/{id}`. Behind those routes the server proxies `starwars-api` (`/all.json`, `/id/{id}.json`) and reuses the same response for the server-side evil check.
 
 Two Kubb-generated types, one per side of the proxy:
 
@@ -91,7 +91,7 @@ Fields the app actually reads (identical on both sides of the proxy, the `starwa
 | `height`             | `number`    | detail page                   |
 | `mass`               | `number`    | detail page                   |
 | `affiliations`       | `string[]`  | detail page, `isDarkSide` rule 2  |
-| `masters`            | `string[]`  | `isDarkSide` rule 3. Names already (may carry a parenthetical role like `"Darth Sidious (Sith Master)"`); substring check still works. |
+| `masters`            | `string[]`  | `isDarkSide` rule 3. Names already (may carry a parenthetical role like `"Darth Sidious (Sith Master)"`), and the substring check still works. |
 
 Other `starwars-api` fields are present on the server-side generated type but are stripped by the proxy before the response leaves the server. The UI does not invent fields the contract doesn't list.
 
@@ -101,7 +101,7 @@ Other `starwars-api` fields are present on the server-side generated type but ar
 | -------------------------------------------------- | ------------------------------------------ | ---------------------- |
 | `count(team_members where teamId = :default and deletedAt is null) <= 5` | `TeamService.add()` wraps dup-check, cap-check, and `insert` in a single `db.transaction(...)` so two concurrent adds cannot both observe count = 4. Soft-deleted rows do not count. | `422 TEAM_FULL`        |
 | `(teamId, characterId)` unique across active `team_members` | DB partial unique index `WHERE deleted_at IS NULL`, double-checked by service inside the same transaction. Soft-deleted rows are ignored so a removed character can be re-added. | `409 ALREADY_MEMBER`   |
-| Default team row exists                            | Seeded by the initial migration; resolved by the service factory during construction (once per request) | request error if missing |
+| Default team row exists                            | Seeded by the initial migration, resolved by the service factory during construction (once per request) | request error if missing |
 | Evil characters cannot be added                    | `TeamService.add()` calls `isDarkSide()` after fetching the character from `starwars-api` | `422 EVIL_FORBIDDEN`  |
 | Character must exist in `starwars-api`                   | `TeamService.add()` fetches `/id/{id}.json` before the evil check | `404 NOT_FOUND` if `fetchCharacter` returns `null` (any non-200 from upstream) |
 

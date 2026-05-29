@@ -20,7 +20,7 @@ The product is simple by intent: no animations, no transforms on hover, no fancy
 
 ## Design tokens
 
-Pure values. Slice 003's `apps/platform/src/theme/theme.ts` imports them; no theme code lives here.
+Pure values. Slice 003's `apps/platform/src/theme/theme.ts` imports them. No theme code lives here.
 
 ### Palette
 
@@ -53,7 +53,7 @@ Top bar sits on the same `surface.app` background as the content (no separate wh
 
 ### Typography
 
-Whale uses **Sofia Pro Soft** for headings (paid Adobe font) and **Nunito Sans** for body. We mirror the body face exactly (Nunito Sans is free on Google Fonts); for headings we fall back to Nunito Sans 800 if Sofia Pro Soft is not licensed. The hi-fi sketches under `plans/starwars-team-builder/design/` load Nunito Sans only.
+Whale uses Sofia Pro Soft for headings (paid Adobe font) and Nunito Sans for body. We mirror the body face exactly (Nunito Sans is free on Google Fonts). For headings we fall back to Nunito Sans 800 if Sofia Pro Soft is not licensed. The hi-fi sketches under `plans/starwars-team-builder/design/` load Nunito Sans only.
 
 | Token         | Value                                                                                  |
 | ------------- | -------------------------------------------------------------------------------------- |
@@ -101,7 +101,7 @@ Cards do not lift or scale on hover. Their border-color changes from `neutral.20
 
 ### Motion
 
-No animations. Hover and focus change colors or borders only; nothing moves. The sidebar drawer toggle (mobile only) is the single exception and uses a `200ms` ease-out slide-in.
+No animations. Hover and focus change colors or borders only, nothing moves. The sidebar drawer toggle (mobile only) is the single exception and uses a `200ms` ease-out slide-in.
 
 ## Layout shell
 
@@ -119,7 +119,7 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 | px |  surface.app (#F5F7FB) bg                   |  neutral.0 card   |
 |    |  inner content max-width 1200, 32px pad     |  border.card      |
 |    |                                             |  radius.lg        |
-|    |  (cards stack inside; white cards on the    |                   |
+|    |  (cards stack inside, white cards on the    |                   |
 |    |   tinted bg, border.card, radius.lg)        |  Your team [2/5]  |
 |    |                                             |  +-------------+  |
 |    |                                             |  | ○ Luke  [x] |  |
@@ -130,9 +130,9 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 +----+---------------------------------------------+-------------------+
 ```
 
-- **Left nav.** 80px wide, `nav.bg` deep navy (`#0F1664`), no labels, icon-only with `nav.fg` white strokes. Items: characters grid (`/`) and team (`/team`). The active item gets a `nav.active` rounded-square (`radius.md`) background. Whale glyph at the top; no settings cog in v1 (the mockups omit it).
+- **Left nav.** 80px wide, `nav.bg` deep navy (`#0F1664`), no labels, icon-only with `nav.fg` white strokes. Items: characters grid (`/`) and team (`/team`). The active item gets a `nav.active` rounded-square (`radius.md`) background. Whale glyph at the top, no settings cog in v1 (the mockups omit it).
 - **Top bar.** 16px vertical padding around a `size.sm` (14px) bold breadcrumb on the `surface.app` background (no white band, matches the content area) with a 1px `neutral.200` bottom border. Breadcrumb on the left, nothing on the right. The team count and the `/team` entry point live in the right panel, not in the top bar, which keeps the top bar quiet.
-- **Team panel** (right context pane). 280px column with 16px right padding so the card sits inset from the viewport edge. A single `neutral.0` card with `border.card`, `radius.lg`, 20px interior padding. Header is `Your team` (head font, 16px / 800) + a count pill (`accent.50` background, `accent.600` text, tabular numerals like `2 / 5`). Roster rows below use the compact `TeamMemberRow`: 36px circular avatar, `size.sm` / 700 name, transparent 24px `x` button that turns `semantic.error-bg` + `semantic.error` text on hover. The CTA at the bottom is contextual: solid navy "Manage team" on `/` and `/characters/[id]`, outline "+ Add characters" on `/team` (where you already are, so the CTA points back to the character list).
+- **Team panel** (right context pane). 280px column with 16px right padding so the card sits inset from the viewport edge. A single `neutral.0` card with `border.card`, `radius.lg`, 20px interior padding. Header is `Your team` (head font, 16px / 800) + a count pill (`accent.50` background, `accent.600` text, tabular numerals like `2 / 5`). Roster rows below use the compact `TeamMemberRow`: 36px circular avatar, `size.sm` / 700 name, transparent 24px `x` button that turns `semantic.error-bg` + `semantic.error` text on hover. The CTA at the bottom is contextual, solid navy "Manage team" on `/` and `/characters/[id]`, outline "+ Add characters" on `/team` (where you already are, so the CTA points back to the character list).
 - **Breakpoints.** Viewport ≥ 1100px shows the team panel inline (above). Below 1100px the panel hides and the sidebar's team icon opens it as a right-side `Drawer`. Below 720px the left nav also collapses to a hamburger.
 
 ## Screens
@@ -165,12 +165,12 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 
 - **Page header.** H1 `Star Wars characters` (40px, head font, navy) + lead "Pick five characters for your team. Evil characters can't join." (16px, `neutral.600`, max-width 720px). The breadcrumb (just `Characters`, no separator on the home page) sits in the top bar, not here.
 - **Grid.** `repeat(4, 1fr)` at ≥1240px, 3 cols ≥980px, 2 cols ≥560px, 1 col below. Gap `24px`.
-- **Card.** `neutral.0`, `radius.lg` (16px), `border.card` (1px `neutral.200`), `overflow: hidden`. Two regions split by a 1px `neutral.200` rule: square media (aspect 1/1, `neutral.100` placeholder, `object-fit: cover`) on top, body below with 16px padding holding the character name (`size.body` 16px, head font, 800, `letter-spacing: -0.01em`). No height/mass/affiliations preview. The spec puts those on the detail page. On hover the card border flips from `neutral.200` to `accent.500`; nothing moves.
+- **Card.** `neutral.0`, `radius.lg` (16px), `border.card` (1px `neutral.200`), `overflow: hidden`. Two regions split by a 1px `neutral.200` rule: square media (aspect 1/1, `neutral.100` placeholder, `object-fit: cover`) on top, body below with 16px padding holding the character name (`size.body` 16px, head font, 800, `letter-spacing: -0.01em`). No height/mass/affiliations preview. The spec puts those on the detail page. On hover the card border flips from `neutral.200` to `accent.500`, and nothing moves.
 - **Badges.** Top-left chip on the media, `radius.pill`, 4×12 padding, `size.xs` (12px) / 700 / uppercase with `0.04em` tracking: `On team` (`accent.500` solid, white text) or `Dark side` (`semantic.error` solid, white text). Solid background only, no blur.
 - **Component.** `<CharacterCard name image onClick badge?>` from `packages/components`.
 - **Data.** `useListCharactersQuery()` from the single `api` slice (hits `/api/characters`, server-proxied from `starwars-api`), joined with `useGetTeamQuery()` for the "On team" badge.
 - **States.** Loading → `<StatePanel variant="loading">`. Error → `<StatePanel variant="error" action={retry}>` (proxy maps any upstream non-200 to `404 NOT_FOUND`; transport failures surface as the same error state). Empty (guard only; the `starwars-api` always has data) → `<StatePanel variant="empty">`.
-- The filter chip row from earlier mockups is dropped: the app doesn't show one and the spec doesn't ask for it.
+- The filter chip row from earlier mockups is dropped. The app doesn't show one and the spec doesn't ask for it.
 
 ### `/characters/[id]`: Character detail
 
@@ -205,11 +205,11 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 - **Detail card.** One `neutral.0` card with `border.card`, `radius.lg`, 24px padding, containing a two-column grid: hero on the left (`280–360px`), info on the right. Collapses to a single column below 760px.
 - **Pager.** Two outline pills (`radius.pill`, 1.5px `neutral.200` border on `neutral.0`) with the adjacent character's name in the label (`Prev (R2-D2)`, `Next (Leia Organa)`). Hover flips the border to `accent.500` and the text to `accent.600`. Position counter on the right reads `N of 87` with a bold `accent` `neutral.900` numerator and `neutral.400` "of 87" trailing.
 - **Hero card.** 4:5 image, `radius.md` (12px), `neutral.900` background while the image loads. Top-left chip: red `Dark side` (`semantic.error` solid) or pink `On team` (`accent.500` solid), `size.xs` (12px) uppercase, `0.04em` letter-spacing.
-- **Info column.** H1 (`size.h1`, 40px, head font, navy) + two stat cards in a `repeat(2, minmax(0, 180px))` grid (each card is `neutral.0`, `border.card`, `radius.md`, 12×16 padding; label `size.xs` uppercase `neutral.400`; value 24px in the head font with a small unit suffix in `neutral.400`). Then a `size.xs` uppercase `AFFILIATIONS` eyebrow, then affiliation chips: each is a `neutral.100` pill with a leading dot, Sith/Darth ones tinted with `semantic.error-bg` background + `semantic.error` text. The spec's five required fields (name, image, height, mass, affiliations) all land here and nothing else.
+- **Info column.** H1 (`size.h1`, 40px, head font, navy) + two stat cards in a `repeat(2, minmax(0, 180px))` grid (each card is `neutral.0`, `border.card`, `radius.md`, 12×16 padding, label `size.xs` uppercase `neutral.400`, value 24px in the head font with a small unit suffix in `neutral.400`). Then a `size.xs` uppercase `AFFILIATIONS` eyebrow, then affiliation chips: each is a `neutral.100` pill with a leading dot, Sith/Darth ones tinted with `semantic.error-bg` background + `semantic.error` text. The spec's five required fields (name, image, height, mass, affiliations) all land here and nothing else.
 - **Action bar.** For evil characters, the CTA sits in a red-tinted box (`semantic.error-bg` background with a `#FCA5A5` border, 16px padding, `radius.md`): a 32px white circle with `semantic.error` warning glyph on the left, a two-line copy block (`On the dark side` title in `semantic.error`, description in `#7F1D1D`) in the middle, and the disabled `Add to team` button on the right. On the non-evil path the banner is gone. The pink Add button stands alone under the affiliation chips.
-- `<ActionButton>` **states.** Default pink (`accent.500`); hover `accent.600`; pressed `accent.700`; disabled `neutral.200` bg + `neutral.400` text + `disabledReason` tooltip on hover / `focus-within`. Already-on-team flips to outlined navy "Remove from team".
-- **Prev/Next.** Wrap around: first character's `Prev` jumps to the last; last character's `Next` jumps to the first. Always enabled.
-- **Data.** `useGetCharacterQuery(id)` hero; `useListCharactersQuery()` for prev/next ordering (`masters` arrives as `string[]` from the source API, no id resolution needed); `useGetTeamQuery()` for membership.
+- `<ActionButton>` **states.** Default pink (`accent.500`), hover `accent.600`, pressed `accent.700`, disabled `neutral.200` bg + `neutral.400` text + `disabledReason` tooltip on hover / `focus-within`. Already-on-team flips to outlined navy "Remove from team".
+- **Prev/Next.** Wrap around. First character's `Prev` jumps to the last, last character's `Next` jumps to the first. Always enabled.
+- **Data.** `useGetCharacterQuery(id)` hero, `useListCharactersQuery()` for prev/next ordering (`masters` arrives as `string[]` from the source API, no id resolution needed), `useGetTeamQuery()` for membership.
 
 ### `/team`: Team management
 
@@ -246,10 +246,10 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 | ---------------------- | ------------- | ---------------------------------------------------------- |
 | `AppShell`             | `shell/`      | Top bar + sidebar + content slots                          |
 | `TopBar`               | `shell/`      | App name + team link                                       |
-| `CharacterCard`        | `characters/` | List grid card; props include optional `badge`             |
+| `CharacterCard`        | `characters/` | List grid card. Props include optional `badge`             |
 | `CharacterList`        | `characters/` | Data-aware grid wrapper                                    |
 | `CharacterDetail`      | `characters/` | Detail page body, Add/Remove wiring; banner + Add/Remove button are inline here (no separate `ActionBar` export) |
-| `TeamSidebar`          | `team/`       | Presentational; compact team rows passed as children       |
+| `TeamSidebar`          | `team/`       | Presentational. Compact team rows passed as children       |
 | `TeamSidebarContainer` | `team/`       | Joins team rows to character data                          |
 | `TeamMemberRow`        | `team/`       | Two variants: `compact` (sidebar) and `full` (`/team`)     |
 | `StatePanel`           | `common/`     | Loading / empty / error variants                           |
@@ -262,5 +262,5 @@ Single shell wraps every page: top bar (fixed), sidebar (fixed on desktop, drawe
 > - **ProgressDots**, `n / 5` dots on the team sidebar / team page: render inline (`Array.from({ length: 5 }).map(...)`) inside `<TeamSidebar>` / `<TeamMemberRow>`.
 > - **Tooltip**, wraps disabled controls: use MUI `<Tooltip>` directly. `<ActionButton>` already integrates it for the `disabledReason` pattern.
 
-All UI components live in `packages/components` from day one; `apps/platform/src/components` is reserved for app-level wiring that isn't a reusable component (route layouts, providers).
+All UI components live in `packages/components` from day one. `apps/platform/src/components` is reserved for app-level wiring that isn't a reusable component (route layouts, providers).
 

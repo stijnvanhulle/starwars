@@ -2,13 +2,14 @@ import { PGlite } from '@electric-sql/pglite'
 import { drizzle as drizzleNodePg } from 'drizzle-orm/node-postgres'
 import { drizzle as drizzlePglite } from 'drizzle-orm/pglite'
 import { Pool } from 'pg'
+import { requireDatabaseUrl } from '@/env'
 import * as schema from './schema'
 
 function createDb() {
   if (process.env.NODE_ENV === 'test') {
     return drizzlePglite(new PGlite(), { schema })
   }
-  return drizzleNodePg(new Pool({ connectionString: process.env.DATABASE_URL }), { schema })
+  return drizzleNodePg(new Pool({ connectionString: requireDatabaseUrl() }), { schema })
 }
 
 // Next.js dev HMR re-evaluates this module on every edit. Without a cache each reload
