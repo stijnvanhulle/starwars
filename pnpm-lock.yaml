@@ -13,8 +13,8 @@ catalogs:
       specifier: 5.0.0-beta.31
       version: 5.0.0-beta.31
     '@kubb/plugin-ts':
-      specifier: 5.0.0-beta.31
-      version: 5.0.0-beta.31
+      specifier: 5.0.0-beta.33
+      version: 5.0.0-beta.33
     '@kubb/plugin-zod':
       specifier: 5.0.0-beta.31
       version: 5.0.0-beta.31
@@ -130,7 +130,7 @@ importers:
         version: 5.0.0-beta.31(@kubb/renderer-jsx@5.0.0-beta.31)
       '@kubb/plugin-ts':
         specifier: 'catalog:'
-        version: 5.0.0-beta.31(@kubb/renderer-jsx@5.0.0-beta.31)
+        version: 5.0.0-beta.33(@kubb/renderer-jsx@5.0.0-beta.31)
       '@kubb/plugin-zod':
         specifier: 'catalog:'
         version: 5.0.0-beta.31(@kubb/renderer-jsx@5.0.0-beta.31)
@@ -1494,6 +1494,10 @@ packages:
     resolution: {integrity: sha512-5i4MZfHFCaXgqM0axLup7G3UkNB4mDBlkmvzDTlF5zLhBG0WZAW0oNEr3pC4X/6bIuvI5QW9XVAxU78YjLdU1g==}
     engines: {node: '>=22'}
 
+  '@kubb/ast@5.0.0-beta.33':
+    resolution: {integrity: sha512-O71JY9BRrqcBE5tZWIJ20E/ezRzSpMREpUxG02X0N//oSfwfuQmMrlQz8GNkq4s72UibGBFzShZkrT07bMsqtw==}
+    engines: {node: '>=22'}
+
   '@kubb/cli@5.0.0-beta.31':
     resolution: {integrity: sha512-c5pa77UR7xtGVmutit6k/KcVjzSQoUDangjSzrO5JZ+pcvbyal/P/QRsVVJBiNV1ZBkRi71Hj4CcB/sWfQ8Trg==}
     engines: {node: '>=22'}
@@ -1516,6 +1520,12 @@ packages:
     peerDependencies:
       '@kubb/renderer-jsx': 5.0.0-beta.31
 
+  '@kubb/core@5.0.0-beta.33':
+    resolution: {integrity: sha512-YvHHL+mChsZ62KLnQ9xZ5U28Q3Ecn4Nu8crSI8ou5tRTnrNiuLudN0xkqTKC7WMtuaWpOFhzpNLIV+kNjQTrjQ==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      '@kubb/renderer-jsx': 5.0.0-beta.33
+
   '@kubb/mcp@5.0.0-beta.31':
     resolution: {integrity: sha512-dJp2VPYzxemgmxQUy5LAbw1TJiK8stIV9noNuNjUko3TbbeSw0+jljvsON0WEgdk/6l0Q/wDM6ui155irFoSVQ==}
     engines: {node: '>=22'}
@@ -1537,6 +1547,10 @@ packages:
     resolution: {integrity: sha512-4/spK8Eb7BzHvBbPGF8mAQ6W79UdHXwD23Txg7N/CPcbLsWAvrnefHWDYrbjWYwa6E+QhVfktSnGNnhud5i3Hw==}
     engines: {node: '>=22'}
 
+  '@kubb/parser-ts@5.0.0-beta.33':
+    resolution: {integrity: sha512-O/Jjg/Smb5J25K/yIyvau5qgEicv9yIsK+Ft7T4+lQiCDbfM5V7gJnPdbonvVA2oqYJIDr4PyvwOQCuloMWsbA==}
+    engines: {node: '>=22'}
+
   '@kubb/plugin-client@5.0.0-beta.31':
     resolution: {integrity: sha512-bkaaAnVmsw6kWhwfF9moafWhaJBLb93Fh+3G46dBteRztEqT/D4u6xm6OzBl3dhuCueizhFbTcIYpSm/ZvSJ9Q==}
     engines: {node: '>=22'}
@@ -1552,6 +1566,12 @@ packages:
     engines: {node: '>=22'}
     peerDependencies:
       '@kubb/renderer-jsx': 5.0.0-beta.31
+
+  '@kubb/plugin-ts@5.0.0-beta.33':
+    resolution: {integrity: sha512-u4Zopi1912NwuRoTgV8KknddLQBLx3J78hKZIJM9nnICCl4pM55nSfCuvO/tmDE8ApooQEvJiJRSIPQMg1hpfQ==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      '@kubb/renderer-jsx': 5.0.0-beta.33
 
   '@kubb/plugin-zod@5.0.0-beta.31':
     resolution: {integrity: sha512-3VSvfCd2P4n18/tvVStREiaygG9krrdQpfEGthdJ9Hj5EkCy2RyjXTUaq+I2iClHYLu4rUIcGgMy7h6N79GhZA==}
@@ -3942,6 +3962,10 @@ packages:
   remeda@2.34.1:
     resolution: {integrity: sha512-k5iIF3lHm2NQ+2bNGDvZTD5jZl/JZkCS6AQOfGjYBd7V4rbb3K5whHvab0/O7CqPI43vYzbnIVCQXQJqmOyI6w==}
 
+  remeda@2.37.0:
+    resolution: {integrity: sha512-wN6BXWua0t4o7vDamqc27J3VRxnokG9cDezsFN2nOnt2JD/IkJQHTYqM6UvmEctAZETAoviwEFQZJO3kZ4Ohew==}
+    engines: {node: '>=18.0.0'}
+
   remove-undefined-objects@7.0.0:
     resolution: {integrity: sha512-+9ycqqqpv6EdaOvHpyOkf81SXJ4MjARKX450Je6AmshEYeqAuiVcfbLx1coNICO3KulleXlOHd0GSHFkEdB3YQ==}
     engines: {node: '>=18'}
@@ -5618,6 +5642,8 @@ snapshots:
 
   '@kubb/ast@5.0.0-beta.31': {}
 
+  '@kubb/ast@5.0.0-beta.33': {}
+
   '@kubb/cli@5.0.0-beta.31(@kubb/adapter-oas@5.0.0-beta.31(@kubb/renderer-jsx@5.0.0-beta.31))(@kubb/mcp@5.0.0-beta.31(@kubb/renderer-jsx@5.0.0-beta.31)(typescript@6.0.3))(@kubb/renderer-jsx@5.0.0-beta.31)(typescript@6.0.3)':
     dependencies:
       '@clack/prompts': 1.4.0
@@ -5636,6 +5662,13 @@ snapshots:
   '@kubb/core@5.0.0-beta.31(@kubb/renderer-jsx@5.0.0-beta.31)':
     dependencies:
       '@kubb/ast': 5.0.0-beta.31
+      '@kubb/renderer-jsx': 5.0.0-beta.31
+      fflate: 0.8.3
+      tinyexec: 1.1.2
+
+  '@kubb/core@5.0.0-beta.33(@kubb/renderer-jsx@5.0.0-beta.31)':
+    dependencies:
+      '@kubb/ast': 5.0.0-beta.33
       '@kubb/renderer-jsx': 5.0.0-beta.31
       fflate: 0.8.3
       tinyexec: 1.1.2
@@ -5676,6 +5709,13 @@ snapshots:
     transitivePeerDependencies:
       - '@kubb/renderer-jsx'
 
+  '@kubb/parser-ts@5.0.0-beta.33(@kubb/renderer-jsx@5.0.0-beta.31)':
+    dependencies:
+      '@kubb/core': 5.0.0-beta.33(@kubb/renderer-jsx@5.0.0-beta.31)
+      typescript: 6.0.3
+    transitivePeerDependencies:
+      - '@kubb/renderer-jsx'
+
   '@kubb/plugin-client@5.0.0-beta.31(@kubb/renderer-jsx@5.0.0-beta.31)':
     dependencies:
       '@kubb/core': 5.0.0-beta.31(@kubb/renderer-jsx@5.0.0-beta.31)
@@ -5689,6 +5729,14 @@ snapshots:
       '@kubb/parser-ts': 5.0.0-beta.31(@kubb/renderer-jsx@5.0.0-beta.31)
       '@kubb/renderer-jsx': 5.0.0-beta.31
       remeda: 2.34.1
+      typescript: 6.0.3
+
+  '@kubb/plugin-ts@5.0.0-beta.33(@kubb/renderer-jsx@5.0.0-beta.31)':
+    dependencies:
+      '@kubb/core': 5.0.0-beta.33(@kubb/renderer-jsx@5.0.0-beta.31)
+      '@kubb/parser-ts': 5.0.0-beta.33(@kubb/renderer-jsx@5.0.0-beta.31)
+      '@kubb/renderer-jsx': 5.0.0-beta.31
+      remeda: 2.37.0
       typescript: 6.0.3
 
   '@kubb/plugin-zod@5.0.0-beta.31(@kubb/renderer-jsx@5.0.0-beta.31)':
@@ -7789,6 +7837,8 @@ snapshots:
   reftools@1.1.9: {}
 
   remeda@2.34.1: {}
+
+  remeda@2.37.0: {}
 
   remove-undefined-objects@7.0.0: {}
 
