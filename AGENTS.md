@@ -74,8 +74,7 @@ Use [Conventional Commits](https://www.conventionalcommits.org/). Before a PR, r
 
 ## How agents read this repo
 
-`AGENTS.md` is the canonical instruction file. `CLAUDE.md`, `GEMINI.md`, and
-`.github/copilot-instructions.md` symlink to it. Skills live in `.agents/skills/` (open
+`AGENTS.md` is the canonical instruction file. `CLAUDE.md` symlinks to it. Skills live in `.agents/skills/` (open
 `SKILL.md` format, cross-provider). Always-on conventions live in `.claude/rules/`
 (`code-style`, `jsdoc`, `markdown`, `testing`, `security`), and `.claude/` also holds commands,
 subagents, output styles, and hooks. See the
